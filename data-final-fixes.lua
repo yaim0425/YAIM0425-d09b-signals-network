@@ -166,7 +166,8 @@ function This_MOD.create_recipes()
     ---> Crear los objetos
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GPrefix.extend(Sender, Receiver)
+    GPrefix.add_recipe_to_tech(This_MOD.prefix .. "transmission", Sender)
+    GPrefix.add_recipe_to_tech(This_MOD.prefix .. "transmission", Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -360,8 +361,10 @@ function This_MOD.create_tech()
             { type = "unlock-recipe", recipe = This_MOD.prefix .. "sender", },
             { type = "unlock-recipe", recipe = This_MOD.prefix .. "receiver", },
         },
-        icon = This_MOD.graphics .. "technology.png",
-        icon_size = 256,
+        icons = { {
+            icon = This_MOD.graphics .. "technology.png",
+            icon_size = 256
+        } },
         order = "e-g",
         prerequisites = {
             "processing-unit",
@@ -381,10 +384,6 @@ function This_MOD.create_tech()
 
     --- Corrección
     if mods["space-age"] then
-        Technology.prerequisites = {
-            "circuit-network",
-            "space-science-pack",
-        }
         table.insert(
             Technology.unit.ingredients
             { "space-science-pack", 1 }
@@ -393,6 +392,42 @@ function This_MOD.create_tech()
 
     --- Crear la tecnología
     GPrefix.extend(Technology)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Correcciones
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Technologies = {}
+    for _, effect in pairs(Technology.effects) do
+        --- Desactivar las recetas
+        local Recipe = data.raw.recipe[effect.recipe]
+        Recipe.enable = false
+
+        --- Buscar los tecnologías de desbloqueo
+        for _, ingredient in pairs(Recipe.ingredients or {}) do
+            local Tech = { level = 0 }
+            for _, recipe in pairs(GPrefix.recipes[ingredient.name] or {}) do
+                for _, tech in pairs(GPrefix.tech.recipe[recipe.name] or {}) do
+                    if Tech.level < tech.level then
+                        Tech = tech
+                    end
+                end
+            end
+            if Tech.technology then
+                Technologies[Tech.technology.name] = Tech
+            end
+        end
+    end
+
+    --- Cambiar los prerequisitos
+    Technology.prerequisites = {}
+    for tech, _ in pairs(Technologies) do
+        table.insert(Technology.prerequisites, tech)
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
