@@ -18,10 +18,14 @@ function This_MOD.start()
     --- Valores de la referencia
     This_MOD.setting_mod()
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     -- --- Crear los prototipos
     -- This_MOD.CreateItem()
     -- This_MOD.CreateEntity()
     -- This_MOD.CreateRecipe()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- --- Estilos a usar
     -- This_MOD.Styles()
@@ -35,20 +39,10 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Contenedor
-    This_MOD.ref = "radar"
-    This_MOD.tech = "satellite"
-    This_MOD.new_name = This_MOD.prefix .. "transceiver"
+    This_MOD.entity_ref = "radar"
+    This_MOD.sender_name = This_MOD.prefix .. "sender"
+    This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
-    This_MOD.icons = { { icon = This_MOD.graphics .. "item.png" } }
-
-    --- Ingredientes para la receta
-    This_MOD.ingredients = {
-        { type = "item", name = "processing-unit",      amount = 13 },
-        { type = "item", name = "copper-cable",         amount = 12 },
-        { type = "item", name = "iron-plate",           amount = 10 },
-        { type = "item", name = "steel-plate",          amount = 10 },
-        { type = "item", name = "electric-engine-unit", amount = 5 }
-    }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -69,12 +63,12 @@ function This_MOD.CreateItem()
 
     --- Modificar las propiedades
     Item.icons = This_MOD.icons
-    Item.name = This_MOD.new_name
-    Item.place_result = This_MOD.new_name
+    Item.name = This_MOD.receiver
+    Item.place_result = This_MOD.receiver
     local Order = tonumber(Item.order) + 1
     Item.order = GPrefix.pad_left(#Item.order, Order)
-    Item.localised_name = { "", { "entity-name." .. This_MOD.new_name } }
-    Item.localised_description = { "", { "entity-description." .. This_MOD.new_name } }
+    Item.localised_name = { "", { "entity-name." .. This_MOD.receiver } }
+    Item.localised_description = { "", { "entity-description." .. This_MOD.receiver } }
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Item })
@@ -87,7 +81,7 @@ function This_MOD.CreateRecipe()
     Recipe = util.copy(Recipe)
 
     --- Modificar las propiedades
-    Recipe.name = This_MOD.new_name
+    Recipe.name = This_MOD.receiver
 
     Recipe.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
@@ -96,7 +90,7 @@ function This_MOD.CreateRecipe()
         { type = "item", name = "electric-engine-unit", amount = 10 }
     }
     Recipe.results = {
-        { type = "item", name = This_MOD.new_name, amount = 1 }
+        { type = "item", name = This_MOD.receiver, amount = 1 }
     }
 
     --- Crear el prototipo
@@ -112,8 +106,8 @@ function This_MOD.CreateEntity()
 
     --- Modificar las propiedades
     local Result = GPrefix.get_table(Entity.minable.results, "name", This_MOD.ref)
-    Result.name = This_MOD.new_name
-    Entity.name = This_MOD.new_name
+    Result.name = This_MOD.receiver
+    Entity.name = This_MOD.receiver
     Entity.icons = This_MOD.icons
 
     Entity.next_upgrade = nil
@@ -123,8 +117,8 @@ function This_MOD.CreateEntity()
     Entity.max_distance_of_sector_revealed = 0
     Entity.max_distance_of_nearby_sector_revealed = 0
 
-    Entity.localised_name = { "", { "entity-name." .. This_MOD.new_name } }
-    Entity.localised_description = { "", { "entity-description." .. This_MOD.new_name } }
+    Entity.localised_name = { "", { "entity-name." .. This_MOD.receiver } }
+    Entity.localised_description = { "", { "entity-description." .. This_MOD.receiver } }
 
     Entity.pictures = {
         layers = {
