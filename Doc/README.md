@@ -25,5 +25,7 @@ Proporciona una **red de señales lógica remota**, ideal para automatización g
 - Compatible con otros MODs lógicos o de automatización  
 - Todo su contenido está disponible para quien lo necesite; estoy abierto a cambios, correcciones y sugerencias.
 
+## 🖼️ Capturas
+
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(1).png)  
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(2).png)

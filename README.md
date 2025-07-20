@@ -25,5 +25,7 @@ Offers a **remote logic signal network**, perfect for global automation, distrib
 - Compatible with other automation or logic MODs  
 - All its content is available to anyone who needs it; I'm open to changes, fixes, and suggestions.
 
+## 🖼️ Screenshots
+
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(1).png)  
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(2).png)
