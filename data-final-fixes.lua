@@ -28,9 +28,9 @@ function This_MOD.start()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Estilos a usar
+    --- Estilos a usar
     -- This_MOD.Styles()
-    -- This_MOD.Icon()
+    This_MOD.icon()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -538,16 +538,15 @@ function This_MOD.Styles()
 end
 
 --- Icono para las imagenes
-function This_MOD.Icon()
-    GPrefix.addDataRaw({ {
+function This_MOD.icon()
+    GPrefix.extend({
         type = "virtual-signal",
-        name = This_MOD.Prefix .. "icon",
-        localised_name = "",
+        name = This_MOD.prefix .. "icon",
         icon = This_MOD.graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
         order = "z-z-o"
-    } })
+    })
 end
 
 ---------------------------------------------------------------------------------------------------
