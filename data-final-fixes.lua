@@ -10,20 +10,20 @@ local ThisMOD = {}
 
 ---------------------------------------------------------------------------------------------------
 
---- Iniciar el modulo
-function ThisMOD.Start()
-    --- Valores de la referencia
-    ThisMOD.setSetting()
+-- --- Iniciar el modulo
+-- function ThisMOD.Start()
+--     --- Valores de la referencia
+--     ThisMOD.setSetting()
 
-    --- Crear los prototipos
-    ThisMOD.CreateItem()
-    ThisMOD.CreateEntity()
-    ThisMOD.CreateRecipe()
+--     --- Crear los prototipos
+--     ThisMOD.CreateItem()
+--     ThisMOD.CreateEntity()
+--     ThisMOD.CreateRecipe()
 
-    --- Estilos a usar
-    ThisMOD.Styles()
-    ThisMOD.Icon()
-end
+--     --- Estilos a usar
+--     ThisMOD.Styles()
+--     ThisMOD.Icon()
+-- end
 
 --- Valores de la referencia
 function ThisMOD.setSetting()
