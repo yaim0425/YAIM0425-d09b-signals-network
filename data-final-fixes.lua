@@ -34,18 +34,27 @@ end
 
 --- Valores de la referencia
 function This_MOD.setting_mod()
-    --- Otros valores
-    This_MOD.Prefix = "zzzYAIM0425-0900-"
-    This_MOD.name = "signal-network"
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Contenedor
-    This_MOD.Ref = "radar"
+    This_MOD.ref = "radar"
     This_MOD.Technology = "satellite"
-    This_MOD.NewName = This_MOD.Prefix .. "transceiver"
-    This_MOD.graphics = "__zzzYAIM0425-0900-signals-network__/graphics/"
+    This_MOD.new_name = This_MOD.prefix .. "transceiver"
+    This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.icons = {
         { icon = This_MOD.graphics .. "item.png" }
     }
+
+    --- Ingredientes para la receta
+    This_MOD.ingredients = {
+        { type = "item", name = "processing-unit",      amount = 13 },
+        { type = "item", name = "copper-cable",         amount = 12 },
+        { type = "item", name = "iron-plate",           amount = 10 },
+        { type = "item", name = "steel-plate",          amount = 10 },
+        { type = "item", name = "electric-engine-unit", amount = 5 }
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -55,17 +64,17 @@ end
 --- Crear el objeto
 function This_MOD.CreateItem()
     --- Portotipo de referencia
-    local Item = GPrefix.items[This_MOD.Ref]
+    local Item = GPrefix.items[This_MOD.ref]
     Item = util.copy(Item)
 
     --- Modificar las propiedades
     Item.icons = This_MOD.icons
-    Item.name = This_MOD.NewName
-    Item.place_result = This_MOD.NewName
+    Item.name = This_MOD.new_name
+    Item.place_result = This_MOD.new_name
     local Order = tonumber(Item.order) + 1
     Item.order = GPrefix.pad_left(#Item.order, Order)
-    Item.localised_name = { "", { "entity-name." .. This_MOD.NewName } }
-    Item.localised_description = { "", { "entity-description." .. This_MOD.NewName } }
+    Item.localised_name = { "", { "entity-name." .. This_MOD.new_name } }
+    Item.localised_description = { "", { "entity-description." .. This_MOD.new_name } }
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Item })
@@ -74,11 +83,11 @@ end
 --- Crear la receta
 function This_MOD.CreateRecipe()
     --- Portotipo de referencia
-    local Recipe = GPrefix.recipes[This_MOD.Ref][1]
+    local Recipe = GPrefix.recipes[This_MOD.ref][1]
     Recipe = util.copy(Recipe)
 
     --- Modificar las propiedades
-    Recipe.name = This_MOD.NewName
+    Recipe.name = This_MOD.new_name
 
     Recipe.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
@@ -87,7 +96,7 @@ function This_MOD.CreateRecipe()
         { type = "item", name = "electric-engine-unit", amount = 10 }
     }
     Recipe.results = {
-        { type = "item", name = This_MOD.NewName, amount = 1 }
+        { type = "item", name = This_MOD.new_name, amount = 1 }
     }
 
     --- Crear el prototipo
@@ -98,13 +107,13 @@ end
 --- Crear la entidad
 function This_MOD.CreateEntity()
     --- Portotipo de referencia
-    local Entity = GPrefix.entities[This_MOD.Ref]
+    local Entity = GPrefix.entities[This_MOD.ref]
     Entity = util.copy(Entity)
 
     --- Modificar las propiedades
-    local Result = GPrefix.get_table(Entity.minable.results, "name", This_MOD.Ref)
-    Result.name = This_MOD.NewName
-    Entity.name = This_MOD.NewName
+    local Result = GPrefix.get_table(Entity.minable.results, "name", This_MOD.ref)
+    Result.name = This_MOD.new_name
+    Entity.name = This_MOD.new_name
     Entity.icons = This_MOD.icons
 
     Entity.next_upgrade = nil
@@ -114,8 +123,8 @@ function This_MOD.CreateEntity()
     Entity.max_distance_of_sector_revealed = 0
     Entity.max_distance_of_nearby_sector_revealed = 0
 
-    Entity.localised_name = { "", { "entity-name." .. This_MOD.NewName } }
-    Entity.localised_description = { "", { "entity-description." .. This_MOD.NewName } }
+    Entity.localised_name = { "", { "entity-name." .. This_MOD.new_name } }
+    Entity.localised_description = { "", { "entity-description." .. This_MOD.new_name } }
 
     Entity.pictures = {
         layers = {
