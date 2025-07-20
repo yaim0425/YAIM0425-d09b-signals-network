@@ -401,13 +401,10 @@ function This_MOD.create_tech()
     ---> Correcciones
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Buscar los tecnologías de desbloqueo
     local Technologies = {}
     for _, effect in pairs(Technology.effects) do
-        --- Desactivar las recetas
         local Recipe = data.raw.recipe[effect.recipe]
-        Recipe.enable = false
-
-        --- Buscar los tecnologías de desbloqueo
         for _, ingredient in pairs(Recipe.ingredients or {}) do
             local Tech = { level = 0 }
             for _, recipe in pairs(GPrefix.recipes[ingredient.name] or {}) do
