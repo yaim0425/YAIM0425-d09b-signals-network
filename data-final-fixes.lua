@@ -21,8 +21,8 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear los prototipos
-    This_MOD.create_item()
-    This_MOD.create_entity()
+    This_MOD.create_items()
+    This_MOD.create_entities()
     -- This_MOD.CreateRecipe()
     -- This_MOD.create_tech()
 
@@ -45,12 +45,14 @@ function This_MOD.setting_mod()
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
 
     --- Objeto de referencia
-    This_MOD.item_ref = GPrefix.items["arithmetic-combinator"]
-    This_MOD.entity_ref = GPrefix.entities["radar"]
+    This_MOD.ref = {}
+    This_MOD.ref.combinator = GPrefix.entities["decider-combinator"]
+    This_MOD.ref.item = GPrefix.items["decider-combinator"]
+    This_MOD.ref.radar = GPrefix.entities["radar"]
 
     --- Crear un subgroup
-    This_MOD.subgroup = This_MOD.prefix .. GPrefix.delete_prefix(This_MOD.item_ref.subgroup)
-    GPrefix.duplicate_subgroup(This_MOD.item_ref.subgroup, This_MOD.subgroup)
+    This_MOD.subgroup = This_MOD.prefix .. GPrefix.delete_prefix(This_MOD.ref.item.subgroup)
+    GPrefix.duplicate_subgroup(This_MOD.ref.item.subgroup, This_MOD.subgroup)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -64,18 +66,17 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Crear el objeto
-function This_MOD.create_item()
+function This_MOD.create_items()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Emisor
-    local Sender = util.copy(This_MOD.item_ref)
+    local Sender = util.copy(This_MOD.ref.item)
     Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
     Sender.subgroup = This_MOD.subgroup
     Sender.order = "010"
 
     Sender.name = This_MOD.prefix .. "sender"
     Sender.place_result = This_MOD.prefix .. "sender"
-    Sender.place_result = nil
 
     Sender.localised_name = { "", { "entity-name." .. Sender.name } }
     Sender.localised_description = { "", { "entity-description." .. Sender.name } }
@@ -83,14 +84,13 @@ function This_MOD.create_item()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Receptor
-    local Receiver = util.copy(This_MOD.item_ref)
+    local Receiver = util.copy(This_MOD.ref.item)
     Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
     Receiver.subgroup = This_MOD.subgroup
     Sender.order = "020"
 
     Receiver.name = This_MOD.prefix .. "receiver"
     Receiver.place_result = This_MOD.prefix .. "receiver"
-    Receiver.place_result = nil
 
     Receiver.localised_name = { "", { "entity-name." .. Receiver.name } }
     Receiver.localised_description = { "", { "entity-description." .. Receiver.name } }
@@ -128,31 +128,96 @@ function This_MOD.CreateRecipe()
 end
 
 --- Crear la entidad
-function This_MOD.create_entity()
-    --- Portotipo de referencia
-    local Entity = GPrefix.entities[This_MOD.ref]
-    Entity = util.copy(Entity)
+function This_MOD.create_entities()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Modificar las propiedades
-    local Result = GPrefix.get_table(Entity.minable.results, "name", This_MOD.ref)
-    Result.name = This_MOD.receiver
-    Entity.name = This_MOD.receiver
-    Entity.icons = This_MOD.icons
+    --- Emisor
+    local Sender = util.copy(This_MOD.ref.radar)
+    Sender.name = This_MOD.prefix .. "sender"
+    Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
 
-    Entity.next_upgrade = nil
-    Entity.energy_usage = '2MW'
-    Entity.rotation_speed = 0.002
-    Entity.connects_to_other_radars = false
-    Entity.max_distance_of_sector_revealed = 0
-    Entity.max_distance_of_nearby_sector_revealed = 0
+    Sender.minable = Sender.minable or { mining_time = 0.1 }
+    Sender.minable.results = { { type = "item", name = Sender.name, amount = 1 } }
 
-    Entity.localised_name = { "", { "entity-name." .. This_MOD.receiver } }
-    Entity.localised_description = { "", { "entity-description." .. This_MOD.receiver } }
+    Sender.next_upgrade = nil
+    Sender.energy_usage = '10MW'
+    Sender.rotation_speed = 0.002
+    Sender.connects_to_other_radars = false
 
-    Entity.pictures = {
+    Sender.localised_name = { "", { "entity-name." .. Sender.name } }
+    Sender.localised_description = { "", { "entity-description." .. Sender.name } }
+
+    Sender.pictures = {
         layers = {
             {
-                filename = This_MOD.graphics .. "entity.png",
+                filename = This_MOD.graphics .. "entity-sender.png",
+                shift = util.by_pixel(6, -13),
+                animation_speed = 0.18,
+                direction_count = 64,
+                priority = "high",
+                height = 3232 / 8,
+                width = 2880 / 8,
+                line_length = 8,
+                scale = 0.5
+            },
+            {
+                draw_as_shadow = true,
+                filename = This_MOD.graphics .. "entity-sender-shadow.png",
+                shift = util.by_pixel(33, 10),
+                direction_count = 64,
+                priority = "high",
+                height = 2224 / 8,
+                width = 3712 / 8,
+                line_length = 8,
+                scale = 0.5
+            }
+        }
+    }
+    Sender.collision_box = {
+        { -2.3, -2.3 },
+        { 2.3,  2.3 }
+    }
+    Sender.selection_box = {
+        { -2.5, -2.5 },
+        { 2.5,  2.5 }
+    }
+    Sender.circuit_connector = {
+        points = {
+            shadow =
+            {
+                green = { -1.5, 2.2 },
+                red = { -1.5, 2.2 },
+            },
+            wire =
+            {
+                green = { -2, 1.7 },
+                red = { -2, 1.7 },
+            }
+        }
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Receptor
+    local Receiver = util.copy(This_MOD.ref.radar)
+    Receiver.name = This_MOD.prefix .. "receiver"
+    Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
+
+    Receiver.minable = Receiver.minable or { mining_time = 0.1 }
+    Receiver.minable.results = { { type = "item", name = Receiver.name, amount = 1 } }
+
+    Receiver.next_upgrade = nil
+    Receiver.energy_usage = '2MW'
+    Receiver.rotation_speed = 0.002
+    Receiver.connects_to_other_radars = false
+
+    Receiver.localised_name = { "", { "entity-name." .. Receiver.name } }
+    Receiver.localised_description = { "", { "entity-description." .. Receiver.name } }
+
+    Receiver.pictures = {
+        layers = {
+            {
+                filename = This_MOD.graphics .. "entity-receiver.png",
                 shift = util.by_pixel(1, -26),
                 animation_speed = 0.15,
                 direction_count = 64,
@@ -164,7 +229,7 @@ function This_MOD.create_entity()
             },
             {
                 draw_as_shadow = true,
-                filename = This_MOD.graphics .. "entity-shadow.png",
+                filename = This_MOD.graphics .. "entity-receiver-shadow.png",
                 shift = util.by_pixel(25, 19),
                 direction_count = 64,
                 priority = "high",
@@ -175,29 +240,50 @@ function This_MOD.create_entity()
             }
         }
     }
-    Entity.collision_box = {
+    Receiver.collision_box = {
         { -4.3, -4.3 },
         { 4.3,  4.3 }
     }
-    Entity.selection_box = {
+    Receiver.selection_box = {
         { -4.5, -4.5 },
         { 4.5,  4.5 }
     }
-    Entity.circuit_connector = {
+    Receiver.circuit_connector = {
         points = {
-            shadow = {
+            shadow =
+            {
                 green = { -2.5, 4.2 },
                 red = { -2.7, 4 },
             },
-            wire = {
+            wire =
+            {
                 green = { -3.5, 3.2 },
                 red = { -3.7, 3 },
             }
         }
     }
 
-    --- Crear el prototipo
-    GPrefix.addDataRaw({ Entity })
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Combinador
+    local Combinator = util.copy(This_MOD.ref.combinator)
+    Combinator.name = This_MOD.prefix .. Combinator.name
+
+    Combinator.minable = Combinator.minable or { mining_time = 0.1 }
+    Combinator.minable.results = nil
+
+    Combinator.localised_name = ""
+    Combinator.localised_description = ""
+
+    Combinator.energy_source = { type = "void" }
+    Combinator.hidden = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear los objetos
+    GPrefix.extend(Sender, Receiver, Combinator)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
