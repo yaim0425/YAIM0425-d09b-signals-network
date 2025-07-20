@@ -38,11 +38,11 @@ function This_MOD.setting_mod()
 
     --- Contenedor
     This_MOD.ref = "radar"
-    This_MOD.technology = "satellite"
+    This_MOD.tech = data.raw.technology["space-science-pack"]
     This_MOD.new_name = This_MOD.prefix .. "transceiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.icons = { { icon = This_MOD.graphics .. "item.png" } }
-
+GPrefix.var_dump(GPrefix.tech.level)
     --- Ingredientes para la receta
     This_MOD.ingredients = {
         { type = "item", name = "processing-unit",      amount = 13 },
@@ -99,7 +99,7 @@ function This_MOD.CreateRecipe()
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Recipe })
-    GPrefix.addRecipeToTechnology(This_MOD.technology, nil, Recipe)
+    GPrefix.addRecipeToTechnology(This_MOD.tech, nil, Recipe)
 end
 
 --- Crear la entidad
