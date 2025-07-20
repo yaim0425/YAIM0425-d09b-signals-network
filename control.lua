@@ -892,6 +892,43 @@ function ThisMOD.show_new_channel(Data)
 end
 
 ---------------------------------------------------------------------------------------------------
+--[[ Código de prueba
+
+script.on_init(function()
+    local player = game.players[1]  -- Solo hay un jugador
+    if not player then return end
+
+    -- Crear un nuevo force temporal
+    local temp_force_name = "temporary_force"
+    if not game.forces[temp_force_name] then
+        game.create_force(temp_force_name)
+    end
+    local temp_force = game.forces[temp_force_name]
+
+    -- Crear 10 entidades para ese force
+    local surface = player.surface
+    local position = player.position
+
+    for i = 1, 10 do
+        local entity_position = { x = position.x + i, y = position.y }
+        surface.create_entity{
+            name = "stone-furnace",  -- Puedes cambiarlo por otra entidad válida
+            position = entity_position,
+            force = temp_force,
+            create_build_effect_smoke = false
+        }
+    end
+
+    -- Fusionar fuerzas: temp_force → jugador.force
+    temp_force.merge(player.force)
+
+    -- Confirmación en consola
+    player.print("Se crearon 10 entidades en un force temporal y se fusionó con el force del jugador.")
+end)
+
+]]
+
+---------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------
 
