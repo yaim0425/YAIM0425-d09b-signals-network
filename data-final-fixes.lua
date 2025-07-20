@@ -4,44 +4,47 @@
 
 --- Contenedor de funciones y datos usados
 --- unicamente en este archivo
-local ThisMOD = {}
+local This_MOD = {}
 
 ---------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------
 
 --- Iniciar el modulo
-function ThisMOD.Start()
+function This_MOD.Start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Obtener información desde el nombre de MOD
+    GPrefix.split_name_folder(This_MOD)
+
     --- Valores de la referencia
-    ThisMOD.setSetting()
+    This_MOD.setting_mod()
 
     -- --- Crear los prototipos
-    -- ThisMOD.CreateItem()
-    -- ThisMOD.CreateEntity()
-    -- ThisMOD.CreateRecipe()
+    -- This_MOD.CreateItem()
+    -- This_MOD.CreateEntity()
+    -- This_MOD.CreateRecipe()
 
     -- --- Estilos a usar
-    -- ThisMOD.Styles()
-    -- ThisMOD.Icon()
+    -- This_MOD.Styles()
+    -- This_MOD.Icon()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Valores de la referencia
-function ThisMOD.setSetting()
+function This_MOD.setting_mod()
     --- Otros valores
-    ThisMOD.Prefix = "zzzYAIM0425-0900-"
-    ThisMOD.name = "signal-network"
+    This_MOD.Prefix = "zzzYAIM0425-0900-"
+    This_MOD.name = "signal-network"
 
     --- Contenedor
-    ThisMOD.Ref = "radar"
-    ThisMOD.Technology = "satellite"
-    ThisMOD.NewName = ThisMOD.Prefix .. "transceiver"
-    ThisMOD.graphics = "__zzzYAIM0425-0900-signals-network__/graphics/"
-    ThisMOD.icons = {
-        { icon = ThisMOD.graphics .. "item.png" }
+    This_MOD.Ref = "radar"
+    This_MOD.Technology = "satellite"
+    This_MOD.NewName = This_MOD.Prefix .. "transceiver"
+    This_MOD.graphics = "__zzzYAIM0425-0900-signals-network__/graphics/"
+    This_MOD.icons = {
+        { icon = This_MOD.graphics .. "item.png" }
     }
 end
 
@@ -50,32 +53,32 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Crear el objeto
-function ThisMOD.CreateItem()
+function This_MOD.CreateItem()
     --- Portotipo de referencia
-    local Item = GPrefix.items[ThisMOD.Ref]
+    local Item = GPrefix.items[This_MOD.Ref]
     Item = util.copy(Item)
 
     --- Modificar las propiedades
-    Item.icons = ThisMOD.icons
-    Item.name = ThisMOD.NewName
-    Item.place_result = ThisMOD.NewName
+    Item.icons = This_MOD.icons
+    Item.name = This_MOD.NewName
+    Item.place_result = This_MOD.NewName
     local Order = tonumber(Item.order) + 1
     Item.order = GPrefix.pad_left(#Item.order, Order)
-    Item.localised_name = { "", { "entity-name." .. ThisMOD.NewName } }
-    Item.localised_description = { "", { "entity-description." .. ThisMOD.NewName } }
+    Item.localised_name = { "", { "entity-name." .. This_MOD.NewName } }
+    Item.localised_description = { "", { "entity-description." .. This_MOD.NewName } }
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Item })
 end
 
 --- Crear la receta
-function ThisMOD.CreateRecipe()
+function This_MOD.CreateRecipe()
     --- Portotipo de referencia
-    local Recipe = GPrefix.recipes[ThisMOD.Ref][1]
+    local Recipe = GPrefix.recipes[This_MOD.Ref][1]
     Recipe = util.copy(Recipe)
 
     --- Modificar las propiedades
-    Recipe.name = ThisMOD.NewName
+    Recipe.name = This_MOD.NewName
 
     Recipe.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
@@ -84,25 +87,25 @@ function ThisMOD.CreateRecipe()
         { type = "item", name = "electric-engine-unit", amount = 10 }
     }
     Recipe.results = {
-        { type = "item", name = ThisMOD.NewName, amount = 1 }
+        { type = "item", name = This_MOD.NewName, amount = 1 }
     }
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Recipe })
-    GPrefix.addRecipeToTechnology(ThisMOD.Technology, nil, Recipe)
+    GPrefix.addRecipeToTechnology(This_MOD.Technology, nil, Recipe)
 end
 
 --- Crear la entidad
-function ThisMOD.CreateEntity()
+function This_MOD.CreateEntity()
     --- Portotipo de referencia
-    local Entity = GPrefix.entities[ThisMOD.Ref]
+    local Entity = GPrefix.entities[This_MOD.Ref]
     Entity = util.copy(Entity)
 
     --- Modificar las propiedades
-    local Result = GPrefix.get_table(Entity.minable.results, "name", ThisMOD.Ref)
-    Result.name = ThisMOD.NewName
-    Entity.name = ThisMOD.NewName
-    Entity.icons = ThisMOD.icons
+    local Result = GPrefix.get_table(Entity.minable.results, "name", This_MOD.Ref)
+    Result.name = This_MOD.NewName
+    Entity.name = This_MOD.NewName
+    Entity.icons = This_MOD.icons
 
     Entity.next_upgrade = nil
     Entity.energy_usage = '2MW'
@@ -111,13 +114,13 @@ function ThisMOD.CreateEntity()
     Entity.max_distance_of_sector_revealed = 0
     Entity.max_distance_of_nearby_sector_revealed = 0
 
-    Entity.localised_name = { "", { "entity-name." .. ThisMOD.NewName } }
-    Entity.localised_description = { "", { "entity-description." .. ThisMOD.NewName } }
+    Entity.localised_name = { "", { "entity-name." .. This_MOD.NewName } }
+    Entity.localised_description = { "", { "entity-description." .. This_MOD.NewName } }
 
     Entity.pictures = {
         layers = {
             {
-                filename = ThisMOD.graphics .. "entity.png",
+                filename = This_MOD.graphics .. "entity.png",
                 shift = util.by_pixel(1, -26),
                 animation_speed = 0.15,
                 direction_count = 64,
@@ -129,7 +132,7 @@ function ThisMOD.CreateEntity()
             },
             {
                 draw_as_shadow = true,
-                filename = ThisMOD.graphics .. "entity-shadow.png",
+                filename = This_MOD.graphics .. "entity-shadow.png",
                 shift = util.by_pixel(25, 19),
                 direction_count = 64,
                 priority = "high",
@@ -170,9 +173,9 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Estilos a usar
-function ThisMOD.Styles()
+function This_MOD.Styles()
     --- Cambiar los guiones del nombre
-    local Prefix = string.gsub(ThisMOD.Prefix, "%-", "_")
+    local Prefix = string.gsub(This_MOD.Prefix, "%-", "_")
 
     --- Renombrar
     local Styles = data.raw["gui-style"].default
@@ -270,12 +273,12 @@ function ThisMOD.Styles()
 end
 
 --- Icono para las imagenes
-function ThisMOD.Icon()
+function This_MOD.Icon()
     GPrefix.addDataRaw({ {
         type = "virtual-signal",
-        name = ThisMOD.Prefix .. "icon",
+        name = This_MOD.Prefix .. "icon",
         localised_name = "",
-        icon = ThisMOD.graphics .. "icon.png",
+        icon = This_MOD.graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
         order = "z-z-o"
@@ -287,6 +290,6 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Iniciar el modulo
-ThisMOD.Start()
+This_MOD.Start()
 
 ---------------------------------------------------------------------------------------------------
