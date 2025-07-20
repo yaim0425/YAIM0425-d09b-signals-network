@@ -20,10 +20,11 @@ function This_MOD.start()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Crear los prototipos
-    -- This_MOD.CreateItem()
+    --- Crear los prototipos
+    This_MOD.create_item()
     -- This_MOD.CreateEntity()
     -- This_MOD.CreateRecipe()
+    -- This_MOD.create_tech()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -56,22 +57,25 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Crear el objeto
-function This_MOD.CreateItem()
-    --- Portotipo de referencia
-    local Item = GPrefix.items[This_MOD.ref]
-    Item = util.copy(Item)
+function This_MOD.create_item()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Modificar las propiedades
-    Item.icons = This_MOD.icons
-    Item.name = This_MOD.receiver
-    Item.place_result = This_MOD.receiver
-    local Order = tonumber(Item.order) + 1
-    Item.order = GPrefix.pad_left(#Item.order, Order)
-    Item.localised_name = { "", { "entity-name." .. This_MOD.receiver } }
-    Item.localised_description = { "", { "entity-description." .. This_MOD.receiver } }
+    --- Emisor
+    local Sender = util.copy(GPrefix.items["arithmetic-combinator"])
+    Sender.icons = { { icon = "__" .. "__/graphics/item-sender.png" } }
+    Sender.place_result = This_MOD.prefix .. "sender"
+    Sender.place_result = nil
 
-    --- Crear el prototipo
-    GPrefix.addDataRaw({ Item })
+    --- Receptor
+    local Receiver = util.copy(GPrefix.items["arithmetic-combinator"])
+    Receiver.icons = { { icon = "__" .. "__/graphics/item-receiver.png" } }
+    Receiver.place_result = This_MOD.prefix .. "receiver"
+    Receiver.place_result = nil
+
+    --- Crear los objetos
+    GPrefix.extend(Sender, Receiver)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear la receta
@@ -169,6 +173,12 @@ function This_MOD.CreateEntity()
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Entity })
+end
+
+---------------------------------------------------------------------------------------------------
+
+--- Crear las tecnologías
+function This_MOD.create_tech()
 end
 
 ---------------------------------------------------------------------------------------------------
