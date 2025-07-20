@@ -22,7 +22,7 @@ function This_MOD.start()
 
     --- Crear los prototipos
     This_MOD.create_item()
-    -- This_MOD.CreateEntity()
+    This_MOD.create_entity()
     -- This_MOD.CreateRecipe()
     -- This_MOD.create_tech()
 
@@ -40,10 +40,17 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Contenedor
-    This_MOD.entity_ref = "radar"
     This_MOD.sender_name = This_MOD.prefix .. "sender"
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
+
+    --- Objeto de referencia
+    This_MOD.item_ref = GPrefix.items["arithmetic-combinator"]
+    This_MOD.entity_ref = GPrefix.entities["radar"]
+
+    --- Crear un subgroup
+    This_MOD.subgroup = This_MOD.prefix .. GPrefix.delete_prefix(This_MOD.item_ref.subgroup)
+    GPrefix.duplicate_subgroup(This_MOD.item_ref.subgroup, This_MOD.subgroup)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -61,16 +68,34 @@ function This_MOD.create_item()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Emisor
-    local Sender = util.copy(GPrefix.items["arithmetic-combinator"])
-    Sender.icons = { { icon = "__" .. "__/graphics/item-sender.png" } }
+    local Sender = util.copy(This_MOD.item_ref)
+    Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
+    Sender.subgroup = This_MOD.subgroup
+    Sender.order = "010"
+
+    Sender.name = This_MOD.prefix .. "sender"
     Sender.place_result = This_MOD.prefix .. "sender"
     Sender.place_result = nil
 
+    Sender.localised_name = { "", { "entity-name." .. Sender.name } }
+    Sender.localised_description = { "", { "entity-description." .. Sender.name } }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Receptor
-    local Receiver = util.copy(GPrefix.items["arithmetic-combinator"])
-    Receiver.icons = { { icon = "__" .. "__/graphics/item-receiver.png" } }
+    local Receiver = util.copy(This_MOD.item_ref)
+    Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
+    Receiver.subgroup = This_MOD.subgroup
+    Sender.order = "020"
+
+    Receiver.name = This_MOD.prefix .. "receiver"
     Receiver.place_result = This_MOD.prefix .. "receiver"
     Receiver.place_result = nil
+
+    Receiver.localised_name = { "", { "entity-name." .. Receiver.name } }
+    Receiver.localised_description = { "", { "entity-description." .. Receiver.name } }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear los objetos
     GPrefix.extend(Sender, Receiver)
@@ -103,7 +128,7 @@ function This_MOD.CreateRecipe()
 end
 
 --- Crear la entidad
-function This_MOD.CreateEntity()
+function This_MOD.create_entity()
     --- Portotipo de referencia
     local Entity = GPrefix.entities[This_MOD.ref]
     Entity = util.copy(Entity)
