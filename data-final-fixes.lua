@@ -38,7 +38,7 @@ function This_MOD.setting_mod()
 
     --- Contenedor
     This_MOD.ref = "radar"
-    This_MOD.Technology = "satellite"
+    This_MOD.technology = "satellite"
     This_MOD.new_name = This_MOD.prefix .. "transceiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.icons = { { icon = This_MOD.graphics .. "item.png" } }
@@ -99,7 +99,7 @@ function This_MOD.CreateRecipe()
 
     --- Crear el prototipo
     GPrefix.addDataRaw({ Recipe })
-    GPrefix.addRecipeToTechnology(This_MOD.Technology, nil, Recipe)
+    GPrefix.addRecipeToTechnology(This_MOD.technology, nil, Recipe)
 end
 
 --- Crear la entidad
