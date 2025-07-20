@@ -23,8 +23,8 @@ function This_MOD.start()
     --- Crear los prototipos
     This_MOD.create_items()
     This_MOD.create_entities()
-    -- This_MOD.CreateRecipe()
-    -- This_MOD.create_tech()
+    This_MOD.create_recipes()
+    This_MOD.create_tech()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -68,8 +68,9 @@ end
 --- Crear el objeto
 function This_MOD.create_items()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Emisor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Emisor
     local Sender = util.copy(This_MOD.ref.item)
     Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
     Sender.subgroup = This_MOD.subgroup
@@ -83,7 +84,12 @@ function This_MOD.create_items()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Receptor
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Receptor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local Receiver = util.copy(This_MOD.ref.item)
     Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
     Receiver.subgroup = This_MOD.subgroup
@@ -97,41 +103,78 @@ function This_MOD.create_items()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Crear los objetos
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Crear los objetos
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     GPrefix.extend(Sender, Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear la receta
-function This_MOD.CreateRecipe()
-    --- Portotipo de referencia
-    local Recipe = GPrefix.recipes[This_MOD.ref][1]
-    Recipe = util.copy(Recipe)
+function This_MOD.create_recipes()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Emisor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Modificar las propiedades
-    Recipe.name = This_MOD.receiver
+    local Sender = {}
+    Sender.type = "recipe"
+    Sender.name = This_MOD.prefix .. "sender"
+    Sender.energy_required = 10
+    Sender.ingredients = {
+        { type = "item", name = "processing-unit",      amount = 20 },
+        { type = "item", name = "battery",              amount = 20 },
+        { type = "item", name = "steel-plate",          amount = 10 },
+        { type = "item", name = "electric-engine-unit", amount = 10 },
+    }
+    Sender.results = {
+        { type = "item", name = "aai-signal-sender", amount = 1 },
+    }
 
-    Recipe.ingredients = {
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Receptor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Receiver = {}
+    Receiver.type = "recipe"
+    Receiver.name = This_MOD.prefix .. "receiver"
+    Receiver.energy_required = 10
+    Receiver.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "copper-plate",         amount = 20 },
         { type = "item", name = "steel-plate",          amount = 20 },
-        { type = "item", name = "electric-engine-unit", amount = 10 }
+        { type = "item", name = "electric-engine-unit", amount = 10 },
     }
-    Recipe.results = {
-        { type = "item", name = This_MOD.receiver, amount = 1 }
+    Receiver.results = {
+        { type = "item", name = "aai-signal-receiver", amount = 1 },
     }
 
-    --- Crear el prototipo
-    GPrefix.addDataRaw({ Recipe })
-    GPrefix.addRecipeToTechnology(This_MOD.tech, nil, Recipe)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Crear los objetos
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    GPrefix.extend(Sender, Receiver)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Crear la entidad
 function This_MOD.create_entities()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Emisor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Emisor
     local Sender = util.copy(This_MOD.ref.radar)
     Sender.name = This_MOD.prefix .. "sender"
     Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
@@ -198,7 +241,12 @@ function This_MOD.create_entities()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Receptor
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Receptor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local Receiver = util.copy(This_MOD.ref.radar)
     Receiver.name = This_MOD.prefix .. "receiver"
     Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
@@ -265,7 +313,12 @@ function This_MOD.create_entities()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Combinador
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Combinador
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local Combinator = util.copy(This_MOD.ref.combinator)
     Combinator.name = This_MOD.prefix .. Combinator.name
 
@@ -280,7 +333,12 @@ function This_MOD.create_entities()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Crear los objetos
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Crear los objetos
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     GPrefix.extend(Sender, Receiver, Combinator)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
