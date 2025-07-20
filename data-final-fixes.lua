@@ -40,7 +40,7 @@ function This_MOD.setting_mod()
     This_MOD.new_name = This_MOD.prefix .. "transceiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.icons = { { icon = This_MOD.graphics .. "item.png" } }
-GPrefix.var_dump(GPrefix.tech.level)
+
     --- Ingredientes para la receta
     This_MOD.ingredients = {
         { type = "item", name = "processing-unit",      amount = 13 },
