@@ -125,13 +125,14 @@ function This_MOD.create_recipes()
     Sender.name = This_MOD.prefix .. "sender"
     Sender.energy_required = 10
     Sender.ingredients = {
+        { type = "item", name = "radar",                amount = 1 },
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "battery",              amount = 20 },
         { type = "item", name = "steel-plate",          amount = 10 },
         { type = "item", name = "electric-engine-unit", amount = 10 },
     }
     Sender.results = {
-        { type = "item", name = "aai-signal-sender", amount = 1 },
+        { type = "item", name = This_MOD.prefix .. "sender", amount = 1 },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -147,13 +148,14 @@ function This_MOD.create_recipes()
     Receiver.name = This_MOD.prefix .. "receiver"
     Receiver.energy_required = 10
     Receiver.ingredients = {
+        { type = "item", name = "radar",                amount = 1 },
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "copper-plate",         amount = 20 },
         { type = "item", name = "steel-plate",          amount = 20 },
         { type = "item", name = "electric-engine-unit", amount = 10 },
     }
     Receiver.results = {
-        { type = "item", name = "aai-signal-receiver", amount = 1 },
+        { type = "item", name = This_MOD.prefix .. "receiver", amount = 1 },
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -348,6 +350,51 @@ end
 
 --- Crear las tecnologías
 function This_MOD.create_tech()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Tecnología base
+    local Technology = {
+        type = "technology",
+        name = This_MOD.prefix .. "transmission",
+        effects = {
+            { type = "unlock-recipe", recipe = This_MOD.prefix .. "sender", },
+            { type = "unlock-recipe", recipe = This_MOD.prefix .. "receiver", },
+        },
+        icon = This_MOD.graphics .. "technology.png",
+        icon_size = 256,
+        order = "e-g",
+        prerequisites = {
+            "processing-unit",
+            "electric-engine",
+            "circuit-network",
+        },
+        unit = {
+            count = 100,
+            time = 30,
+            ingredients = {
+                { "automation-science-pack", 1 },
+                { "logistic-science-pack",   1 },
+                { "chemical-science-pack",   1 },
+            }
+        }
+    }
+
+    --- Corrección
+    if mods["space-age"] then
+        Technology.prerequisites = {
+            "circuit-network",
+            "space-science-pack",
+        }
+        table.insert(
+            Technology.unit.ingredients
+            { "space-science-pack", 1 }
+        )
+    end
+
+    --- Crear la tecnología
+    GPrefix.extend(Technology)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
