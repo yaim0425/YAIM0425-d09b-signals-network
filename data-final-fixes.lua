@@ -39,7 +39,7 @@ end
 function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Contenedor
+    --- Valores constante
     This_MOD.sender_name = This_MOD.prefix .. "sender"
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
