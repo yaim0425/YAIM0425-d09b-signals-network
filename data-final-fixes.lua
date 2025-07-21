@@ -29,7 +29,7 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Estilos a usar
-    -- This_MOD.Styles()
+    This_MOD.styles()
     This_MOD.icon()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -438,7 +438,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Estilos a usar
-function This_MOD.Styles()
+function This_MOD.styles()
     --- Cambiar los guiones del nombre
     local Prefix = string.gsub(This_MOD.Prefix, "%-", "_")
 
@@ -539,9 +539,14 @@ end
 
 --- Icono para las imagenes
 function This_MOD.icon()
+    --- Validación
+    local Name = GPrefix.name .. "-icon"
+    if data.raw["virtual-signal"][Name] then return end
+
+    --- Crear la señal
     GPrefix.extend({
         type = "virtual-signal",
-        name = This_MOD.prefix .. "icon",
+        name = Name,
         icon = This_MOD.graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
