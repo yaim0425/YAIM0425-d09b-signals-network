@@ -535,13 +535,19 @@ function This_MOD.load_styles()
         type = "textbox_style",
         width = 250
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Icono para las imagenes
 function This_MOD.load_icon()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Validación
     local Name = GPrefix.name .. "-icon"
     if data.raw["virtual-signal"][Name] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la señal
     GPrefix.extend({
@@ -552,6 +558,8 @@ function This_MOD.load_icon()
         subgroup = "virtual-signal",
         order = "z-z-o"
     })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
