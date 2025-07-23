@@ -444,7 +444,7 @@ function This_MOD.load_styles()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Cambiar los guiones del nombre
-    local Prefix = string.gsub(This_MOD.Prefix, "%-", "_")
+    local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
 
     --- Renombrar
     local Styles = data.raw["gui-style"].default
