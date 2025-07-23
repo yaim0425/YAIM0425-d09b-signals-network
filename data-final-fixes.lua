@@ -43,6 +43,7 @@ function This_MOD.setting_mod()
     This_MOD.sender_name = This_MOD.prefix .. "sender"
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
+    This_MOD.sound = "__" .. This_MOD.prefix .. This_MOD.name .. "__/sound/"
 
     --- Objeto de referencia
     This_MOD.ref = {}
@@ -513,6 +514,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_green"] = {
         type = "button_style",
         parent = "tool_button_green",
+        left_click_sound = This_MOD.sound .. "empty_audio.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -557,6 +559,20 @@ function This_MOD.load_icon()
         icon_size = 40,
         subgroup = "virtual-signal",
         order = "z-z-o"
+    })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+--- Cargar el sonido
+function This_MOD.load_sound()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    GPrefix.extend({
+        type = "sound",
+        name = "gui_tool_button",
+        filename = "__core__/sound/gui-tool-button.ogg",
+        volume = 1.0
     })
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
