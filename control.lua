@@ -23,8 +23,8 @@ function This_MOD.start()
     --- Valores de la referencia
     This_MOD.setting_mod()
 
-    -- --- Cambiar la propiedad necesaria
-    -- This_MOD.Load_events()
+    --- Cambiar la propiedad necesaria
+    This_MOD.load_events()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -56,73 +56,73 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Cargar los eventos a ejecutar
-function This_MOD.Load_events()
-    --- Al crear la entidad
-    script.on_event({
-        defines.events.on_built_entity,
-        defines.events.on_robot_built_entity,
-        defines.events.script_raised_built,
-        defines.events.script_raised_revive,
-        defines.events.on_space_platform_built_entity,
-    }, function(event)
-        This_MOD.on_entity_created(This_MOD.Create_data(event))
-    end)
+function This_MOD.load_events()
+    -- --- Al crear la entidad
+    -- script.on_event({
+    --     defines.events.on_built_entity,
+    --     defines.events.on_robot_built_entity,
+    --     defines.events.script_raised_built,
+    --     defines.events.script_raised_revive,
+    --     defines.events.on_space_platform_built_entity,
+    -- }, function(event)
+    --     This_MOD.on_entity_created(This_MOD.Create_data(event))
+    -- end)
 
-    --- Ocultar la superficie de las fuerzas recién creadas
-    script.on_event({
-        defines.events.on_force_created
-    }, function(event)
-        This_MOD.hide_surface(This_MOD.Create_data(event))
-    end)
+    -- --- Ocultar la superficie de las fuerzas recién creadas
+    -- script.on_event({
+    --     defines.events.on_force_created
+    -- }, function(event)
+    --     This_MOD.hide_surface(This_MOD.Create_data(event))
+    -- end)
 
-    script.on_event({
-        defines.events.on_forces_merged
-    }, function(event)
-        This_MOD.forces_merged(This_MOD.Create_data(event))
-    end)
+    -- script.on_event({
+    --     defines.events.on_forces_merged
+    -- }, function(event)
+    --     This_MOD.forces_merged(This_MOD.Create_data(event))
+    -- end)
 
-    --- Verificar que la entidad tenga energía
-    script.on_nth_tick(30, This_MOD.check_power)
+    -- --- Verificar que la entidad tenga energía
+    -- script.on_nth_tick(30, This_MOD.check_power)
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Abrir o cerrar la interfaz
-    script.on_event({
-        defines.events.on_gui_opened,
-        defines.events.on_gui_closed
-    }, function(event)
-        This_MOD.Toggle_window(This_MOD.Create_data(event))
-    end)
+    -- --- Abrir o cerrar la interfaz
+    -- script.on_event({
+    --     defines.events.on_gui_opened,
+    --     defines.events.on_gui_closed
+    -- }, function(event)
+    --     This_MOD.Toggle_window(This_MOD.Create_data(event))
+    -- end)
 
-    --- Al seleccionar o deseleccionar un icon
-    script.on_event({
-        defines.events.on_gui_elem_changed
-    }, function(event)
-        This_MOD.add_icon(This_MOD.Create_data(event))
-    end)
+    -- --- Al seleccionar o deseleccionar un icon
+    -- script.on_event({
+    --     defines.events.on_gui_elem_changed
+    -- }, function(event)
+    --     This_MOD.add_icon(This_MOD.Create_data(event))
+    -- end)
 
-    --- Al seleccionar otro canal
-    script.on_event({
-        defines.events.on_gui_selection_state_changed
-    }, function(event)
-        This_MOD.selection_channel(This_MOD.Create_data(event))
-    end)
+    -- --- Al seleccionar otro canal
+    -- script.on_event({
+    --     defines.events.on_gui_selection_state_changed
+    -- }, function(event)
+    --     This_MOD.selection_channel(This_MOD.Create_data(event))
+    -- end)
 
-    --- Al hacer clic en algún elemento de la ventana
-    script.on_event({
-        defines.events.on_gui_click
-    }, function(event)
-        This_MOD.button_action(This_MOD.Create_data(event))
-    end)
+    -- --- Al hacer clic en algún elemento de la ventana
+    -- script.on_event({
+    --     defines.events.on_gui_click
+    -- }, function(event)
+    --     This_MOD.button_action(This_MOD.Create_data(event))
+    -- end)
 
-    --- Validar el nuevo nombre
-    script.on_event({
-        defines.events.on_gui_confirmed
-    }, function(event)
-        This_MOD.validate_channel_name(This_MOD.Create_data(event))
-    end)
+    -- --- Validar el nuevo nombre
+    -- script.on_event({
+    --     defines.events.on_gui_confirmed
+    -- }, function(event)
+    --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
+    -- end)
 end
 
 --- Crea y agrupar las variables a usar
