@@ -19,11 +19,11 @@ require("__zzzYAIM0425-0000-lib__/control")
 
 --- Iniciar el modulo
 function This_MOD.start()
-    --- Valores de la referencia
-    This_MOD.setSetting()
+    -- --- Valores de la referencia
+    -- This_MOD.setSetting()
 
-    --- Cambiar la propiedad necesaria
-    This_MOD.Load_events()
+    -- --- Cambiar la propiedad necesaria
+    -- This_MOD.Load_events()
 end
 
 --- Valores de la referencia
