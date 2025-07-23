@@ -31,6 +31,7 @@ function This_MOD.start()
     --- Estilos a usar
     This_MOD.load_styles()
     This_MOD.load_icon()
+    This_MOD.load_sound()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
