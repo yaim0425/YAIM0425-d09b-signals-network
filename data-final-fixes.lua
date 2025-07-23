@@ -45,7 +45,7 @@ function This_MOD.setting_mod()
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.sound = "__" .. This_MOD.prefix .. This_MOD.name .. "__/sound/"
 
-    --- Objeto de referencia
+    --- Valores de referencia
     This_MOD.ref = {}
     This_MOD.ref.combinator = GPrefix.entities["decider-combinator"]
     This_MOD.ref.item = GPrefix.items["decider-combinator"]
