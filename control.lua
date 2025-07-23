@@ -15,11 +15,18 @@ require("__zzzYAIM0425-0000-lib__/control")
 
 --- Iniciar el modulo
 function This_MOD.start()
-    -- --- Valores de la referencia
-    -- This_MOD.setSetting()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Obtener información desde el nombre de MOD
+    GPrefix.split_name_folder(This_MOD)
+
+    --- Valores de la referencia
+    This_MOD.setSetting()
 
     -- --- Cambiar la propiedad necesaria
     -- This_MOD.Load_events()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Valores de la referencia
