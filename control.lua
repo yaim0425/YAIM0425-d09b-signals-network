@@ -21,7 +21,7 @@ function This_MOD.start()
     GPrefix.split_name_folder(This_MOD)
 
     --- Valores de la referencia
-    This_MOD.setSetting()
+    This_MOD.setting_mod()
 
     -- --- Cambiar la propiedad necesaria
     -- This_MOD.Load_events()
@@ -30,25 +30,27 @@ function This_MOD.start()
 end
 
 --- Valores de la referencia
-function This_MOD.setSetting()
-    --- Otros valores
-    This_MOD.Prefix = "zzzYAIM0425-0900-"
-    This_MOD.name = "signal-network"
+function This_MOD.setting_mod()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Contenedor
-    This_MOD.NewName = This_MOD.Prefix .. "transceiver"
-    This_MOD.Channel_default = { This_MOD.Prefix .. "default-channel" }
-    This_MOD.New_channel = { This_MOD.Prefix .. "new-channel" }
-    This_MOD.Ref = "-0900-"
+    --- Valores constante
+    This_MOD.sender_name = This_MOD.prefix .. "sender"
+    This_MOD.receiver_name = This_MOD.prefix .. "receiver"
+
+    --- Canales constantes
+    This_MOD.Channel_default = { This_MOD.prefix .. "default-channel" }
+    This_MOD.New_channel = { This_MOD.prefix .. "new-channel" }
 
     --- Posibles estados de la ventana
-    This_MOD.Action = {}
-    This_MOD.Action.none = nil
-    This_MOD.Action.build = 1
-    This_MOD.Action.edit = 2
+    This_MOD.action = {}
+    This_MOD.action.none = nil
+    This_MOD.action.build = 1
+    This_MOD.action.edit = 2
     -- ThisMOD.Action.apply = 3
     -- ThisMOD.Action.discard = 4
-    This_MOD.Action.new_channel = 5
+    This_MOD.action.new_channel = 5
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -294,8 +296,8 @@ end
 --- Superficie de los canales
 function This_MOD.get_surface()
     --- Devolver la superficie de existir
-    if game.surfaces[This_MOD.Prefix .. This_MOD.name] then
-        return game.surfaces[This_MOD.Prefix .. This_MOD.name]
+    if game.surfaces[This_MOD.prefix .. This_MOD.name] then
+        return game.surfaces[This_MOD.prefix .. This_MOD.name]
     end
 
     --- Crear la superficie si no existe
@@ -320,7 +322,7 @@ function This_MOD.get_surface()
             }
         }
     }
-    local Surface = game.create_surface(This_MOD.Prefix .. This_MOD.name, map_gen_settings)
+    local Surface = game.create_surface(This_MOD.prefix .. This_MOD.name, map_gen_settings)
     Surface.request_to_generate_chunks({ 0, 0 }, 1)
     Surface.force_generate_chunk_requests()
 
@@ -414,7 +416,7 @@ function This_MOD.Toggle_window(Data)
         return true
     end
     local function Validate_close()
-        if Data.GUI.Action == This_MOD.Action.build then return false end
+        if Data.GUI.Action == This_MOD.action.build then return false end
         if not Data.Event.element then return false end
         if Data.Event.element == Data.GUI.frame_main then return true end
         if Data.Event.element ~= Data.GUI.button_exit then return false end
@@ -423,7 +425,7 @@ function This_MOD.Toggle_window(Data)
 
     local function Build()
         --- Cambiar los guiones del nombre
-        local Prefix = string.gsub(This_MOD.Prefix, "%-", "_")
+        local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -481,7 +483,7 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.button_exit.sprite = "utility/close"
         Data.GUI.button_exit.hovered_sprite = "utility/close_black"
         Data.GUI.button_exit.clicked_sprite = "utility/close_black"
-        Data.GUI.button_exit.tooltip = { "", { This_MOD.Prefix .. "close" } }
+        Data.GUI.button_exit.tooltip = { "", { This_MOD.prefix .. "close" } }
         Data.GUI.button_exit = Data.GUI.flow_head.add(Data.GUI.button_exit)
         Data.GUI.button_exit.style = Prefix .. "button_close"
 
@@ -552,7 +554,7 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.button_edit.type = "sprite-button"
         Data.GUI.button_edit.name = "button_edit"
         Data.GUI.button_edit.sprite = "utility/rename_icon"
-        Data.GUI.button_edit.tooltip = { This_MOD.Prefix .. "edit-channel" }
+        Data.GUI.button_edit.tooltip = { This_MOD.prefix .. "edit-channel" }
         Data.GUI.button_edit = Data.GUI.frame_old_channels.add(Data.GUI.button_edit)
         Data.GUI.button_edit.style = Prefix .. "button_blue"
 
@@ -593,7 +595,7 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.button_icon.type = "choose-elem-button"
         Data.GUI.button_icon.name = "button_icon"
         Data.GUI.button_icon.elem_type = "signal"
-        Data.GUI.button_icon.signal = { type = "virtual", name = This_MOD.Prefix .. "icon" }
+        Data.GUI.button_icon.signal = { type = "virtual", name = This_MOD.prefix .. "icon" }
         Data.GUI.button_icon = Data.GUI.frame_new_channels.add(Data.GUI.button_icon)
         Data.GUI.button_icon.style = Prefix .. "button"
 
@@ -643,12 +645,12 @@ function This_MOD.Toggle_window(Data)
     if Data.GUI.frame_main and Validate_close() then
         Destroy()
     elseif not Data.GUI.frame_main and Validate_open() then
-        Data.GUI.Action = This_MOD.Action.build
+        Data.GUI.Action = This_MOD.action.build
         Build()
         Info()
         Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
         This_MOD.selection_channel(Data)
-        Data.GUI.Action = This_MOD.Action.none
+        Data.GUI.Action = This_MOD.action.none
     end
 end
 
@@ -673,7 +675,7 @@ function This_MOD.selection_channel(Data)
 
     --- Se quiere crear un nuevo canal
     if selected_index == #dropdown_channels.items then
-        Data.GUI.Action = This_MOD.Action.new_channel
+        Data.GUI.Action = This_MOD.action.new_channel
         This_MOD.show_new_channel(Data)
         return
     end
@@ -721,8 +723,8 @@ function This_MOD.button_action(Data)
     end
 
     --- Cambiar el nombre de un canal o agregar un nuevo canal
-    Flag = false or Data.GUI.Action == This_MOD.Action.edit
-    Flag = Flag or Data.GUI.Action == This_MOD.Action.new_channel
+    Flag = false or Data.GUI.Action == This_MOD.action.edit
+    Flag = Flag or Data.GUI.Action == This_MOD.action.new_channel
     Flag = Flag and Data.Event.element == Data.GUI.button_green
     if Flag then
         This_MOD.validate_channel_name(Data)
@@ -732,7 +734,7 @@ function This_MOD.button_action(Data)
     --- Editar el nombre del canal seleccionado
     Flag = Data.Event.element == Data.GUI.button_edit
     if Flag then
-        Data.GUI.Action = This_MOD.Action.edit
+        Data.GUI.Action = This_MOD.action.edit
         This_MOD.show_new_channel(Data)
         return
     end
@@ -766,7 +768,7 @@ function This_MOD.add_icon(Data)
     --- Restaurar el icono
     Data.GUI.button_icon.elem_value = {
         type = "virtual",
-        name = This_MOD.Prefix .. "icon"
+        name = This_MOD.prefix .. "icon"
     }
 
     --- Se intentó limpiar el icono
@@ -826,7 +828,7 @@ function This_MOD.validate_channel_name(Data)
     end
 
     --- Crear un nuevo canal
-    if Data.GUI.Action == This_MOD.Action.new_channel then
+    if Data.GUI.Action == This_MOD.action.new_channel then
         --- Crear el nuevo canal
         Data.GUI.Pos = GPrefix.get_length(Data.Channel) + 1
         Data.Event.element = Data.GUI.dropdown_channels
@@ -837,7 +839,7 @@ function This_MOD.validate_channel_name(Data)
     end
 
     --- Cambiar el nombre de un canal
-    if Data.GUI.Action == This_MOD.Action.edit then
+    if Data.GUI.Action == This_MOD.action.edit then
         --- Buscar el canal
         local Channel = This_MOD.get_channel_pos(Data)
 
@@ -892,13 +894,13 @@ function This_MOD.show_new_channel(Data)
     Data.GUI.frame_new_channels.visible = true
 
     --- Configuración para un nuevo canal
-    if Data.GUI.Action == This_MOD.Action.new_channel then
-        Data.GUI.Action = This_MOD.Action.new_channel
+    if Data.GUI.Action == This_MOD.action.new_channel then
+        Data.GUI.Action = This_MOD.action.new_channel
         Data.GUI.textfield_new_channel.text = ""
     end
 
     --- Configuración para un nuevo nombre
-    if Data.GUI.Action == This_MOD.Action.edit then
+    if Data.GUI.Action == This_MOD.action.edit then
         local dropdown = Data.GUI.dropdown_channels
         local textfield = Data.GUI.textfield_new_channel
         textfield.text = dropdown.get_item(Data.GUI.Pos)
