@@ -53,8 +53,6 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
----------------------------------------------------------------------------------------------------
-
 --- Cargar los eventos a ejecutar
 function This_MOD.load_events()
     -- --- Al crear la entidad
@@ -124,6 +122,8 @@ function This_MOD.load_events()
     --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
     -- end)
 end
+
+---------------------------------------------------------------------------------------------------
 
 --- Crea y agrupar las variables a usar
 function This_MOD.create_data(event)
