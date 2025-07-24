@@ -55,16 +55,18 @@ end
 
 --- Cargar los eventos a ejecutar
 function This_MOD.load_events()
-    -- --- Al crear la entidad
-    -- script.on_event({
-    --     defines.events.on_built_entity,
-    --     defines.events.on_robot_built_entity,
-    --     defines.events.script_raised_built,
-    --     defines.events.script_raised_revive,
-    --     defines.events.on_space_platform_built_entity,
-    -- }, function(event)
-    --     This_MOD.on_entity_created(This_MOD.Create_data(event))
-    -- end)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Al crear la entidad
+    script.on_event({
+        defines.events.on_built_entity,
+        defines.events.on_robot_built_entity,
+        defines.events.script_raised_built,
+        defines.events.script_raised_revive,
+        defines.events.on_space_platform_built_entity,
+    }, function(event)
+        This_MOD.on_entity_created(This_MOD.create_data(event))
+    end)
 
     -- --- Ocultar la superficie de las fuerzas recién creadas
     -- script.on_event({
@@ -121,6 +123,8 @@ function This_MOD.load_events()
     -- }, function(event)
     --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
     -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -154,9 +158,13 @@ end
 
 --- Al crear la entidad
 function This_MOD.on_entity_created(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Entidad no valida
     if not Data.Entity then return end
-    if not string.find(Data.Entity.name, This_MOD.Ref) then return end
+    if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la superficie y el canal por defecto
     local Channel = This_MOD.get_channel(Data, This_MOD.Channel_default)
@@ -165,7 +173,7 @@ function This_MOD.on_entity_created(Data)
     Data.Entity.backer_name = ""
 
     --- Guardar el canal de la enridad
-    Data.Node[Data.Entity.unit_number] = {
+    Data.node[Data.Entity.unit_number] = {
         entity = Data.Entity,
         connect = false,
         channel = Channel,
@@ -173,6 +181,8 @@ function This_MOD.on_entity_created(Data)
         red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true),
         green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Ocultar la superficie de las fuerzas recién creadas
@@ -289,10 +299,14 @@ end
 
 --- Superficie de los canales
 function This_MOD.get_surface()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Devolver la superficie de existir
     if game.surfaces[This_MOD.prefix .. This_MOD.name] then
         return game.surfaces[This_MOD.prefix .. This_MOD.name]
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la superficie si no existe
     local map_gen_settings = {
@@ -328,6 +342,8 @@ function This_MOD.get_surface()
 
     --- Devolver la superficie
     return Surface
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Obtener un canal
