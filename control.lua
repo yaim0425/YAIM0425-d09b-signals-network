@@ -173,14 +173,66 @@ function This_MOD.on_entity_created(Data)
     Data.Entity.backer_name = ""
 
     --- Guardar el canal de la enridad
-    Data.node[Data.Entity.unit_number] = {
-        entity = Data.Entity,
-        connect = false,
-        channel = Channel,
-        index = Data.Entity.unit_number,
-        red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true),
-        green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-    }
+    local Node = {}
+    Node.index = Data.Entity.unit_number
+    Node.entity = Data.Entity
+    Node.channel = Channel
+    Node.connect = false
+    Data.node[Node.index] = Node
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Emisor
+    if string.find(Data.Entity.name, "sender", 1, true) then
+        --- Superficie de los canales
+        local Surface = This_MOD.get_surface()
+
+        --- Crear los filtros
+        Node.filter_red = Surface.create_entity({
+            name = This_MOD.prefix .. This_MOD.ref.combinator.name,
+            force = Data.Force.name,
+            position = { 0, 0 }
+        })
+        Node.filter_green = Surface.create_entity({
+            name = This_MOD.prefix .. This_MOD.ref.combinator.name,
+            force = Data.Force.name,
+            position = { 0, 0 }
+        })
+
+        --- Configurar los filtros
+        Node.filter_red.get_or_create_control_behavior().parameters = {
+            output_signal = { type = "virtual", name = "signal-everything" },
+            first_signal = { type = "virtual", name = "signal-anything" },
+            comparator = "≠"
+        }
+        Node.filter_green.get_or_create_control_behavior().parameters = {
+            output_signal = { type = "virtual", name = "signal-everything" },
+            first_signal = { type = "virtual", name = "signal-anything" },
+            comparator = "≠"
+        }
+
+        --- Puntos de conexión del emisor
+        local Filter_red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_input_red, true)
+        local Filter_green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_input_green, true)
+
+        --- Puntos de conexión del emisor
+        local Sender_red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+        local Sender_green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+
+        --- Conectar el emisor a los filtros
+        Sender_red.connect_to(Filter_red, false, defines.wire_origin.script)
+        Sender_green.connect_to(Filter_green, false, defines.wire_origin.script)
+
+        --- Guardar el puntos de conexión
+        Node.red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_output_red, true)
+        Node.green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
+    end
+
+    --- Receptor
+    if string.find(Data.Entity.name, "receiver", 1, true) then
+        Node.red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+        Node.green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
