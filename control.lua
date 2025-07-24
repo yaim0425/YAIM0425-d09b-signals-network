@@ -126,25 +126,19 @@ function This_MOD.load_events()
 end
 
 --- Crea y agrupar las variables a usar
-function This_MOD.Create_data(event)
+function This_MOD.create_data(event)
     --- Consolidar la información
     local Data = GPrefix.create_data(event or {}, This_MOD)
+    if not Data.gForce then return Data end
     if not event then return Data end
 
-    --- Entidad en el event
-    if event.entity and event.entity.valid then
-        Data.Entity = event.entity
-    elseif event.created_entity and event.created_entity.valid then
-        Data.Entity = event.created_entity
-    end
-
     --- Lista de los postes
-    Data.gForce.Channel = Data.gForce.Channel or {}
-    Data.Channel = Data.gForce.Channel
+    Data.gForce.channel = Data.gForce.channel or {}
+    Data.channel = Data.gForce.channel
 
     --- Lista de los transceiver
-    Data.gForce.Node = Data.gForce.Node or {}
-    Data.Node = Data.gForce.Node
+    Data.gForce.node = Data.gForce.node or {}
+    Data.node = Data.gForce.node
 
     --- Devolver el consolidado de los datos
     return Data
@@ -214,7 +208,7 @@ function This_MOD.check_power()
     end
 
     --- Variables a usar
-    local Data = This_MOD.Create_data()
+    local Data = This_MOD.create_data()
     local Deleted = {}
 
     --- Recorrer cada entidad enlistada
@@ -240,12 +234,12 @@ function This_MOD.check_power()
 
             --- Acciones
             if Node.connect and not power_satisfied then
-                action(This_MOD.Create_data({
+                action(This_MOD.create_data({
                     entity = Node.entity,
                     force = Node.entity.force
                 }))
             elseif not Node.connect and power_satisfied then
-                action(This_MOD.Create_data({
+                action(This_MOD.create_data({
                     entity = Node.entity,
                     force = Node.entity.force
                 }))
@@ -267,18 +261,18 @@ function This_MOD.forces_merged(Data)
     --- Renombrar
     local Source = Data.gForces[Data.Event.source_index]
     if not Source then return end
-    local Destination = This_MOD.Create_data({
+    local Destination = This_MOD.create_data({
         force = Data.Event.destination
     })
 
     --- Mover los canales
     for index, Channel in pairs(Source.Channel) do
-        Destination.Channel[index] = Channel
+        Destination.channel[index] = Channel
     end
 
     --- Mover los nodos
     for index, Node in pairs(Source.Node) do
-        Destination.Node[index] = Node
+        Destination.node[index] = Node
     end
 
     --- Eliminar la referencia a la fuerza
