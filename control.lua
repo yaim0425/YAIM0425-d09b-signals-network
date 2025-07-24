@@ -348,12 +348,16 @@ end
 
 --- Obtener un canal
 function This_MOD.get_channel(Data, channel)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Superficie de los canales
     local Surface = This_MOD.get_surface()
 
     --- Cargar el poste del canal indicado
-    local Channel = GPrefix.get_table(Data.Channel, "name", channel)
-    if Channel.name then return Channel end
+    local Channel = GPrefix.get_table(Data.channel, "name", channel)
+    if Channel then return Channel end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear el poste
     local Entity = Surface.create_entity({
@@ -367,16 +371,18 @@ function This_MOD.get_channel(Data, channel)
     Copper.disconnect_all(defines.wire_origin.script)
 
     --- Guardar el nuevo canal
-    Data.Channel[Entity.unit_number] = {
-        name = channel,
-        entity = Entity,
-        index = Entity.unit_number,
-        red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true),
-        green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-    }
+    Channel = {}
+    Channel.name = channel
+    Channel.entity = Entity
+    Channel.index = Entity.unit_number
+    Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+    Channel.green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+    Data.channel[Channel.index] = Channel
 
     --- Devolver el canal indicado
-    return Data.Channel[Entity.unit_number]
+    return Channel
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Cambiar el canal
