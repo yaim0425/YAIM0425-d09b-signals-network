@@ -41,6 +41,10 @@ function This_MOD.setting_mod()
     This_MOD.Channel_default = { This_MOD.prefix .. "default-channel" }
     This_MOD.New_channel = { This_MOD.prefix .. "new-channel" }
 
+    --- Valores de referencia
+    This_MOD.ref = {}
+    This_MOD.ref.combinator = GPrefix.entities["decider-combinator"]
+
     --- Posibles estados de la ventana
     This_MOD.action = {}
     This_MOD.action.none = nil
