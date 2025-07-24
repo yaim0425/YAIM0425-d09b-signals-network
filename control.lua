@@ -159,6 +159,8 @@ end
 
 
 ---------------------------------------------------------------------------------------------------
+---> Acciones por eventos
+---------------------------------------------------------------------------------------------------
 
 --- Al crear la entidad
 function This_MOD.on_entity_created(Data)
@@ -352,6 +354,8 @@ end
 
 
 ---------------------------------------------------------------------------------------------------
+---> Funciones de apoyo
+---------------------------------------------------------------------------------------------------
 
 --- Superficie de los canales
 function This_MOD.get_surface()
@@ -463,7 +467,26 @@ function This_MOD.set_channel(node, channel)
 end
 
 ---------------------------------------------------------------------------------------------------
---- Desde acá empieza la parte GUI: Esta sección es para cambiar el canal -------------------------
+
+--- Obtener el canal seleccionado
+function This_MOD.get_channel_pos(Data)
+    local Pos = 0
+    for _, channel in pairs(Data.Channel) do
+        Pos = Pos + 1
+        if Pos == Data.GUI.Pos then
+            return channel
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+---> Acciones en el GUI
 ---------------------------------------------------------------------------------------------------
 
 --- Crear o destruir la ventana
@@ -822,14 +845,6 @@ function This_MOD.button_action(Data)
     end
 end
 
----------------------------------------------------------------------------------------------------
-
-
-
-
-
----------------------------------------------------------------------------------------------------
-
 --- Seleccionar un nuevo objeto
 function This_MOD.add_icon(Data)
     if not Data.GUI.button_icon then return end
@@ -876,6 +891,42 @@ function This_MOD.add_icon(Data)
     local text = Data.GUI.textfield_new_channel.text
     text = text .. signal_to_rich_text(Select)
     Data.GUI.textfield_new_channel.text = text
+    Data.GUI.textfield_new_channel.focus()
+end
+
+---------------------------------------------------------------------------------------------------
+
+--- Mostrar el cuerpo para seleccionar un canal
+function This_MOD.show_old_channel(Data)
+    --- Cambiar de frame
+    Data.GUI.frame_new_channels.visible = false
+    Data.GUI.frame_old_channels.visible = true
+
+    --- Enfocar la selección
+    Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
+    This_MOD.selection_channel(Data)
+end
+
+--- Mostrar el cuerpo para crear un nuevo canal
+function This_MOD.show_new_channel(Data)
+    --- Cambiar de frame
+    Data.GUI.frame_old_channels.visible = false
+    Data.GUI.frame_new_channels.visible = true
+
+    --- Configuración para un nuevo canal
+    if Data.GUI.Action == This_MOD.action.new_channel then
+        Data.GUI.Action = This_MOD.action.new_channel
+        Data.GUI.textfield_new_channel.text = ""
+    end
+
+    --- Configuración para un nuevo nombre
+    if Data.GUI.Action == This_MOD.action.edit then
+        local dropdown = Data.GUI.dropdown_channels
+        local textfield = Data.GUI.textfield_new_channel
+        textfield.text = dropdown.get_item(Data.GUI.Pos)
+    end
+
+    --- Enfocar nombre
     Data.GUI.textfield_new_channel.focus()
 end
 
@@ -927,59 +978,6 @@ function This_MOD.validate_channel_name(Data)
     Data.Event.element = Data.GUI.button_exit
     This_MOD.Toggle_window(Data)
     Data.Player.play_sound({ path = "entity-open/constant-combinator" })
-end
-
---- Obtener el canal seleccionado
-function This_MOD.get_channel_pos(Data)
-    local Pos = 0
-    for _, channel in pairs(Data.Channel) do
-        Pos = Pos + 1
-        if Pos == Data.GUI.Pos then
-            return channel
-        end
-    end
-end
-
----------------------------------------------------------------------------------------------------
-
-
-
-
-
----------------------------------------------------------------------------------------------------
-
---- Mostrar el cuerpo para seleccionar un canal
-function This_MOD.show_old_channel(Data)
-    --- Cambiar de frame
-    Data.GUI.frame_new_channels.visible = false
-    Data.GUI.frame_old_channels.visible = true
-
-    --- Enfocar la selección
-    Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
-    This_MOD.selection_channel(Data)
-end
-
---- Mostrar el cuerpo para crear un nuevo canal
-function This_MOD.show_new_channel(Data)
-    --- Cambiar de frame
-    Data.GUI.frame_old_channels.visible = false
-    Data.GUI.frame_new_channels.visible = true
-
-    --- Configuración para un nuevo canal
-    if Data.GUI.Action == This_MOD.action.new_channel then
-        Data.GUI.Action = This_MOD.action.new_channel
-        Data.GUI.textfield_new_channel.text = ""
-    end
-
-    --- Configuración para un nuevo nombre
-    if Data.GUI.Action == This_MOD.action.edit then
-        local dropdown = Data.GUI.dropdown_channels
-        local textfield = Data.GUI.textfield_new_channel
-        textfield.text = dropdown.get_item(Data.GUI.Pos)
-    end
-
-    --- Enfocar nombre
-    Data.GUI.textfield_new_channel.focus()
 end
 
 ---------------------------------------------------------------------------------------------------
