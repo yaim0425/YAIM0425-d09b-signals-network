@@ -38,8 +38,8 @@ function This_MOD.setting_mod()
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
 
     --- Canales constantes
-    This_MOD.Channel_default = { This_MOD.prefix .. "default-channel" }
-    This_MOD.New_channel = { This_MOD.prefix .. "new-channel" }
+    This_MOD.channel_default = { This_MOD.prefix .. "default-channel" }
+    This_MOD.new_channel = { This_MOD.prefix .. "new-channel" }
 
     --- Valores de referencia
     This_MOD.ref = {}
@@ -94,13 +94,13 @@ function This_MOD.load_events()
 
     -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Abrir o cerrar la interfaz
-    -- script.on_event({
-    --     defines.events.on_gui_opened,
-    --     defines.events.on_gui_closed
-    -- }, function(event)
-    --     This_MOD.Toggle_window(This_MOD.Create_data(event))
-    -- end)
+    --- Abrir o cerrar la interfaz
+    script.on_event({
+        defines.events.on_gui_opened,
+        defines.events.on_gui_closed
+    }, function(event)
+        This_MOD.toggle_gui(This_MOD.create_data(event))
+    end)
 
     -- --- Al seleccionar o deseleccionar un icon
     -- script.on_event({
@@ -175,7 +175,7 @@ function This_MOD.on_entity_created(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la superficie y el canal por defecto
-    local Channel = This_MOD.get_channel(Data, This_MOD.Channel_default)
+    local Channel = This_MOD.get_channel(Data, This_MOD.channel_default)
 
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
@@ -492,16 +492,27 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Crear o destruir la ventana
-function This_MOD.Toggle_window(Data)
-    local function Validate_open()
-        --- Validación
+function This_MOD.toggle_gui(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local function validate_open()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Validación
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if Data.GUI.frame_main then return false end
         if not Data.Entity then return false end
         if not Data.Entity.valid then return false end
-        if Data.Entity.name ~= This_MOD.NewName then return false end
+        if GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
 
-        --- Por alguna razón algo no se inicializa lo más probable es que
-        --- se trate de una entidad heredada ejecute de nuevo los eventos
-        --- creados para pasar por el proceso normal de configuración.
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> En caso de ser necesaria
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
         if not Data.Node[Data.Entity.unit_number] then
             This_MOD.on_entity_created({
                 entity = Data.Node.entity,
@@ -509,18 +520,44 @@ function This_MOD.Toggle_window(Data)
             })
         end
 
-        --- Abrir / Cerrar la ventana
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Aprovado
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
         return true
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
-    local function Validate_close()
+    local function validate_close()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Validación
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if not Data.GUI.frame_main then return false end
         if Data.GUI.Action == This_MOD.action.build then return false end
         if not Data.Event.element then return false end
         if Data.Event.element == Data.GUI.frame_main then return true end
         if Data.Event.element ~= Data.GUI.button_exit then return false end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Aprovado
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
         return true
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
 
-    local function Build()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local function build()
         --- Cambiar los guiones del nombre
         local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
 
@@ -561,7 +598,7 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.label_title = {}
         Data.GUI.label_title.type = "label"
         Data.GUI.label_title.name = "title"
-        Data.GUI.label_title.caption = { "entity-name." .. This_MOD.NewName }
+        Data.GUI.label_title.caption = { "entity-name." .. Data.Entity.name }
         Data.GUI.label_title = Data.GUI.flow_head.add(Data.GUI.label_title)
         Data.GUI.label_title.style = Prefix .. "label_title"
 
@@ -641,10 +678,10 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.dropdown_channels.style = Prefix .. "drop_down_channels"
 
         --- Cargar los canales
-        for _, channel in pairs(Data.Channel) do
+        for _, channel in pairs(Data.channel) do
             Data.GUI.dropdown_channels.add_item(channel.name)
         end
-        Data.GUI.dropdown_channels.add_item(This_MOD.New_channel)
+        Data.GUI.dropdown_channels.add_item(This_MOD.new_channel)
 
         --- Botón para aplicar los cambios
         Data.GUI.button_edit = {}
@@ -655,14 +692,14 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.button_edit = Data.GUI.frame_old_channels.add(Data.GUI.button_edit)
         Data.GUI.button_edit.style = Prefix .. "button_blue"
 
-        --- Botón para aplicar los cambios
-        Data.GUI.button_confirm = {}
-        Data.GUI.button_confirm.type = "sprite-button"
-        Data.GUI.button_confirm.name = "button_confirm"
-        Data.GUI.button_confirm.sprite = "utility/check_mark_white"
-        Data.GUI.button_confirm.tooltip = { "gui.confirm" }
-        Data.GUI.button_confirm = Data.GUI.frame_old_channels.add(Data.GUI.button_confirm)
-        Data.GUI.button_confirm.style = Prefix .. "button_green"
+        -- --- Botón para aplicar los cambios
+        -- Data.GUI.button_confirm = {}
+        -- Data.GUI.button_confirm.type = "sprite-button"
+        -- Data.GUI.button_confirm.name = "button_confirm"
+        -- Data.GUI.button_confirm.sprite = "utility/check_mark_white"
+        -- Data.GUI.button_confirm.tooltip = { "gui.confirm" }
+        -- Data.GUI.button_confirm = Data.GUI.frame_old_channels.add(Data.GUI.button_confirm)
+        -- Data.GUI.button_confirm.style = Prefix .. "button_green"
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -706,20 +743,22 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.button_cancel.style = Prefix .. "button_red"
 
         --- Botón para aplicar los cambios
-        Data.GUI.button_green = {}
-        Data.GUI.button_green.type = "sprite-button"
-        Data.GUI.button_green.name = "button_green"
-        Data.GUI.button_green.sprite = "utility/check_mark_white"
-        Data.GUI.button_green.tooltip = { "gui.confirm" }
-        Data.GUI.button_green = Data.GUI.frame_new_channels.add(Data.GUI.button_green)
-        Data.GUI.button_green.style = Prefix .. "button_green"
+        Data.GUI.button_confirm = {}
+        Data.GUI.button_confirm.type = "sprite-button"
+        Data.GUI.button_confirm.name = "button_green"
+        Data.GUI.button_confirm.sprite = "utility/check_mark_white"
+        Data.GUI.button_confirm.tooltip = { "gui.confirm" }
+        Data.GUI.button_confirm = Data.GUI.frame_new_channels.add(Data.GUI.button_confirm)
+        Data.GUI.button_confirm.style = Prefix .. "button_green"
     end
-    local function Destroy()
+    local function destroy()
         Data.GUI.frame_main.destroy()
         Data.GPlayer.GUI = {}
         Data.GUI = Data.GPlayer.GUI
         Data.Player.opened = nil
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     local function Info()
         --- Valores de la entidad
@@ -727,7 +766,7 @@ function This_MOD.Toggle_window(Data)
 
         --- Selección inicial
         Data.GUI.Pos_start = 0
-        for index, _ in pairs(Data.Channel) do
+        for index, _ in pairs(Data.channel) do
             Data.GUI.Pos_start = Data.GUI.Pos_start + 1
             if index == Data.GUI.Node.channel.index then
                 break
@@ -738,15 +777,17 @@ function This_MOD.Toggle_window(Data)
         Data.GUI.Pos = Data.GUI.Pos_start
     end
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Acción a ejecutar
-    if Data.GUI.frame_main and Validate_close() then
-        Destroy()
-    elseif not Data.GUI.frame_main and Validate_open() then
+    if validate_close() then
+        destroy()
+    elseif validate_open() then
         Data.GUI.Action = This_MOD.action.build
-        Build()
-        Info()
-        Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
-        This_MOD.selection_channel(Data)
+        build()
+        -- Info()
+        -- Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
+        -- This_MOD.selection_channel(Data)
         Data.GUI.Action = This_MOD.action.none
     end
 end
@@ -807,7 +848,7 @@ function This_MOD.button_action(Data)
     --- Cerrar la ventana
     Flag = Data.Event.element == Data.GUI.button_exit
     if Flag then
-        This_MOD.Toggle_window(Data)
+        This_MOD.toggle_gui(Data)
         return
     end
 
@@ -841,7 +882,7 @@ function This_MOD.button_action(Data)
     if Flag then
         This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
         Data.Event.element = Data.GUI.button_exit
-        This_MOD.Toggle_window(Data)
+        This_MOD.toggle_gui(Data)
         Data.Player.play_sound({ path = "entity-open/constant-combinator" })
         return
     end
@@ -978,7 +1019,7 @@ function This_MOD.validate_channel_name(Data)
 
     --- Cerrar la ventana
     Data.Event.element = Data.GUI.button_exit
-    This_MOD.Toggle_window(Data)
+    This_MOD.toggle_gui(Data)
     Data.Player.play_sound({ path = "entity-open/constant-combinator" })
 end
 
