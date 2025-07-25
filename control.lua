@@ -503,7 +503,7 @@ function This_MOD.toggle_gui(Data)
         if Data.GUI.frame_main then return false end
         if not Data.Entity then return false end
         if not Data.Entity.valid then return false end
-        if GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
+        if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -513,7 +513,7 @@ function This_MOD.toggle_gui(Data)
         ---> En caso de ser necesaria
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        if not Data.Node[Data.Entity.unit_number] then
+        if not Data.node[Data.Entity.unit_number] then
             This_MOD.on_entity_created({
                 entity = Data.Node.entity,
                 force = Data.Node.entity.force
@@ -663,18 +663,18 @@ function This_MOD.toggle_gui(Data)
         --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Efecto de profundidad
-        Data.GUI.frame_old_channels = {}
-        Data.GUI.frame_old_channels.type = "frame"
-        Data.GUI.frame_old_channels.name = "frame_old_channels"
-        Data.GUI.frame_old_channels.direction = "horizontal"
-        Data.GUI.frame_old_channels = Data.GUI.flow_items.add(Data.GUI.frame_old_channels)
-        Data.GUI.frame_old_channels.style = Prefix .. "frame_body"
+        Data.GUI.frame_old_channel = {}
+        Data.GUI.frame_old_channel.type = "frame"
+        Data.GUI.frame_old_channel.name = "frame_old_channels"
+        Data.GUI.frame_old_channel.direction = "horizontal"
+        Data.GUI.frame_old_channel = Data.GUI.flow_items.add(Data.GUI.frame_old_channel)
+        Data.GUI.frame_old_channel.style = Prefix .. "frame_body"
 
         --- Barra de movimiento
         Data.GUI.dropdown_channels = {}
         Data.GUI.dropdown_channels.type = "drop-down"
         Data.GUI.dropdown_channels.name = "drop_down_channels"
-        Data.GUI.dropdown_channels = Data.GUI.frame_old_channels.add(Data.GUI.dropdown_channels)
+        Data.GUI.dropdown_channels = Data.GUI.frame_old_channel.add(Data.GUI.dropdown_channels)
         Data.GUI.dropdown_channels.style = Prefix .. "drop_down_channels"
 
         --- Cargar los canales
@@ -689,17 +689,8 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_edit.name = "button_edit"
         Data.GUI.button_edit.sprite = "utility/rename_icon"
         Data.GUI.button_edit.tooltip = { This_MOD.prefix .. "edit-channel" }
-        Data.GUI.button_edit = Data.GUI.frame_old_channels.add(Data.GUI.button_edit)
+        Data.GUI.button_edit = Data.GUI.frame_old_channel.add(Data.GUI.button_edit)
         Data.GUI.button_edit.style = Prefix .. "button_blue"
-
-        -- --- Botón para aplicar los cambios
-        -- Data.GUI.button_confirm = {}
-        -- Data.GUI.button_confirm.type = "sprite-button"
-        -- Data.GUI.button_confirm.name = "button_confirm"
-        -- Data.GUI.button_confirm.sprite = "utility/check_mark_white"
-        -- Data.GUI.button_confirm.tooltip = { "gui.confirm" }
-        -- Data.GUI.button_confirm = Data.GUI.frame_old_channels.add(Data.GUI.button_confirm)
-        -- Data.GUI.button_confirm.style = Prefix .. "button_green"
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -708,20 +699,20 @@ function This_MOD.toggle_gui(Data)
         --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Efecto de profundidad
-        Data.GUI.frame_new_channels = {}
-        Data.GUI.frame_new_channels.type = "frame"
-        Data.GUI.frame_new_channels.name = "frame_new_channels"
-        Data.GUI.frame_new_channels.direction = "horizontal"
-        Data.GUI.frame_new_channels = Data.GUI.flow_items.add(Data.GUI.frame_new_channels)
-        Data.GUI.frame_new_channels.style = Prefix .. "frame_body"
-        Data.GUI.frame_new_channels.visible = false
+        Data.GUI.frame_new_channel = {}
+        Data.GUI.frame_new_channel.type = "frame"
+        Data.GUI.frame_new_channel.name = "frame_new_channels"
+        Data.GUI.frame_new_channel.direction = "horizontal"
+        Data.GUI.frame_new_channel = Data.GUI.flow_items.add(Data.GUI.frame_new_channel)
+        Data.GUI.frame_new_channel.style = Prefix .. "frame_body"
+        -- Data.GUI.frame_new_channel.visible = false
 
         --- Nuevo nombre
         Data.GUI.textfield_new_channel = {}
         Data.GUI.textfield_new_channel.type = "textfield"
         Data.GUI.textfield_new_channel.name = "write-channel"
         Data.GUI.textfield_new_channel.text = "xXx"
-        Data.GUI.textfield_new_channel = Data.GUI.frame_new_channels.add(Data.GUI.textfield_new_channel)
+        Data.GUI.textfield_new_channel = Data.GUI.frame_new_channel.add(Data.GUI.textfield_new_channel)
         Data.GUI.textfield_new_channel.style = Prefix .. "stretchable_textfield"
 
         --- Crear la imagen de selección
@@ -729,8 +720,8 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_icon.type = "choose-elem-button"
         Data.GUI.button_icon.name = "button_icon"
         Data.GUI.button_icon.elem_type = "signal"
-        Data.GUI.button_icon.signal = { type = "virtual", name = This_MOD.prefix .. "icon" }
-        Data.GUI.button_icon = Data.GUI.frame_new_channels.add(Data.GUI.button_icon)
+        Data.GUI.button_icon.signal = { type = "virtual", name = GPrefix.name .. "-icon" }
+        Data.GUI.button_icon = Data.GUI.frame_new_channel.add(Data.GUI.button_icon)
         Data.GUI.button_icon.style = Prefix .. "button"
 
         --- Botón para cancelar los cambios
@@ -739,7 +730,7 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_cancel.name = "button_cancel"
         Data.GUI.button_cancel.sprite = "utility/close_fat"
         Data.GUI.button_cancel.tooltip = { "gui-mod-settings.cancel" }
-        Data.GUI.button_cancel = Data.GUI.frame_new_channels.add(Data.GUI.button_cancel)
+        Data.GUI.button_cancel = Data.GUI.frame_new_channel.add(Data.GUI.button_cancel)
         Data.GUI.button_cancel.style = Prefix .. "button_red"
 
         --- Botón para aplicar los cambios
@@ -748,7 +739,7 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_confirm.name = "button_green"
         Data.GUI.button_confirm.sprite = "utility/check_mark_white"
         Data.GUI.button_confirm.tooltip = { "gui.confirm" }
-        Data.GUI.button_confirm = Data.GUI.frame_new_channels.add(Data.GUI.button_confirm)
+        Data.GUI.button_confirm = Data.GUI.frame_new_channel.add(Data.GUI.button_confirm)
         Data.GUI.button_confirm.style = Prefix .. "button_green"
     end
     local function destroy()
