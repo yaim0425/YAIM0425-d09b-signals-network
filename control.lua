@@ -557,15 +557,16 @@ function This_MOD.toggle_gui(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local function build()
+    local function gui_build()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Cambiar los guiones del nombre
         local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Crear el cuadro principal
         Data.GUI.frame_main = {}
@@ -580,11 +581,11 @@ function This_MOD.toggle_gui(Data)
         --- Cerrar la ventana al abrir otra ventana, presionar E o Esc
         Data.Player.opened = Data.GUI.frame_main
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Contenedor de la cabeza
         Data.GUI.flow_head = {}
@@ -621,11 +622,11 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_exit = Data.GUI.flow_head.add(Data.GUI.button_exit)
         Data.GUI.button_exit.style = Prefix .. "button_close"
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Contenedor del cuerpo para el inventario
         Data.GUI.flow_items = {}
@@ -635,11 +636,11 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.flow_items = Data.GUI.frame_main.add(Data.GUI.flow_items)
         Data.GUI.flow_items.style = Prefix .. "flow_vertival_8"
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Efecto de profundidad
         Data.GUI.frame_entity = {}
@@ -657,11 +658,11 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.entity_preview_entity.style = "wide_entity_button"
         Data.GUI.entity_preview_entity.entity = Data.Entity
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Efecto de profundidad
         Data.GUI.frame_old_channel = {}
@@ -678,12 +679,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.dropdown_channels = Data.GUI.frame_old_channel.add(Data.GUI.dropdown_channels)
         Data.GUI.dropdown_channels.style = Prefix .. "drop_down_channels"
 
-        --- Cargar los canales
-        for _, channel in pairs(Data.channel) do
-            Data.GUI.dropdown_channels.add_item(channel.name)
-        end
-        Data.GUI.dropdown_channels.add_item(This_MOD.new_channel)
-
         --- Botón para aplicar los cambios
         Data.GUI.button_edit = {}
         Data.GUI.button_edit.type = "sprite-button"
@@ -693,11 +688,11 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_edit = Data.GUI.frame_old_channel.add(Data.GUI.button_edit)
         Data.GUI.button_edit.style = Prefix .. "button_blue"
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-        --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Efecto de profundidad
         Data.GUI.frame_new_channel = {}
@@ -742,12 +737,18 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_confirm.tooltip = { "gui.confirm" }
         Data.GUI.button_confirm = Data.GUI.frame_new_channel.add(Data.GUI.button_confirm)
         Data.GUI.button_confirm.style = Prefix .. "button_green"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
-    local function destroy()
+    local function gui_destroy()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
         Data.GUI.frame_main.destroy()
         Data.GPlayer.GUI = {}
         Data.GUI = Data.GPlayer.GUI
         Data.Player.opened = nil
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -769,14 +770,27 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.Pos = Data.GUI.Pos_start
     end
 
+    --- Cargar los canales
+    local function load_channels()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        for _, channel in pairs(Data.channel) do
+            Data.GUI.dropdown_channels.add_item(channel.name)
+        end
+        Data.GUI.dropdown_channels.add_item(This_MOD.new_channel)
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Acción a ejecutar
     if validate_close() then
-        destroy()
+        gui_destroy()
     elseif validate_open() then
         Data.GUI.Action = This_MOD.action.build
-        build()
+        gui_build()
+        load_channels()
         -- Info()
         -- Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
         -- This_MOD.selection_channel(Data)
