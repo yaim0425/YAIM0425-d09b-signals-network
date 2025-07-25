@@ -450,12 +450,20 @@ function This_MOD.load_styles()
     local Styles = data.raw["gui-style"].default
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Multiuso
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     Styles[Prefix .. "flow_vertival_8"] = {
         type = "vertical_flow_style",
         vertical_spacing = 8
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cabeza
@@ -487,6 +495,10 @@ function This_MOD.load_styles()
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cuerpo
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     Styles[Prefix .. "frame_entity"] = {
@@ -501,8 +513,12 @@ function This_MOD.load_styles()
     }
     Styles[Prefix .. "drop_down_channels"] = {
         type = "dropdown_style",
-        width = 250 + 32
+        width = 282 + 32
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Nuevo canal
