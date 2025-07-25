@@ -29,8 +29,9 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Estilos a usar
-    -- This_MOD.Styles()
-    This_MOD.icon()
+    This_MOD.load_styles()
+    This_MOD.load_icon()
+    This_MOD.load_sound()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -39,12 +40,13 @@ end
 function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Contenedor
+    --- Valores constante
     This_MOD.sender_name = This_MOD.prefix .. "sender"
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
+    This_MOD.sound = "__" .. This_MOD.prefix .. This_MOD.name .. "__/sound/"
 
-    --- Objeto de referencia
+    --- Valores de referencia
     This_MOD.ref = {}
     This_MOD.ref.combinator = GPrefix.entities["decider-combinator"]
     This_MOD.ref.item = GPrefix.items["decider-combinator"]
@@ -438,12 +440,18 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Estilos a usar
-function This_MOD.Styles()
+function This_MOD.load_styles()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Cambiar los guiones del nombre
-    local Prefix = string.gsub(This_MOD.Prefix, "%-", "_")
+    local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
 
     --- Renombrar
     local Styles = data.raw["gui-style"].default
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Multiuso
@@ -452,6 +460,10 @@ function This_MOD.Styles()
         type = "vertical_flow_style",
         vertical_spacing = 8
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cabeza
@@ -483,6 +495,10 @@ function This_MOD.Styles()
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Cuerpo
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     Styles[Prefix .. "frame_entity"] = {
@@ -497,8 +513,12 @@ function This_MOD.Styles()
     }
     Styles[Prefix .. "drop_down_channels"] = {
         type = "dropdown_style",
-        width = 250 + 32
+        width = 296 + 64
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     ---> Nuevo canal
@@ -513,6 +533,7 @@ function This_MOD.Styles()
     Styles[Prefix .. "button_green"] = {
         type = "button_style",
         parent = "tool_button_green",
+        left_click_sound = This_MOD.sound .. "empty_audio.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -533,20 +554,47 @@ function This_MOD.Styles()
     }
     Styles[Prefix .. "stretchable_textfield"] = {
         type = "textbox_style",
-        width = 250
+        width = 296
     }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Icono para las imagenes
-function This_MOD.icon()
+function This_MOD.load_icon()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
+    local Name = GPrefix.name .. "-icon"
+    if data.raw["virtual-signal"][Name] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear la señal
     GPrefix.extend({
         type = "virtual-signal",
-        name = This_MOD.prefix .. "icon",
+        name = Name,
         icon = This_MOD.graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
         order = "z-z-o"
     })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+--- Cargar el sonido
+function This_MOD.load_sound()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    GPrefix.extend({
+        type = "sound",
+        name = "gui_tool_button",
+        filename = "__core__/sound/gui-tool-button.ogg",
+        volume = 1.0
+    })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
