@@ -538,7 +538,7 @@ function This_MOD.toggle_gui(Data)
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         if not Data.GUI.frame_main then return false end
-        if Data.GUI.Action == This_MOD.action.build then return false end
+        if Data.GUI.action == This_MOD.action.build then return false end
         if not Data.Event.element then return false end
         if Data.Event.element == Data.GUI.frame_main then return true end
         if Data.Event.element ~= Data.GUI.button_exit then return false end
@@ -788,13 +788,13 @@ function This_MOD.toggle_gui(Data)
     if validate_close() then
         gui_destroy()
     elseif validate_open() then
-        Data.GUI.Action = This_MOD.action.build
+        Data.GUI.action = This_MOD.action.build
         gui_build()
         load_channels()
         -- Info()
         -- Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
         -- This_MOD.selection_channel(Data)
-        Data.GUI.Action = This_MOD.action.none
+        Data.GUI.action = This_MOD.action.none
     end
 end
 
@@ -819,7 +819,7 @@ function This_MOD.selection_channel(Data)
 
     --- Se quiere crear un nuevo canal
     if selected_index == #dropdown_channels.items then
-        Data.GUI.Action = This_MOD.action.new_channel
+        Data.GUI.action = This_MOD.action.new_channel
         This_MOD.show_new_channel(Data)
         return
     end
@@ -867,8 +867,8 @@ function This_MOD.button_action(Data)
     end
 
     --- Cambiar el nombre de un canal o agregar un nuevo canal
-    Flag = false or Data.GUI.Action == This_MOD.action.edit
-    Flag = Flag or Data.GUI.Action == This_MOD.action.new_channel
+    Flag = false or Data.GUI.action == This_MOD.action.edit
+    Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
     Flag = Flag and Data.Event.element == Data.GUI.button_green
     if Flag then
         This_MOD.validate_channel_name(Data)
@@ -878,7 +878,7 @@ function This_MOD.button_action(Data)
     --- Editar el nombre del canal seleccionado
     Flag = Data.Event.element == Data.GUI.button_edit
     if Flag then
-        Data.GUI.Action = This_MOD.action.edit
+        Data.GUI.action = This_MOD.action.edit
         This_MOD.show_new_channel(Data)
         return
     end
@@ -963,13 +963,13 @@ function This_MOD.show_new_channel(Data)
     Data.GUI.frame_new_channels.visible = true
 
     --- Configuración para un nuevo canal
-    if Data.GUI.Action == This_MOD.action.new_channel then
-        Data.GUI.Action = This_MOD.action.new_channel
+    if Data.GUI.action == This_MOD.action.new_channel then
+        Data.GUI.action = This_MOD.action.new_channel
         Data.GUI.textfield_new_channel.text = ""
     end
 
     --- Configuración para un nuevo nombre
-    if Data.GUI.Action == This_MOD.action.edit then
+    if Data.GUI.action == This_MOD.action.edit then
         local dropdown = Data.GUI.dropdown_channels
         local textfield = Data.GUI.textfield_new_channel
         textfield.text = dropdown.get_item(Data.GUI.Pos)
@@ -1000,7 +1000,7 @@ function This_MOD.validate_channel_name(Data)
     end
 
     --- Crear un nuevo canal
-    if Data.GUI.Action == This_MOD.action.new_channel then
+    if Data.GUI.action == This_MOD.action.new_channel then
         --- Crear el nuevo canal
         Data.GUI.Pos = GPrefix.get_length(Data.Channel) + 1
         Data.Event.element = Data.GUI.dropdown_channels
@@ -1011,7 +1011,7 @@ function This_MOD.validate_channel_name(Data)
     end
 
     --- Cambiar el nombre de un canal
-    if Data.GUI.Action == This_MOD.action.edit then
+    if Data.GUI.action == This_MOD.action.edit then
         --- Buscar el canal
         local Channel = This_MOD.get_channel_pos(Data)
 
