@@ -513,7 +513,7 @@ function This_MOD.load_styles()
     }
     Styles[Prefix .. "drop_down_channels"] = {
         type = "dropdown_style",
-        width = 282 + 32
+        width = (250 + 32) + 32
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---

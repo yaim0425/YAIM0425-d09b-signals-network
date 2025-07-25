@@ -651,6 +651,7 @@ function This_MOD.toggle_gui(Data)
 
         --- Imagen de la entidad
         Data.GUI.entity_preview_entity = {}
+        Data.GUI.entity_preview_entity.name = "entity_preview_entity"
         Data.GUI.entity_preview_entity.type = "entity-preview"
         Data.GUI.entity_preview_entity.style = "wide_entity_button"
         Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
