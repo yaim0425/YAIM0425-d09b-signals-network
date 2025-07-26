@@ -219,7 +219,7 @@ function This_MOD.on_entity_created(Data)
             comparator = "≠"
         }
 
-        --- Puntos de conexión del emisor
+        --- Puntos de conexión de los filtros
         local Filter_red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_input_red, true)
         local Filter_green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_input_green, true)
 
@@ -800,6 +800,8 @@ end
 
 --- Al seleccionar un canal
 function This_MOD.selection_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Validación
     if not Data.GUI.frame_main then return end
     if not Data.GUI.dropdown_channels then return end
@@ -807,9 +809,13 @@ function This_MOD.selection_channel(Data)
     local dropdown_channels = Data.GUI.dropdown_channels
     if element and element ~= dropdown_channels then return end
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Selección actul
     local selected_index = dropdown_channels.selected_index
     if selected_index == 0 then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- No hay cambio de canal
     Data.GUI.button_confirm.enabled = selected_index ~= Data.GUI.Pos_start
@@ -832,6 +838,8 @@ function This_MOD.selection_channel(Data)
         Data.GUI.button_edit.enabled = false
         return
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Acciones de los botones
