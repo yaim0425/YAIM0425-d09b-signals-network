@@ -50,9 +50,7 @@ function This_MOD.setting_mod()
     This_MOD.action.none = nil
     This_MOD.action.build = 1
     This_MOD.action.edit = 2
-    -- ThisMOD.Action.apply = 3
-    -- ThisMOD.Action.discard = 4
-    This_MOD.action.new_channel = 5
+    This_MOD.action.new_channel = 3
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
