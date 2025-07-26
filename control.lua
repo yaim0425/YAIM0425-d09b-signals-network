@@ -189,7 +189,7 @@ function This_MOD.on_entity_created(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Emisor
-    if string.find(Data.Entity.name, "sender", 1, true) then
+    if string.find(Data.Entity.name, This_MOD.sender_name, 1, true) then
         --- Superficie de los canales
         local Surface = This_MOD.get_surface()
 
@@ -235,7 +235,7 @@ function This_MOD.on_entity_created(Data)
     end
 
     --- Receptor
-    if string.find(Data.Entity.name, "receiver", 1, true) then
+    if string.find(Data.Entity.name, This_MOD.receiver_name, 1, true) then
         Node.red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
         Node.green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
     end
