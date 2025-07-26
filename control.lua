@@ -326,11 +326,11 @@ function This_MOD.check_power()
         --- Eliminar a las entidad invalidas
         for _, key in pairs(Deleted) do
             local Node = gForce.node[key]
+            table.remove(gForce.node, key)
             if Node.type == This_MOD.sender_name then
                 Node.filter_red.destroy()
                 Node.filter_green.destroy()
             end
-            gForce.node[key] = nil
         end
     end
 
