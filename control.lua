@@ -175,6 +175,10 @@ function This_MOD.on_entity_created(Data)
     --- Crear la superficie y el canal por defecto
     local Channel = This_MOD.get_channel(Data, This_MOD.channel_default)
 
+    for i = 1, 10, 1 do
+        This_MOD.get_channel(Data, "Channel " .. i)
+    end
+
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
 
@@ -445,7 +449,8 @@ function This_MOD.get_channel(Data, channel)
 
     --- Guardar el nuevo canal
     Channel = {}
-    Channel.index = GPrefix.pad_left_zeros(10, #Data.channel + 1)
+    Channel.index = GPrefix.get_length(Data.channel) or 0
+    Channel.index = GPrefix.pad_left_zeros(10, Channel.index + 1)
     Channel.entity = Entity
     Channel.name = channel
     Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
