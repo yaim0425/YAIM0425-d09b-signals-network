@@ -256,25 +256,24 @@ end
 function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local function action(Data)
+    local function connection_toggle(Data)
         --- Entidad a modificar
         if not Data.Entity then return end
         if not Data.Entity.valid then return end
 
         --- Renombrar
-        local Node = Data.node[Data.Entity.unit_number]
-        local Channel = Node.channel
+        local Node = GPrefix.get_table(Data.node, "entity", Data.Entity)
 
         if Node.connect then
             --- Desconectar
             Node.connect = false
-            Node.red.disconnect_from(Channel.red, defines.wire_origin.script)
-            Node.green.disconnect_from(Channel.green, defines.wire_origin.script)
+            Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
+            Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
         else
             --- Conectar
             Node.connect = true
-            Node.red.connect_to(Channel.red, false, defines.wire_origin.script)
-            Node.green.connect_to(Channel.green, false, defines.wire_origin.script)
+            Node.red.connect_to(Node.channel.red, false, defines.wire_origin.script)
+            Node.green.connect_to(Node.channel.green, false, defines.wire_origin.script)
         end
     end
 
@@ -293,16 +292,11 @@ function This_MOD.check_power()
         local Power_satisfied = Energy >= Buffer * Threshold
 
         --- Acciones
+        local Flag = false
+        Flag = Flag or Node.connect and not Power_satisfied --- Desconectar
+        Flag = Flag or not Node.connect and Power_satisfied --- Conectar
         if Node.connect and not Power_satisfied then
-            action(This_MOD.create_data({
-                entity = Node.entity,
-                force = Node.entity.force
-            }))
-        elseif not Node.connect and Power_satisfied then
-            action(This_MOD.create_data({
-                entity = Node.entity,
-                force = Node.entity.force
-            }))
+            connection_toggle(This_MOD.create_data({ entity = Node.entity }))
         end
     end
 
