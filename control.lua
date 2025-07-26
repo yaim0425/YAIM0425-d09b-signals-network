@@ -109,12 +109,12 @@ function This_MOD.load_events()
     --     This_MOD.add_icon(This_MOD.Create_data(event))
     -- end)
 
-    -- --- Al seleccionar otro canal
-    -- script.on_event({
-    --     defines.events.on_gui_selection_state_changed
-    -- }, function(event)
-    --     This_MOD.selection_channel(This_MOD.Create_data(event))
-    -- end)
+    --- Al seleccionar otro canal
+    script.on_event({
+        defines.events.on_gui_selection_state_changed
+    }, function(event)
+        This_MOD.selection_channel(This_MOD.create_data(event))
+    end)
 
     -- --- Al hacer clic en algún elemento de la ventana
     -- script.on_event({
@@ -823,39 +823,27 @@ function This_MOD.selection_channel(Data)
     --- Validación
     if not Data.GUI.frame_main then return end
     if not Data.GUI.dropdown_channels then return end
-    local element = Data.Event.element
-    local dropdown_channels = Data.GUI.dropdown_channels
-    if element and element ~= dropdown_channels then return end
+    local Element = Data.Event.element
+    local Dropdown_channels = Data.GUI.dropdown_channels
+    if Element and Element ~= Dropdown_channels then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Selección actul
-    local selected_index = dropdown_channels.selected_index
-    if selected_index == 0 then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- No hay cambio de canal
-    Data.GUI.button_confirm.enabled = selected_index ~= Data.GUI.Pos_start
-
-    --- Se seleccionó un canal existente
-    Data.GUI.button_edit.enabled = true
+    --- Selección actual
+    local Selected_index = Dropdown_channels.selected_index
 
     --- Se quiere crear un nuevo canal
-    if selected_index == #dropdown_channels.items then
-        Data.GUI.action = This_MOD.action.new_channel
+    if Selected_index == #Dropdown_channels.items then
+        Data.GUI.button_edit.enabled = false
         This_MOD.show_new_channel(Data)
         return
     end
 
     --- Actualizar la selección
-    Data.GUI.Pos = selected_index
+    Data.GUI.last_selected_index = Selected_index
 
     --- De volvió al canal por defecto
-    if selected_index == 1 then
-        Data.GUI.button_edit.enabled = false
-        return
-    end
+    Data.GUI.button_edit.enabled = Selected_index > 1
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
