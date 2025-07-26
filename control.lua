@@ -255,6 +255,8 @@ end
 
 --- Verificar que la entidad tenga energía
 function This_MOD.check_power()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local function action(Data)
         --- Entidad a modificar
         if not Data.Entity then return end
@@ -277,9 +279,13 @@ function This_MOD.check_power()
         end
     end
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Variables a usar
     local Data = This_MOD.create_data()
     local Deleted = {}
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Recorrer cada entidad enlistada
     for _, gForce in pairs(Data.gForces) do
@@ -324,6 +330,8 @@ function This_MOD.check_power()
             gForce.Node[key] = nil
         end
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Al fusionar dos fuerzas
