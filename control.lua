@@ -308,7 +308,7 @@ function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Lista de entidades a eliminar
-    local Deleted = {}
+    local Deleted
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
