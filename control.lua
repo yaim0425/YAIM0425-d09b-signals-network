@@ -34,8 +34,8 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Valores constante
-    This_MOD.sender_name = This_MOD.prefix .. "sender"
-    This_MOD.receiver_name = This_MOD.prefix .. "receiver"
+    This_MOD.sender_name = "sender"
+    This_MOD.receiver_name = "receiver"
 
     --- Canales constantes
     This_MOD.channel_default = { This_MOD.prefix .. "default-channel" }
