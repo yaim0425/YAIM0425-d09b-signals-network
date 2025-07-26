@@ -860,7 +860,7 @@ function This_MOD.selection_channel(Data)
     --- Guardar la selección
     Data.GUI.last_selected_index = Selected_index
 
-    --- De volvió al canal por defecto
+    --- Estado del botón
     Data.GUI.button_edit.enabled = Selected_index > 1
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
