@@ -485,7 +485,7 @@ end
 function This_MOD.get_index_of_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Channel_name = Data.node[Data.Entity.unit_number].channel.name
+    local Channel_name = GPrefix.get_table(Data.node, "entity", Data.Entity).channel.name
     local i = 0
 
     for _, channel in pairs(Data.channel) do
