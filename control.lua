@@ -141,12 +141,18 @@ function This_MOD.create_data(event)
     if not event then return Data end
 
     --- Lista de los postes
-    Data.gForce.channel = Data.gForce.channel or {}
-    Data.channel = Data.gForce.channel
+    Data.gForce.channels = Data.gForce.channels or {}
+    Data.channels = Data.gForce.channels
 
     --- Lista de los transceiver
-    Data.gForce.node = Data.gForce.node or {}
-    Data.node = Data.gForce.node
+    Data.gForce.nodes = Data.gForce.nodes or {}
+    Data.nodes = Data.gForce.nodes
+
+    --- Cargar el nodo a tratar
+    if Data.Entity or Data.GUI then
+        local Entity = Data.Entity or Data.GUI.entity
+        Data.node = GPrefix.get_table(Data.nodes, "entity", Entity)
+    end
 
     --- Devolver el consolidado de los datos
     return Data
@@ -175,7 +181,7 @@ function This_MOD.on_entity_created(Data)
     --- Crear la superficie y el canal por defecto
     local Channel = This_MOD.get_channel(Data, This_MOD.channel_default)
 
-    for i = 1, 10, 1 do
+    for i = 2, 10, 1 do
         This_MOD.get_channel(Data, "Channel " .. i)
     end
 
@@ -187,7 +193,7 @@ function This_MOD.on_entity_created(Data)
     Node.entity = Data.Entity
     Node.channel = Channel
     Node.connect = false
-    table.insert(Data.node, Node)
+    table.insert(Data.nodes, Node)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -248,13 +254,13 @@ function This_MOD.on_entity_created(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Ocultar la superficie de las fuerzas recién creadas
-function This_MOD.hide_surface(Data)
-    local Surface = This_MOD.get_surface()
-    if Surface then
-        Data.Event.force.set_surface_hidden(Surface, true)
-    end
-end
+-- --- Ocultar la superficie de las fuerzas recién creadas
+-- function This_MOD.hide_surface(Data)
+--     local Surface = This_MOD.get_surface()
+--     if Surface then
+--         Data.Event.force.set_surface_hidden(Surface, true)
+--     end
+-- end
 
 --- Verificar que la entidad tenga energía
 function This_MOD.check_power()
@@ -266,7 +272,7 @@ function This_MOD.check_power()
         if not Data.Entity.valid then return end
 
         --- Renombrar
-        local Node = GPrefix.get_table(Data.node, "entity", Data.Entity)
+        local Node = GPrefix.get_table(Data.nodes, "entity", Data.Entity)
 
         if Node.connect then
             --- Desconectar
@@ -319,9 +325,9 @@ function This_MOD.check_power()
         Deleted = {}
 
         --- Validar cada antena
-        for key, Node in pairs(gForce.node) do
-            if Node.entity and Node.entity.valid then
-                check_power(Node)
+        for key, node in pairs(gForce.nodes) do
+            if node.entity and node.entity.valid then
+                check_power(node)
             else
                 table.insert(Deleted, 1, key)
             end
@@ -329,8 +335,8 @@ function This_MOD.check_power()
 
         --- Eliminar a las entidad invalidas
         for _, key in pairs(Deleted) do
-            local Node = gForce.node[key]
-            table.remove(gForce.node, key)
+            local Node = gForce.nodes[key]
+            table.remove(gForce.nodes, key)
             if Node.type == This_MOD.sender_name then
                 Node.filter_red.destroy()
                 Node.filter_green.destroy()
@@ -341,28 +347,28 @@ function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Al fusionar dos fuerzas
-function This_MOD.forces_merged(Data)
-    --- Renombrar
-    local Source = Data.gForces[Data.Event.source_index]
-    if not Source then return end
-    local Destination = This_MOD.create_data({
-        force = Data.Event.destination
-    })
+-- --- Al fusionar dos fuerzas
+-- function This_MOD.forces_merged(Data)
+--     --- Renombrar
+--     local Source = Data.gForces[Data.Event.source_index]
+--     if not Source then return end
+--     local Destination = This_MOD.create_data({
+--         force = Data.Event.destination
+--     })
 
-    --- Mover los canales
-    for index, Channel in pairs(Source.Channel) do
-        Destination.channel[index] = Channel
-    end
+--     --- Mover los canales
+--     for index, Channel in pairs(Source.Channel) do
+--         Destination.channel[index] = Channel
+--     end
 
-    --- Mover los nodos
-    for index, Node in pairs(Source.Node) do
-        Destination.node[index] = Node
-    end
+--     --- Mover los nodos
+--     for index, Node in pairs(Source.Node) do
+--         Destination.node[index] = Node
+--     end
 
-    --- Eliminar la referencia a la fuerza
-    Data.gForces[Data.Event.source_index] = nil
-end
+--     --- Eliminar la referencia a la fuerza
+--     Data.gForces[Data.Event.source_index] = nil
+-- end
 
 ---------------------------------------------------------------------------------------------------
 
@@ -431,7 +437,7 @@ function This_MOD.get_channel(Data, channel)
     local Surface = This_MOD.get_surface()
 
     --- Cargar el poste del canal indicado
-    local Channel = GPrefix.get_table(Data.channel, "name", channel)
+    local Channel = GPrefix.get_table(Data.channels, "name", channel)
     if Channel then return Channel end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -449,13 +455,13 @@ function This_MOD.get_channel(Data, channel)
 
     --- Guardar el nuevo canal
     Channel = {}
-    Channel.index = GPrefix.get_length(Data.channel) or 0
+    Channel.index = GPrefix.get_length(Data.channels) or 0
     Channel.index = GPrefix.pad_left_zeros(10, Channel.index + 1)
     Channel.entity = Entity
     Channel.name = channel
     Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
     Channel.green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-    Data.channel[Channel.index] = Channel
+    Data.channels[Channel.index] = Channel
 
     --- Devolver el canal indicado
     return Channel
@@ -486,33 +492,33 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
---- Obtener el indice del canal de la entidad
-function This_MOD.get_index_of_channel(Data)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- --- Obtener el indice del canal de la entidad
+-- function This_MOD.get_index_of_channel(Data)
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Channel_name = GPrefix.get_table(Data.node, "entity", Data.Entity).channel.name
-    local i = 0
+--     local Channel_name = GPrefix.get_table(Data.nodes, "entity", Data.Entity).channel.name
+--     local i = 0
 
-    for _, channel in pairs(Data.channel) do
-        i = i + 1
-        if channel.name == Channel_name then
-            return i
-        end
-    end
+--     for _, channel in pairs(Data.channels) do
+--         i = i + 1
+--         if channel.name == Channel_name then
+--             return i
+--         end
+--     end
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- end
 
---- Obtener el canal seleccionado
-function This_MOD.get_channel_pos(Data)
-    local Pos = 0
-    for _, channel in pairs(Data.Channel) do
-        Pos = Pos + 1
-        if Pos == Data.GUI.Pos then
-            return channel
-        end
-    end
-end
+-- --- Obtener el canal seleccionado
+-- function This_MOD.get_channel_pos(Data)
+--     local Pos = 0
+--     for _, channel in pairs(Data.Channel) do
+--         Pos = Pos + 1
+--         if Pos == Data.GUI.Pos then
+--             return channel
+--         end
+--     end
+-- end
 
 ---------------------------------------------------------------------------------------------------
 
@@ -546,10 +552,9 @@ function This_MOD.toggle_gui(Data)
         ---> En caso de ser necesaria
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        if not GPrefix.get_table(Data.node, "entity", Data.Entity) then
+        if not Data.node then
             This_MOD.on_entity_created({
-                entity = Data.Node.entity,
-                force = Data.Node.entity.force
+                entity = Data.Entity
             })
         end
 
@@ -786,33 +791,36 @@ function This_MOD.toggle_gui(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local function Info()
-        --- Valores de la entidad
-        Data.GUI.Node = Data.Node[Data.Entity.unit_number]
+    -- local function Info()
+    --     --- Valores de la entidad
+    --     Data.GUI.Node = Data.Node[Data.Entity.unit_number]
 
-        --- Selección inicial
-        Data.GUI.Pos_start = 0
-        for index, _ in pairs(Data.channel) do
-            Data.GUI.Pos_start = Data.GUI.Pos_start + 1
-            if index == Data.GUI.Node.channel.index then
-                break
-            end
-        end
+    --     --- Selección inicial
+    --     Data.GUI.Pos_start = 0
+    --     for index, _ in pairs(Data.channels) do
+    --         Data.GUI.Pos_start = Data.GUI.Pos_start + 1
+    --         if index == Data.GUI.Node.channel.index then
+    --             break
+    --         end
+    --     end
 
-        --- Selección actual
-        Data.GUI.Pos = Data.GUI.Pos_start
-    end
+    --     --- Selección actual
+    --     Data.GUI.Pos = Data.GUI.Pos_start
+    -- end
 
     --- Cargar los canales
     local function load_channels()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+        --- Cargar los canales
         local Dropdown = Data.GUI.dropdown_channels
-        for _, channel in pairs(Data.channel) do
+        for _, channel in pairs(Data.channels) do
             Dropdown.add_item(channel.name)
         end
         Dropdown.add_item(This_MOD.new_channel)
-        Dropdown.selected_index = This_MOD.get_index_of_channel(Data)
+
+        --- Seleccionar el canal actual
+        Dropdown.selected_index = tonumber(Data.node.channel.index)
         Data.GUI.button_edit.enabled = Dropdown.selected_index > 1
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -830,6 +838,7 @@ function This_MOD.toggle_gui(Data)
         -- Info()
         -- Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
         -- This_MOD.selection_channel(Data)
+        Data.GUI.entity = Data.Entity
         Data.GUI.action = This_MOD.action.none
     end
 end
@@ -852,223 +861,218 @@ function This_MOD.selection_channel(Data)
 
     --- Se quiere crear un nuevo canal
     if Selected_index == #Dropdown_channels.items then
-        Data.GUI.button_edit.enabled = false
         This_MOD.show_new_channel(Data)
         return
     end
-
-    --- Guardar la selección
-    Data.GUI.last_selected_index = Selected_index
 
     --- Estado del botón
     Data.GUI.button_edit.enabled = Selected_index > 1
 
     --- Cambiar el canal del nodo
-    local Node = GPrefix.get_table(Data.node, "entity", Data.GUI.entity)
-    Node.channel = Data.channel[GPrefix.pad_left_zeros(10, Selected_index)]
+    local Channel = Data.channels[GPrefix.pad_left_zeros(10, Selected_index)]
+    This_MOD.set_channel(Data.node, Channel)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Acciones de los botones
-function This_MOD.button_action(Data)
-    --- Variables a usar
-    local Flag = false
-    local EventID = 0
+-- --- Acciones de los botones
+-- function This_MOD.button_action(Data)
+--     --- Variables a usar
+--     local Flag = false
+--     local EventID = 0
 
-    --- Validar el elemento
-    EventID = defines.events.on_gui_click
-    Flag = Data.Event.name == EventID
-    if not Flag then return end
+--     --- Validar el elemento
+--     EventID = defines.events.on_gui_click
+--     Flag = Data.Event.name == EventID
+--     if not Flag then return end
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cerrar la ventana
-    Flag = Data.Event.element == Data.GUI.button_exit
-    if Flag then
-        This_MOD.toggle_gui(Data)
-        return
-    end
+--     --- Cerrar la ventana
+--     Flag = Data.Event.element == Data.GUI.button_exit
+--     if Flag then
+--         This_MOD.toggle_gui(Data)
+--         return
+--     end
 
-    --- Cancelar el cambio de nombre o el nuevo canal
-    Flag = Data.Event.element == Data.GUI.button_cancel
-    if Flag then
-        Data.Event.element = Data.GUI.dropdown_channels
-        This_MOD.show_old_channel(Data)
-        return
-    end
+--     --- Cancelar el cambio de nombre o el nuevo canal
+--     Flag = Data.Event.element == Data.GUI.button_cancel
+--     if Flag then
+--         Data.Event.element = Data.GUI.dropdown_channels
+--         This_MOD.show_old_channel(Data)
+--         return
+--     end
 
-    --- Cambiar el nombre de un canal o agregar un nuevo canal
-    Flag = false or Data.GUI.action == This_MOD.action.edit
-    Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
-    Flag = Flag and Data.Event.element == Data.GUI.button_green
-    if Flag then
-        This_MOD.validate_channel_name(Data)
-        return
-    end
+--     --- Cambiar el nombre de un canal o agregar un nuevo canal
+--     Flag = false or Data.GUI.action == This_MOD.action.edit
+--     Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
+--     Flag = Flag and Data.Event.element == Data.GUI.button_green
+--     if Flag then
+--         This_MOD.validate_channel_name(Data)
+--         return
+--     end
 
-    --- Editar el nombre del canal seleccionado
-    Flag = Data.Event.element == Data.GUI.button_edit
-    if Flag then
-        Data.GUI.action = This_MOD.action.edit
-        This_MOD.show_new_channel(Data)
-        return
-    end
+--     --- Editar el nombre del canal seleccionado
+--     Flag = Data.Event.element == Data.GUI.button_edit
+--     if Flag then
+--         Data.GUI.action = This_MOD.action.edit
+--         This_MOD.show_new_channel(Data)
+--         return
+--     end
 
-    --- Cambiar el canal
-    Flag = Data.Event.element == Data.GUI.button_confirm
-    if Flag then
-        This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
-        Data.Event.element = Data.GUI.button_exit
-        This_MOD.toggle_gui(Data)
-        Data.Player.play_sound({ path = "entity-open/constant-combinator" })
-        return
-    end
-end
+--     --- Cambiar el canal
+--     Flag = Data.Event.element == Data.GUI.button_confirm
+--     if Flag then
+--         This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
+--         Data.Event.element = Data.GUI.button_exit
+--         This_MOD.toggle_gui(Data)
+--         Data.Player.play_sound({ path = "entity-open/constant-combinator" })
+--         return
+--     end
+-- end
 
---- Seleccionar un nuevo objeto
-function This_MOD.add_icon(Data)
-    if not Data.GUI.button_icon then return end
+-- --- Seleccionar un nuevo objeto
+-- function This_MOD.add_icon(Data)
+--     if not Data.GUI.button_icon then return end
 
-    --- Cargar la selección
-    local Select = Data.GUI.button_icon.elem_value
+--     --- Cargar la selección
+--     local Select = Data.GUI.button_icon.elem_value
 
-    --- Restaurar el icono
-    Data.GUI.button_icon.elem_value = {
-        type = "virtual",
-        name = This_MOD.prefix .. "icon"
-    }
+--     --- Restaurar el icono
+--     Data.GUI.button_icon.elem_value = {
+--         type = "virtual",
+--         name = This_MOD.prefix .. "icon"
+--     }
 
-    --- Se intentó limpiar el icono
-    if not Select then return end
+--     --- Se intentó limpiar el icono
+--     if not Select then return end
 
-    --- Convertir seleccion en texto
-    local function signal_to_rich_text(select)
-        local type = ""
+--     --- Convertir seleccion en texto
+--     local function signal_to_rich_text(select)
+--         local type = ""
 
-        if not select.type then
-            if prototypes.entity[select.name] then
-                type = "entity"
-            elseif prototypes.recipe[select.name] then
-                type = "recipe"
-            elseif prototypes.fluid[select.name] then
-                type = "fluid"
-            elseif prototypes.item[select.name] then
-                type = "item"
-            end
-        end
+--         if not select.type then
+--             if prototypes.entity[select.name] then
+--                 type = "entity"
+--             elseif prototypes.recipe[select.name] then
+--                 type = "recipe"
+--             elseif prototypes.fluid[select.name] then
+--                 type = "fluid"
+--             elseif prototypes.item[select.name] then
+--                 type = "item"
+--             end
+--         end
 
-        if select.type then
-            type = select.type
-            if select.type == "virtual" then
-                type = type .. "-signal"
-            end
-        end
+--         if select.type then
+--             type = select.type
+--             if select.type == "virtual" then
+--                 type = type .. "-signal"
+--             end
+--         end
 
-        return "[img=" .. type .. "." .. select.name .. "]"
-    end
+--         return "[img=" .. type .. "." .. select.name .. "]"
+--     end
 
-    --- Agregar la imagen seleccionada
-    local text = Data.GUI.textfield_new_channel.text
-    text = text .. signal_to_rich_text(Select)
-    Data.GUI.textfield_new_channel.text = text
-    Data.GUI.textfield_new_channel.focus()
-end
+--     --- Agregar la imagen seleccionada
+--     local text = Data.GUI.textfield_new_channel.text
+--     text = text .. signal_to_rich_text(Select)
+--     Data.GUI.textfield_new_channel.text = text
+--     Data.GUI.textfield_new_channel.focus()
+-- end
 
 ---------------------------------------------------------------------------------------------------
 
---- Mostrar el cuerpo para seleccionar un canal
-function This_MOD.show_old_channel(Data)
-    --- Cambiar de frame
-    Data.GUI.frame_new_channels.visible = false
-    Data.GUI.frame_old_channels.visible = true
+-- --- Mostrar el cuerpo para seleccionar un canal
+-- function This_MOD.show_old_channel(Data)
+--     --- Cambiar de frame
+--     Data.GUI.frame_new_channels.visible = false
+--     Data.GUI.frame_old_channels.visible = true
 
-    --- Enfocar la selección
-    Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
-    This_MOD.selection_channel(Data)
-end
+--     --- Enfocar la selección
+--     Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
+--     This_MOD.selection_channel(Data)
+-- end
 
---- Mostrar el cuerpo para crear un nuevo canal
-function This_MOD.show_new_channel(Data)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- --- Mostrar el cuerpo para crear un nuevo canal
+-- function This_MOD.show_new_channel(Data)
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cambiar de frame
-    Data.GUI.frame_old_channel.visible = false
-    Data.GUI.frame_new_channel.visible = true
+--     --- Cambiar de frame
+--     Data.GUI.frame_old_channel.visible = false
+--     Data.GUI.frame_new_channel.visible = true
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Configuración para un nuevo canal
-    if Data.GUI.action == This_MOD.action.new_channel then
-        Data.GUI.textfield_new_channel.text = ""
-    end
+--     --- Configuración para un nuevo canal
+--     if Data.GUI.action == This_MOD.action.new_channel then
+--         Data.GUI.textfield_new_channel.text = ""
+--     end
 
-    --- Configuración para un nuevo nombre
-    if Data.GUI.action == This_MOD.action.edit then
-        local dropdown = Data.GUI.dropdown_channels
-        local textfield = Data.GUI.textfield_new_channel
-        textfield.text = dropdown.get_item(Data.GUI.Pos)
-    end
+--     --- Configuración para un nuevo nombre
+--     if Data.GUI.action == This_MOD.action.edit then
+--         local Textfield = Data.GUI.textfield_new_channel
+--         Textfield.text = Data.node.channel.name
+--     end
 
-    --- Enfocar nombre
-    Data.GUI.textfield_new_channel.focus()
+--     --- Enfocar nombre
+--     Data.GUI.textfield_new_channel.focus()
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- end
 
---- Validar el nombre del canal
-function This_MOD.validate_channel_name(Data)
-    --- Texto a evaluar
-    local textfield = Data.GUI.textfield_new_channel
+-- --- Validar el nombre del canal
+-- function This_MOD.validate_channel_name(Data)
+--     --- Texto a evaluar
+--     local textfield = Data.GUI.textfield_new_channel
 
-    --- Nombre invalido
-    if textfield.text == "" then
-        textfield.focus()
-        return
-    end
+--     --- Nombre invalido
+--     if textfield.text == "" then
+--         textfield.focus()
+--         return
+--     end
 
-    --- Nuevo canal
-    local result = GPrefix.get_table(Data.Channel, "name", textfield.text)
+--     --- Nuevo canal
+--     local result = GPrefix.get_table(Data.Channel, "name", textfield.text)
 
-    --- Nombre ocupado
-    if result.name then
-        textfield.focus()
-        return
-    end
+--     --- Nombre ocupado
+--     if result.name then
+--         textfield.focus()
+--         return
+--     end
 
-    --- Crear un nuevo canal
-    if Data.GUI.action == This_MOD.action.new_channel then
-        --- Crear el nuevo canal
-        Data.GUI.Pos = GPrefix.get_length(Data.Channel) + 1
-        Data.Event.element = Data.GUI.dropdown_channels
-        This_MOD.get_channel(Data, textfield.text)
+--     --- Crear un nuevo canal
+--     if Data.GUI.action == This_MOD.action.new_channel then
+--         --- Crear el nuevo canal
+--         Data.GUI.Pos = GPrefix.get_length(Data.Channel) + 1
+--         Data.Event.element = Data.GUI.dropdown_channels
+--         This_MOD.get_channel(Data, textfield.text)
 
-        --- Agregar el nuevo canal
-        Data.GUI.dropdown_channels.add_item(textfield.text, Data.GUI.Pos)
-    end
+--         --- Agregar el nuevo canal
+--         Data.GUI.dropdown_channels.add_item(textfield.text, Data.GUI.Pos)
+--     end
 
-    --- Cambiar el nombre de un canal
-    if Data.GUI.action == This_MOD.action.edit then
-        --- Buscar el canal
-        local Channel = This_MOD.get_channel_pos(Data)
+--     --- Cambiar el nombre de un canal
+--     if Data.GUI.action == This_MOD.action.edit then
+--         --- Buscar el canal
+--         local Channel = This_MOD.get_channel_pos(Data)
 
-        --- Actualizar el nombre
-        Channel.name = textfield.text
-        Data.GUI.dropdown_channels.set_item(Data.GUI.Pos, textfield.text)
-    end
+--         --- Actualizar el nombre
+--         Channel.name = textfield.text
+--         Data.GUI.dropdown_channels.set_item(Data.GUI.Pos, textfield.text)
+--     end
 
-    --- Cambiar el canal
-    This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
+--     --- Cambiar el canal
+--     This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
 
-    --- Cerrar la ventana
-    Data.Event.element = Data.GUI.button_exit
-    This_MOD.toggle_gui(Data)
-    Data.Player.play_sound({ path = "entity-open/constant-combinator" })
-end
+--     --- Cerrar la ventana
+--     Data.Event.element = Data.GUI.button_exit
+--     This_MOD.toggle_gui(Data)
+--     Data.Player.play_sound({ path = "entity-open/constant-combinator" })
+-- end
 
 ---------------------------------------------------------------------------------------------------
 
