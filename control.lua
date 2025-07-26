@@ -180,11 +180,10 @@ function This_MOD.on_entity_created(Data)
 
     --- Guardar el canal de la enridad
     local Node = {}
-    Node.index = Data.Entity.unit_number
     Node.entity = Data.Entity
     Node.channel = Channel
     Node.connect = false
-    Data.node[Node.index] = Node
+    table.insert(Data.node, Node)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -450,9 +449,9 @@ function This_MOD.get_channel(Data, channel)
 
     --- Guardar el nuevo canal
     Channel = {}
-    Channel.name = channel
+    Channel.index = GPrefix.pad_left_zeros(10, #Data.channel + 1)
     Channel.entity = Entity
-    Channel.index = Entity.unit_number
+    Channel.name = channel
     Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
     Channel.green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
     Data.channel[Channel.index] = Channel
