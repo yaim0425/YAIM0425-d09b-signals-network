@@ -701,7 +701,7 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.frame_new_channel.direction = "horizontal"
         Data.GUI.frame_new_channel = Data.GUI.flow_items.add(Data.GUI.frame_new_channel)
         Data.GUI.frame_new_channel.style = Prefix .. "frame_body"
-        -- Data.GUI.frame_new_channel.visible = false
+        Data.GUI.frame_new_channel.visible = false
 
         --- Nuevo nombre
         Data.GUI.textfield_new_channel = {}
