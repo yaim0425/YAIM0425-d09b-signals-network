@@ -495,10 +495,12 @@ end
 function This_MOD.validate_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cerrado forzado de la ventana
+    --- Cerrado forzado de la ventana de ser necesario
     if not Data.Entity or not Data.Entity.valid then
-        Data.GUI.action = This_MOD.action.close_force
-        This_MOD.toggle_gui(Data)
+        if Data.GUI.frame_main then
+            Data.GUI.action = This_MOD.action.close_force
+            This_MOD.toggle_gui(Data)
+        end
         return false
     end
 
@@ -554,13 +556,36 @@ end
 function This_MOD.toggle_gui(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    local function validate_close()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Validación
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if not Data.GUI.frame_main then return false end
+        if Data.GUI.action == This_MOD.action.build then return false end
+        if Data.GUI.action == This_MOD.action.close_force then return true end
+        if not Data.Event.element then return false end
+        if Data.Event.element == Data.GUI.frame_main then return true end
+        if Data.Event.element ~= Data.GUI.button_exit then return false end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+        ---> Aprovado
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        return true
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
     local function validate_open()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
         ---> Validación
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         if Data.GUI.frame_main then return false end
-        if This_MOD.validate_entity(Data) then return false end
+        if not This_MOD.validate_entity(Data) then return false end
         if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -589,32 +614,19 @@ function This_MOD.toggle_gui(Data)
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
-    local function validate_close()
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-        ---> Validación
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-        if not Data.GUI.frame_main then return false end
-        if Data.GUI.action == This_MOD.action.build then return false end
-        if Data.GUI.action == This_MOD.action.close_force then return true end
-        if not Data.Event.element then return false end
-        if Data.Event.element == Data.GUI.frame_main then return true end
-        if Data.Event.element ~= Data.GUI.button_exit then return false end
-
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-        ---> Aprovado
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-        return true
-
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    local function gui_destroy()
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        Data.GUI.frame_main.destroy()
+        Data.GPlayer.GUI = {}
+        Data.GUI = Data.GPlayer.GUI
+        Data.Player.opened = nil
+
+        --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
     local function gui_build()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Cambiar los guiones del nombre
@@ -795,16 +807,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_confirm.tooltip = { "gui.confirm" }
         Data.GUI.button_confirm = Data.GUI.frame_new_channel.add(Data.GUI.button_confirm)
         Data.GUI.button_confirm.style = Prefix .. "button_green"
-
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-    end
-    local function gui_destroy()
-        --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-        Data.GUI.frame_main.destroy()
-        Data.GPlayer.GUI = {}
-        Data.GUI = Data.GPlayer.GUI
-        Data.Player.opened = nil
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
