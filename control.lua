@@ -839,7 +839,7 @@ function This_MOD.selection_channel(Data)
         return
     end
 
-    --- Actualizar la selección
+    --- Guardar la selección
     Data.GUI.last_selected_index = Selected_index
 
     --- De volvió al canal por defecto
