@@ -488,6 +488,23 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
+--- Obtener el indice del canal de la entidad
+function This_MOD.get_index_of_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Channel_name = Data.node[Data.Entity.unit_number].channel.name
+    local i = 0
+
+    for _, channel in pairs(Data.channel) do
+        i = i + 1
+        if channel.name == Channel_name then
+            return i
+        end
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 --- Obtener el canal seleccionado
 function This_MOD.get_channel_pos(Data)
     local Pos = 0
@@ -792,10 +809,13 @@ function This_MOD.toggle_gui(Data)
     local function load_channels()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+        local Dropdown = Data.GUI.dropdown_channels
         for _, channel in pairs(Data.channel) do
-            Data.GUI.dropdown_channels.add_item(channel.name)
+            Dropdown.add_item(channel.name)
         end
-        Data.GUI.dropdown_channels.add_item(This_MOD.new_channel)
+        Dropdown.add_item(This_MOD.new_channel)
+        Dropdown.selected_index = This_MOD.get_index_of_channel(Data)
+        Data.GUI.button_edit.enabled = Dropdown.selected_index > 1
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
