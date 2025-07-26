@@ -541,7 +541,7 @@ function This_MOD.toggle_gui(Data)
         ---> En caso de ser necesaria
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        if not Data.node[Data.Entity.unit_number] then
+        if not GPrefix.get_table(Data.node, "entity", Data.Entity) then
             This_MOD.on_entity_created({
                 entity = Data.Node.entity,
                 force = Data.Node.entity.force
@@ -857,6 +857,10 @@ function This_MOD.selection_channel(Data)
 
     --- Estado del botón
     Data.GUI.button_edit.enabled = Selected_index > 1
+
+    --- Cambiar el canal del nodo
+    local Node = GPrefix.get_table(Data.node, "entity", Data.GUI.entity)
+    Node.channel = Data.channel[GPrefix.pad_left_zeros(10, Selected_index)]
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
