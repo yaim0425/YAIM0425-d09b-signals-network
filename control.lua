@@ -295,8 +295,10 @@ function This_MOD.check_power()
         local Flag = false
         Flag = Flag or Node.connect and not Power_satisfied --- Desconectar
         Flag = Flag or not Node.connect and Power_satisfied --- Conectar
-        if Node.connect and not Power_satisfied then
-            connection_toggle(This_MOD.create_data({ entity = Node.entity }))
+        if Flag then
+            local Data = { entity = Node.entity }
+            Data = This_MOD.create_data(Data)
+            connection_toggle(Data)
         end
     end
 
