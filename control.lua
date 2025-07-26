@@ -232,12 +232,14 @@ function This_MOD.on_entity_created(Data)
         --- Guardar el puntos de conexión
         Node.red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_output_red, true)
         Node.green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
+        Node.type = This_MOD.sender_name
     end
 
     --- Receptor
     if string.find(Data.Entity.name, This_MOD.receiver_name, 1, true) then
         Node.red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
         Node.green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+        Node.type = This_MOD.receiver_name
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
