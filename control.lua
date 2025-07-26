@@ -51,6 +51,7 @@ function This_MOD.setting_mod()
     This_MOD.action.build = 1
     This_MOD.action.edit = 2
     This_MOD.action.new_channel = 3
+    This_MOD.action.close_force = 4
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -490,6 +491,25 @@ function This_MOD.set_channel(node, channel)
     node.channel = channel
 end
 
+--- Forzar cierre de la GUI
+function This_MOD.validate_entity(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cerrado forzado de la ventana
+    if not Data.Entity or not Data.Entity.valid then
+        Data.GUI.action = This_MOD.action.close_force
+        This_MOD.toggle_gui(Data)
+        return false
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Es valido
+    return true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 ---------------------------------------------------------------------------------------------------
 
 -- --- Obtener el indice del canal de la entidad
@@ -540,8 +560,7 @@ function This_MOD.toggle_gui(Data)
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         if Data.GUI.frame_main then return false end
-        if not Data.Entity then return false end
-        if not Data.Entity.valid then return false end
+        if This_MOD.validate_entity(Data) then return false end
         if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -577,6 +596,7 @@ function This_MOD.toggle_gui(Data)
 
         if not Data.GUI.frame_main then return false end
         if Data.GUI.action == This_MOD.action.build then return false end
+        if Data.GUI.action == This_MOD.action.close_force then return true end
         if not Data.Event.element then return false end
         if Data.Event.element == Data.GUI.frame_main then return true end
         if Data.Event.element ~= Data.GUI.button_exit then return false end
