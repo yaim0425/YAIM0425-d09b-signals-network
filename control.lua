@@ -85,8 +85,8 @@ function This_MOD.load_events()
     --     This_MOD.forces_merged(This_MOD.Create_data(event))
     -- end)
 
-    -- --- Verificar que la entidad tenga energía
-    -- script.on_nth_tick(30, This_MOD.check_power)
+    --- Verificar que la entidad tenga energía
+    script.on_nth_tick(20, This_MOD.check_power)
 
     -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -263,7 +263,7 @@ function This_MOD.check_power()
         if not Data.Entity.valid then return end
 
         --- Renombrar
-        local Node = Data.Node[Data.Entity.unit_number]
+        local Node = Data.node[Data.Entity.unit_number]
         local Channel = Node.channel
 
         if Node.connect then
@@ -279,55 +279,65 @@ function This_MOD.check_power()
         end
     end
 
+    local function check_power(Node)
+        --- En Factorio 2.0 puede ocurrir que la entidad esté
+        --- completamente alimentada, pero debido a algunas
+        --- peculiaridades del motor el búfer sólo está lleno
+        --- al 96%, por ejemplo.
+
+        --- Umbral de activació: 90%
+        local Threshold = 0.9
+
+        --- Variables a usar
+        local Energy = Node.entity.energy
+        local Buffer = Node.entity.electric_buffer_size
+        local Power_satisfied = Energy >= Buffer * Threshold
+
+        --- Acciones
+        if Node.connect and not Power_satisfied then
+            action(This_MOD.create_data({
+                entity = Node.entity,
+                force = Node.entity.force
+            }))
+        elseif not Node.connect and Power_satisfied then
+            action(This_MOD.create_data({
+                entity = Node.entity,
+                force = Node.entity.force
+            }))
+        end
+    end
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Variables a usar
-    local Data = This_MOD.create_data()
+    --- Lista de entidades a eliminar
     local Deleted = {}
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Recorrer cada entidad enlistada
-    for _, gForce in pairs(Data.gForces) do
-        for key, Node in pairs(gForce.Node) do
-            if not Node.entity or not Node.entity.valid then
-                table.insert(Deleted, key)
-                goto JumpNode
+    --- Recorrer cada fuerza activa
+    for _, gForce in pairs(This_MOD.create_data().gForces) do
+        --- Antenas a eliminar
+        Deleted = {}
+
+        --- Validar cada antena
+        for key, Node in pairs(gForce.node) do
+            if Node.entity and Node.entity.valid then
+                check_power(Node)
+            else
+                table.insert(Deleted, 1, key)
             end
-
-            --- En Factorio 2.0 puede ocurrir que la entidad esté
-            --- completamente alimentada, pero debido a algunas
-            --- peculiaridades del motor el búfer sólo está lleno
-            --- al 96%, por ejemplo.
-
-            --- Umbral de activació: 90%
-            local Threshold = 0.9
-
-            --- Variables a usar
-            local energy = Node.entity.energy
-            local buffer = Node.entity.electric_buffer_size
-            local power_satisfied = energy >= buffer * Threshold
-
-            --- Acciones
-            if Node.connect and not power_satisfied then
-                action(This_MOD.create_data({
-                    entity = Node.entity,
-                    force = Node.entity.force
-                }))
-            elseif not Node.connect and power_satisfied then
-                action(This_MOD.create_data({
-                    entity = Node.entity,
-                    force = Node.entity.force
-                }))
-            end
-
-            --- Receptor de salto
-            :: JumpNode ::
         end
 
         --- Eliminar a las entidad invalidas
         for _, key in pairs(Deleted) do
-            gForce.Node[key] = nil
+            local Node = gForce.node[key]
+            if Node.filter_red then
+                Node.filter_red.destroy()
+            end
+            if Node.filter_green then
+                Node.filter_green.destroy()
+            end
+            gForce.node[key] = nil
         end
     end
 
