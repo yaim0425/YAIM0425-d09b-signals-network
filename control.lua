@@ -972,13 +972,16 @@ end
 
 --- Mostrar el cuerpo para crear un nuevo canal
 function This_MOD.show_new_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Cambiar de frame
-    Data.GUI.frame_old_channels.visible = false
-    Data.GUI.frame_new_channels.visible = true
+    Data.GUI.frame_old_channel.visible = false
+    Data.GUI.frame_new_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Configuración para un nuevo canal
     if Data.GUI.action == This_MOD.action.new_channel then
-        Data.GUI.action = This_MOD.action.new_channel
         Data.GUI.textfield_new_channel.text = ""
     end
 
@@ -991,6 +994,8 @@ function This_MOD.show_new_channel(Data)
 
     --- Enfocar nombre
     Data.GUI.textfield_new_channel.focus()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Validar el nombre del canal
