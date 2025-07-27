@@ -84,14 +84,20 @@ function This_MOD.load_events()
     --     This_MOD.forces_merged(This_MOD.Create_data(event))
     -- end)
 
-    --- Verificar que la entidad tenga energía
-    script.on_nth_tick(20, This_MOD.check_power)
+    --- Verificación regular
+    script.on_nth_tick(20, function()
+        --- La entidad tenga energía
+        This_MOD.check_power()
 
-    -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Forzar el cierre, en caso de ser necesario
+        This_MOD.validate_gui()
+    end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
-    -- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Abrir o cerrar la interfaz
     script.on_event({
@@ -263,7 +269,7 @@ end
 --     end
 -- end
 
---- Verificar que la entidad tenga energía
+--- La entidad tenga energía
 function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -347,6 +353,12 @@ function This_MOD.check_power()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
+
+--- Validar el estado 
+function This_MOD.validate_gui()
+
+end
+
 
 -- --- Al fusionar dos fuerzas
 -- function This_MOD.forces_merged(Data)
@@ -872,6 +884,7 @@ function This_MOD.selection_channel(Data)
     --- Validación
     if not Data.GUI.frame_main then return end
     if not Data.GUI.dropdown_channels then return end
+    if not This_MOD.validate_entity(Data) then return end
     local Element = Data.Event.element
     local Dropdown_channels = Data.GUI.dropdown_channels
     if Element and Element ~= Dropdown_channels then return end
