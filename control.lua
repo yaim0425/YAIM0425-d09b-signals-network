@@ -1049,13 +1049,12 @@ end
 --     Data.GUI.textfield_new_channel.focus()
 -- end
 
+--- Guardar el canal en la copia
 function This_MOD.create_blueprint(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Variable a usar
     local Blueprint = nil
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Identificar el tipo de selección
     local Flag_blueprint =
@@ -1072,8 +1071,6 @@ function This_MOD.create_blueprint(Data)
     elseif Flag_cursor then
         Blueprint = Data.Player.cursor_stack
     end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validar la selección
     if not Blueprint then return end
