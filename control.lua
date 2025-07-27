@@ -190,9 +190,6 @@ function This_MOD.on_entity_created(Data)
     if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    -- event.unit_number = event.entity.unit_number
-    -- GPrefix.var_dump(event)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Canal por defecto
     This_MOD.get_channel(Data, This_MOD.channel_default)
@@ -475,7 +472,7 @@ function This_MOD.get_channel(Data, channel)
 
     --- Se busca el canal por defecto
     local Index = GPrefix.pad_left_zeros(10, 1)
-    local Flag = GPrefix.get_length(Data.channels) > 0
+    local Flag = GPrefix.get_length(Data.channels)
     Flag = Flag and GPrefix.is_table(channel)
     if Flag then return Data.channels[Index] end
 
