@@ -86,12 +86,24 @@ function This_MOD.load_events()
         -- This_MOD.forces_merged(This_MOD.Create_data(event))
     end)
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Modificar el fantasma de reconstrucción
     script.on_event({
         defines.events.on_post_entity_died
     }, function(event)
-        This_MOD.create_ghost(This_MOD.create_data(event))
+        event.entity = event.ghost
+        This_MOD.edit_ghost(This_MOD.create_data(event))
     end)
+
+    --- Muerte de la entidad
+    script.on_event({
+        defines.events.on_entity_died
+    }, function(event)
+        This_MOD.entity_destroyed(This_MOD.create_data(event))
+    end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Verificación periodica
     script.on_nth_tick(20, function()
@@ -164,10 +176,18 @@ end
 
 --- Crea y agrupar las variables a usar
 function This_MOD.create_data(event)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Consolidar la información
     local Data = GPrefix.create_data(event or {}, This_MOD)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
     if not Data.gForce then return Data end
     if not event then return Data end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Postes / canales
     Data.gForce.channels = Data.gForce.channels or {}
@@ -189,6 +209,8 @@ function This_MOD.create_data(event)
 
     --- Devolver el consolidado de los datos
     return Data
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -227,6 +249,7 @@ function This_MOD.on_entity_created(Data)
     Node.entity = Data.Entity
     Node.channel = Channel
     Node.connect = false
+    Node.unit_number = Data.Entity.unit_number
     table.insert(Data.nodes, Node)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -319,19 +342,59 @@ end
 --     Data.gForces[Data.Event.source_index] = nil
 -- end
 
+---------------------------------------------------------------------------------------------------
 
-function This_MOD.create_ghost(Data)
+--- Modificar el fantasma de reconstrucción
+function This_MOD.edit_ghost(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Renombrar
     local Ghost = Data.Event.ghost
+    local Prototype = Data.Event.prototype
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
     if not Ghost then return end
-    if not GPrefix.has_id(Ghost.name, This_MOD.id) then return end
+    if not GPrefix.has_id(Prototype.name, This_MOD.id) then return end
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Cargar la información relacionada
+    local Info = GPrefix.get_table(Data.ghosts, "unit_number", Data.Event.unit_number)
+    if not Info then return end
 
+    --- Modificar el fantasma
+    Ghost.tags = { name = Info.channel.name }
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
-    GPrefix.var_dump(Data)
-    -- if GPrefix.has_id() then
-    -- end
+--- Muerte de la entidad
+function This_MOD.entity_destroyed(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
+    if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Eliminar la conexión
+    Data.node.red.disconnect_from(Data.node.channel.red, defines.wire_origin.script)
+    Data.node.green.disconnect_from(Data.node.channel.green, defines.wire_origin.script)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Información a guardar
+    local Info = {}
+    Info.unit_number = Data.node.unit_number
+    Info.channel = Data.node.channel
+    Info.tick = 9
+
+    --- Guardar la información
+    table.insert(Data.ghosts, Info)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -407,15 +470,6 @@ function This_MOD.check_power()
             local Node = gForce.nodes[key]
             table.remove(gForce.nodes, key)
 
-            table.insert(gForce.ghosts, {
-                unit_number = Node.entity.unit_number,
-                index = Node.channel.index,
-                tick = 3,
-            })
-
-            Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
-            Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
-
             if Node.type == This_MOD.sender_name then
                 Node.filter_red.destroy()
                 Node.filter_green.destroy()
@@ -462,7 +516,7 @@ function This_MOD.on_pre_destroy()
 
         --- Eliminar la información
         for _, key in pairs(Deleted) do
-            table.remove(Deleted, key)
+            table.remove(gForce.ghosts, key)
         end
     end
 
