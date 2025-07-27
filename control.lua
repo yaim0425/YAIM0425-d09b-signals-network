@@ -135,6 +135,12 @@ function This_MOD.load_events()
     --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
     -- end)
 
+    script.on_event({
+        defines.events.on_player_setup_blueprint
+    }, function(event)
+        This_MOD.create_blueprint(This_MOD.create_data(event))
+    end)
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
@@ -1042,6 +1048,58 @@ end
 --     Data.GUI.textfield_new_channel.text = text
 --     Data.GUI.textfield_new_channel.focus()
 -- end
+
+function This_MOD.create_blueprint(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Variable a usar
+    local Blueprint = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Identificar el tipo de selección
+    local Flag_blueprint =
+        Data.Player.blueprint_to_setup and
+        Data.Player.blueprint_to_setup.valid_for_read
+
+    local Flag_cursor =
+        Data.Player.cursor_stack.valid_for_read and
+        Data.Player.cursor_stack.is_blueprint
+
+    --- Renombrar la selección
+    if Flag_blueprint then
+        Blueprint = Data.Player.blueprint_to_setup
+    elseif Flag_cursor then
+        Blueprint = Data.Player.cursor_stack
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validar la selección
+    if not Blueprint then return end
+    if not Blueprint.is_blueprint_setup() then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Listado de las entidades
+    local Entities = Blueprint.get_blueprint_entities()
+    if not Entities then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Guardar el canal al que está conectado
+    local Mapping = Data.Event.mapping.get()
+    for _, entity in pairs(Entities or {}) do
+        if GPrefix.has_id(entity.name, This_MOD.id) then
+            local Entity = Mapping[entity.entity_number]
+            local Node = GPrefix.get_table(Data.nodes, "entity", Entity)
+            local Tags = { name = Node.channel.name }
+            Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
+        end
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 ---------------------------------------------------------------------------------------------------
 
