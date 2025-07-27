@@ -354,9 +354,20 @@ function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Validar el estado 
+--- Validar el estado
 function This_MOD.validate_gui()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    for player_index, GPlayer in pairs(This_MOD.create_data().GPlayers) do
+        This_MOD.validate_entity(
+            This_MOD.create_data({
+                entity = GPlayer.GUI.entity,
+                player_index = player_index
+            })
+        )
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 -- --- Al fusionar dos fuerzas
