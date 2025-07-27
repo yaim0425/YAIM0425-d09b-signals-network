@@ -84,7 +84,7 @@ function This_MOD.load_events()
     --     This_MOD.forces_merged(This_MOD.Create_data(event))
     -- end)
 
-    --- Verificación regular
+    --- Verificación periodica
     script.on_nth_tick(20, function()
         --- La entidad tenga energía
         This_MOD.check_power()
@@ -135,6 +135,7 @@ function This_MOD.load_events()
     --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
     -- end)
 
+    --- Al copiar las entidades
     script.on_event({
         defines.events.on_player_setup_blueprint
     }, function(event)
