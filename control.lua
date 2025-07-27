@@ -519,7 +519,13 @@ function This_MOD.validate_entity(Data)
     ---> Cerrado forzado de la ventana de ser necesario
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if not Data.Entity or not Data.Entity.valid then
+    local Flag = false
+    Flag = (Data.GUI.entity and Data.GUI.entity.valid)
+    Flag = Flag or (Data.Entity and Data.Entity.valid)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Flag then
         if Data.GUI.frame_main then
             Data.GUI.action = This_MOD.action.close_force
             This_MOD.toggle_gui(Data)
