@@ -516,8 +516,9 @@ end
 --- Forzar cierre de la GUI
 function This_MOD.validate_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Cerrado forzado de la ventana de ser necesario
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cerrado forzado de la ventana de ser necesario
     if not Data.Entity or not Data.Entity.valid then
         if Data.GUI.frame_main then
             Data.GUI.action = This_MOD.action.close_force
@@ -528,7 +529,12 @@ function This_MOD.validate_entity(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Es valido
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    ---> Aprovado
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     return true
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
