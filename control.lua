@@ -1057,6 +1057,7 @@ function This_MOD.selection_channel(Data)
     --- Se quiere crear un nuevo canal
     if Selected_index == #Dropdown_channels.items then
         This_MOD.show_new_channel(Data)
+        Data.Player.play_sound({ path = "utility/gui_click" })
         return
     end
 
@@ -1066,6 +1067,7 @@ function This_MOD.selection_channel(Data)
     --- Cambiar el canal del nodo
     local Channel = Data.channels[GPrefix.pad_left_zeros(10, Selected_index)]
     This_MOD.set_channel(Data.node, Channel)
+    Data.Player.play_sound({ path = "utility/wire_connect_pole" })
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
