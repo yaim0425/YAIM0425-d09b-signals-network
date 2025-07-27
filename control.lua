@@ -199,10 +199,6 @@ function This_MOD.on_entity_created(Data)
     Tags = Tags and Tags.name or This_MOD.channel_default
     local Channel = This_MOD.get_channel(Data, Tags)
 
-    for i = 2, 10, 1 do
-        This_MOD.get_channel(Data, "Channel " .. i)
-    end
-
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
 
