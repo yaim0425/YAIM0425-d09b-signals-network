@@ -86,6 +86,13 @@ function This_MOD.load_events()
         -- This_MOD.forces_merged(This_MOD.Create_data(event))
     end)
 
+    --- Modificar el fantasma de reconstrucción
+    script.on_event({
+        defines.events.on_post_entity_died
+    }, function(event)
+        This_MOD.create_ghost(This_MOD.create_data(event))
+    end)
+
     --- Verificación periodica
     script.on_nth_tick(20, function()
         --- La entidad tenga energía
@@ -93,6 +100,9 @@ function This_MOD.load_events()
 
         --- Forzar el cierre, en caso de ser necesario
         This_MOD.validate_gui()
+
+        --- Información de las antenas destruidas
+        This_MOD.on_pre_destroy()
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -159,13 +169,17 @@ function This_MOD.create_data(event)
     if not Data.gForce then return Data end
     if not event then return Data end
 
-    --- Lista de los postes
+    --- Postes / canales
     Data.gForce.channels = Data.gForce.channels or {}
     Data.channels = Data.gForce.channels
 
-    --- Lista de los transceiver
+    --- Antenas
     Data.gForce.nodes = Data.gForce.nodes or {}
     Data.nodes = Data.gForce.nodes
+
+    --- Auxiliar
+    Data.gForce.ghosts = Data.gForce.ghosts or {}
+    Data.ghosts = Data.gForce.ghosts
 
     --- Cargar el nodo a tratar
     if Data.Entity or Data.GUI then
@@ -282,6 +296,46 @@ end
 --     end
 -- end
 
+-- --- Al fusionar dos fuerzas
+-- function This_MOD.forces_merged(Data)
+--     --- Renombrar
+--     local Source = Data.gForces[Data.Event.source_index]
+--     if not Source then return end
+--     local Destination = This_MOD.create_data({
+--         force = Data.Event.destination
+--     })
+
+--     --- Mover los canales
+--     for index, Channel in pairs(Source.Channel) do
+--         Destination.channel[index] = Channel
+--     end
+
+--     --- Mover los nodos
+--     for index, Node in pairs(Source.Node) do
+--         Destination.node[index] = Node
+--     end
+
+--     --- Eliminar la referencia a la fuerza
+--     Data.gForces[Data.Event.source_index] = nil
+-- end
+
+
+function This_MOD.create_ghost(Data)
+    local Ghost = Data.Event.ghost
+    if not Ghost then return end
+    if not GPrefix.has_id(Ghost.name, This_MOD.id) then return end
+
+
+
+
+
+    GPrefix.var_dump(Data)
+    -- if GPrefix.has_id() then
+    -- end
+end
+
+---------------------------------------------------------------------------------------------------
+
 --- La entidad tenga energía
 function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -334,15 +388,10 @@ function This_MOD.check_power()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Lista de entidades a eliminar
-    local Deleted
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Recorrer cada fuerza activa
     for _, gForce in pairs(This_MOD.create_data().gForces) do
         --- Antenas a eliminar
-        Deleted = {}
+        local Deleted = {}
 
         --- Validar cada antena
         for key, node in pairs(gForce.nodes) do
@@ -357,6 +406,12 @@ function This_MOD.check_power()
         for _, key in pairs(Deleted) do
             local Node = gForce.nodes[key]
             table.remove(gForce.nodes, key)
+
+            table.insert(gForce.ghosts, {
+                unit_number = Node.entity.unit_number,
+                index = Node.channel.index,
+                tick = 3,
+            })
 
             Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
             Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
@@ -387,28 +442,32 @@ function This_MOD.validate_gui()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- --- Al fusionar dos fuerzas
--- function This_MOD.forces_merged(Data)
---     --- Renombrar
---     local Source = Data.gForces[Data.Event.source_index]
---     if not Source then return end
---     local Destination = This_MOD.create_data({
---         force = Data.Event.destination
---     })
+--- Información de las antenas destruidas
+function This_MOD.on_pre_destroy()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Mover los canales
---     for index, Channel in pairs(Source.Channel) do
---         Destination.channel[index] = Channel
---     end
+    --- Recorrer cada fuerza activa
+    for _, gForce in pairs(This_MOD.create_data().gForces) do
+        --- Información a eliminar
+        local Deleted = {}
 
---     --- Mover los nodos
---     for index, Node in pairs(Source.Node) do
---         Destination.node[index] = Node
---     end
+        --- Revisar cada información
+        for key, ghost in pairs(gForce.ghosts) do
+            if ghost.tick == 0 then
+                table.insert(Deleted, 1, key)
+            else
+                ghost.tick = ghost.tick - 1
+            end
+        end
 
---     --- Eliminar la referencia a la fuerza
---     Data.gForces[Data.Event.source_index] = nil
--- end
+        --- Eliminar la información
+        for _, key in pairs(Deleted) do
+            table.remove(Deleted, key)
+        end
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 ---------------------------------------------------------------------------------------------------
 
