@@ -190,6 +190,8 @@ function This_MOD.on_entity_created(Data)
     if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    GPrefix.var_dump(Data.Event)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la superficie y el canal por defecto
     local Channel = This_MOD.get_channel(Data, This_MOD.channel_default)
@@ -764,9 +766,9 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.entity_preview_entity = {}
         Data.GUI.entity_preview_entity.name = "entity_preview_entity"
         Data.GUI.entity_preview_entity.type = "entity-preview"
-        Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
-        Data.GUI.entity_preview_entity.style = "wide_entity_button"
-        Data.GUI.entity_preview_entity.entity = Data.Entity
+        -- Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
+        -- Data.GUI.entity_preview_entity.style = "wide_entity_button"
+        -- Data.GUI.entity_preview_entity.entity = Data.Entity
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 

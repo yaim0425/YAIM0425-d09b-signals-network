@@ -519,7 +519,7 @@ function This_MOD.load_styles()
             item_style = {
                 type = "button_style",
                 parent = "list_box_item",
-                left_click_sound = "__Testing__/sound/empty_audio.ogg"
+                left_click_sound = This_MOD.sound .. "empty_audio.ogg",
             },
         },
         width = 296 + 64
