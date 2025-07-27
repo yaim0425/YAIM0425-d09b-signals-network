@@ -190,11 +190,17 @@ function This_MOD.on_entity_created(Data)
     if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    GPrefix.var_dump(Data.Event)
+    -- event.unit_number = event.entity.unit_number
+    -- GPrefix.var_dump(event)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Crear la superficie y el canal por defecto
-    local Channel = This_MOD.get_channel(Data, This_MOD.channel_default)
+    --- Canal por defecto
+    This_MOD.get_channel(Data, This_MOD.channel_default)
+
+    --- Canal para la nueva antena
+    local Tags = Data.Event.tags
+    Tags = Tags and Tags.name or This_MOD.channel_default
+    local Channel = This_MOD.get_channel(Data, Tags)
 
     for i = 2, 10, 1 do
         This_MOD.get_channel(Data, "Channel " .. i)
@@ -467,7 +473,13 @@ function This_MOD.get_channel(Data, channel)
     --- Superficie de los canales
     local Surface = This_MOD.get_surface()
 
-    --- Cargar el poste del canal indicado
+    --- Se busca el canal por defecto
+    local Index = GPrefix.pad_left_zeros(10, 1)
+    local Flag = GPrefix.get_length(Data.channels) > 0
+    Flag = Flag and GPrefix.is_table(channel)
+    if Flag then return Data.channels[Index] end
+
+    --- Cargar el canal indicado
     local Channel = GPrefix.get_table(Data.channels, "name", channel)
     if Channel then return Channel end
 
@@ -766,9 +778,9 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.entity_preview_entity = {}
         Data.GUI.entity_preview_entity.name = "entity_preview_entity"
         Data.GUI.entity_preview_entity.type = "entity-preview"
-        -- Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
-        -- Data.GUI.entity_preview_entity.style = "wide_entity_button"
-        -- Data.GUI.entity_preview_entity.entity = Data.Entity
+        Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
+        Data.GUI.entity_preview_entity.style = "wide_entity_button"
+        Data.GUI.entity_preview_entity.entity = Data.Entity
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
