@@ -513,6 +513,15 @@ function This_MOD.load_styles()
     }
     Styles[Prefix .. "drop_down_channels"] = {
         type = "dropdown_style",
+        parent = "dropdown",
+        list_box_style = {
+            type = "list_box_style",
+            item_style = {
+                type = "button_style",
+                parent = "list_box_item",
+                left_click_sound = "__Testing__/sound/empty_audio.ogg"
+            },
+        },
         width = 296 + 64
     }
 
