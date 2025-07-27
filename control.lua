@@ -71,18 +71,20 @@ function This_MOD.load_events()
         This_MOD.on_entity_created(This_MOD.create_data(event))
     end)
 
-    -- --- Ocultar la superficie de las fuerzas recién creadas
-    -- script.on_event({
-    --     defines.events.on_force_created
-    -- }, function(event)
-    --     This_MOD.hide_surface(This_MOD.Create_data(event))
-    -- end)
+    --- Ocultar la superficie de las fuerzas recién creadas
+    script.on_event({
+        defines.events.on_force_created
+    }, function(event)
+        GPrefix.var_dump("hide_surface")
+        -- This_MOD.hide_surface(This_MOD.Create_data(event))
+    end)
 
-    -- script.on_event({
-    --     defines.events.on_forces_merged
-    -- }, function(event)
-    --     This_MOD.forces_merged(This_MOD.Create_data(event))
-    -- end)
+    script.on_event({
+        defines.events.on_forces_merged
+    }, function(event)
+        GPrefix.var_dump("forces_merged")
+        -- This_MOD.forces_merged(This_MOD.Create_data(event))
+    end)
 
     --- Verificación periodica
     script.on_nth_tick(20, function()
@@ -107,12 +109,13 @@ function This_MOD.load_events()
         This_MOD.toggle_gui(This_MOD.create_data(event))
     end)
 
-    -- --- Al seleccionar o deseleccionar un icon
-    -- script.on_event({
-    --     defines.events.on_gui_elem_changed
-    -- }, function(event)
-    --     This_MOD.add_icon(This_MOD.Create_data(event))
-    -- end)
+    --- Al seleccionar o deseleccionar un icon
+    script.on_event({
+        defines.events.on_gui_elem_changed
+    }, function(event)
+        GPrefix.var_dump("add_icon")
+        -- This_MOD.add_icon(This_MOD.Create_data(event))
+    end)
 
     --- Al seleccionar otro canal
     script.on_event({
@@ -121,19 +124,21 @@ function This_MOD.load_events()
         This_MOD.selection_channel(This_MOD.create_data(event))
     end)
 
-    -- --- Al hacer clic en algún elemento de la ventana
-    -- script.on_event({
-    --     defines.events.on_gui_click
-    -- }, function(event)
-    --     This_MOD.button_action(This_MOD.Create_data(event))
-    -- end)
+    --- Al hacer clic en algún elemento de la ventana
+    script.on_event({
+        defines.events.on_gui_click
+    }, function(event)
+        GPrefix.var_dump("button_action")
+        -- This_MOD.button_action(This_MOD.Create_data(event))
+    end)
 
-    -- --- Validar el nuevo nombre
-    -- script.on_event({
-    --     defines.events.on_gui_confirmed
-    -- }, function(event)
-    --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
-    -- end)
+    --- Validar el nuevo nombre
+    script.on_event({
+        defines.events.on_gui_confirmed
+    }, function(event)
+        GPrefix.var_dump("validate_channel_name")
+        -- This_MOD.validate_channel_name(This_MOD.Create_data(event))
+    end)
 
     --- Al copiar las entidades
     script.on_event({
@@ -352,6 +357,10 @@ function This_MOD.check_power()
         for _, key in pairs(Deleted) do
             local Node = gForce.nodes[key]
             table.remove(gForce.nodes, key)
+
+            Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
+            Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
+
             if Node.type == This_MOD.sender_name then
                 Node.filter_red.destroy()
                 Node.filter_green.destroy()
