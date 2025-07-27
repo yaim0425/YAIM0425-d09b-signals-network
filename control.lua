@@ -359,7 +359,6 @@ function This_MOD.validate_gui()
 
 end
 
-
 -- --- Al fusionar dos fuerzas
 -- function This_MOD.forces_merged(Data)
 --     --- Renombrar
@@ -875,6 +874,8 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.entity = Data.Entity
         Data.GUI.action = This_MOD.action.none
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Al seleccionar un canal
