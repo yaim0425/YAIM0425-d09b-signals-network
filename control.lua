@@ -1023,6 +1023,7 @@ function This_MOD.toggle_gui(Data)
     --- Acción a ejecutar
     if validate_close() then
         gui_destroy()
+        Data.Player.play_sound({ path = "entity-close/decider-combinator" })
     elseif validate_open() then
         Data.GUI.action = This_MOD.action.build
         gui_build()
@@ -1032,6 +1033,7 @@ function This_MOD.toggle_gui(Data)
         -- This_MOD.selection_channel(Data)
         Data.GUI.entity = Data.Entity
         Data.GUI.action = This_MOD.action.none
+        Data.Player.play_sound({ path = "entity-open/decider-combinator" })
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---

@@ -192,9 +192,6 @@ function This_MOD.create_entities()
     Sender.rotation_speed = 0.002
     Sender.connects_to_other_radars = false
 
-    Sender.open_sound = This_MOD.ref.combinator.combinator_open
-    Sender.close_sound = This_MOD.ref.combinator.combinator_close
-
     Sender.localised_name = { "", { "entity-name." .. Sender.name } }
     Sender.localised_description = { "", { "entity-description." .. Sender.name } }
 
@@ -266,9 +263,6 @@ function This_MOD.create_entities()
     Receiver.energy_usage = '2MW'
     Receiver.rotation_speed = 0.002
     Receiver.connects_to_other_radars = false
-
-    Sender.open_sound = This_MOD.ref.combinator.combinator_open
-    Sender.close_sound = This_MOD.ref.combinator.combinator_close
 
     Receiver.localised_name = { "", { "entity-name." .. Receiver.name } }
     Receiver.localised_description = { "", { "entity-description." .. Receiver.name } }
