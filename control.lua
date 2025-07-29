@@ -68,7 +68,7 @@ function This_MOD.load_events()
         defines.events.script_raised_revive,
         defines.events.on_space_platform_built_entity,
     }, function(event)
-        This_MOD.on_entity_created(This_MOD.create_data(event))
+        This_MOD.create_entity(This_MOD.create_data(event))
     end)
 
     --- Ocultar la superficie de las fuerzas recién creadas
@@ -100,7 +100,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_entity_died
     }, function(event)
-        This_MOD.entity_destroyed(This_MOD.create_data(event))
+        This_MOD.beafore_entity_died(This_MOD.create_data(event))
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -114,7 +114,7 @@ function This_MOD.load_events()
         This_MOD.validate_gui()
 
         --- Información de las antenas destruidas
-        This_MOD.on_pre_destroy()
+        This_MOD.after_entity_died()
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -224,7 +224,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Al crear la entidad
-function This_MOD.on_entity_created(Data)
+function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Entidad no valida
@@ -371,7 +371,7 @@ function This_MOD.edit_ghost(Data)
 end
 
 --- Muerte de la entidad
-function This_MOD.entity_destroyed(Data)
+function This_MOD.beafore_entity_died(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validación
@@ -497,7 +497,7 @@ function This_MOD.validate_gui()
 end
 
 --- Información de las antenas destruidas
-function This_MOD.on_pre_destroy()
+function This_MOD.after_entity_died()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Recorrer cada fuerza activa
@@ -767,7 +767,7 @@ function This_MOD.toggle_gui(Data)
         --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         if not Data.node then
-            This_MOD.on_entity_created({
+            This_MOD.create_entity({
                 entity = Data.Entity
             })
         end
