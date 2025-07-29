@@ -41,10 +41,15 @@ function This_MOD.setting_mod()
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Valores constante
+    This_MOD.tech_name = This_MOD.prefix .. "transmission"
     This_MOD.sender_name = This_MOD.prefix .. "sender"
     This_MOD.receiver_name = This_MOD.prefix .. "receiver"
     This_MOD.graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
     This_MOD.sound = "__" .. This_MOD.prefix .. This_MOD.name .. "__/sound/"
+
+    -- GPrefix.var_dump(GPrefix.entities["roboport"])
+    -- GPrefix.var_dump(GPrefix.entities["aai-signal-sender"])
+    -- GPrefix.var_dump(GPrefix.entities["aai-signal-receiver"])
 
     --- Valores de referencia
     This_MOD.ref = {}
@@ -78,8 +83,8 @@ function This_MOD.create_items()
     Sender.subgroup = This_MOD.subgroup
     Sender.order = "010"
 
-    Sender.name = This_MOD.prefix .. "sender"
-    Sender.place_result = This_MOD.prefix .. "sender"
+    Sender.name = This_MOD.sender_name
+    Sender.place_result = This_MOD.sender_name
 
     Sender.localised_name = { "", { "entity-name." .. Sender.name } }
     Sender.localised_description = { "", { "entity-description." .. Sender.name } }
@@ -97,8 +102,8 @@ function This_MOD.create_items()
     Receiver.subgroup = This_MOD.subgroup
     Sender.order = "020"
 
-    Receiver.name = This_MOD.prefix .. "receiver"
-    Receiver.place_result = This_MOD.prefix .. "receiver"
+    Receiver.name = This_MOD.receiver_name
+    Receiver.place_result = This_MOD.receiver_name
 
     Receiver.localised_name = { "", { "entity-name." .. Receiver.name } }
     Receiver.localised_description = { "", { "entity-description." .. Receiver.name } }
@@ -124,7 +129,7 @@ function This_MOD.create_recipes()
 
     local Sender = {}
     Sender.type = "recipe"
-    Sender.name = This_MOD.prefix .. "sender"
+    Sender.name = This_MOD.sender_name
     Sender.energy_required = 10
     Sender.ingredients = {
         { type = "item", name = "radar",                amount = 1 },
@@ -133,9 +138,11 @@ function This_MOD.create_recipes()
         { type = "item", name = "steel-plate",          amount = 10 },
         { type = "item", name = "electric-engine-unit", amount = 10 },
     }
-    Sender.results = {
-        { type = "item", name = This_MOD.prefix .. "sender", amount = 1 },
-    }
+    Sender.results = { {
+        type = "item",
+        name = This_MOD.sender_name,
+        amount = 1
+    } }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -147,7 +154,7 @@ function This_MOD.create_recipes()
 
     local Receiver = {}
     Receiver.type = "recipe"
-    Receiver.name = This_MOD.prefix .. "receiver"
+    Receiver.name = This_MOD.receiver_name
     Receiver.energy_required = 10
     Receiver.ingredients = {
         { type = "item", name = "radar",                amount = 1 },
@@ -156,9 +163,11 @@ function This_MOD.create_recipes()
         { type = "item", name = "steel-plate",          amount = 20 },
         { type = "item", name = "electric-engine-unit", amount = 10 },
     }
-    Receiver.results = {
-        { type = "item", name = This_MOD.prefix .. "receiver", amount = 1 },
-    }
+    Receiver.results = { {
+        type = "item",
+        name = This_MOD.receiver_name,
+        amount = 1
+    } }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -168,8 +177,8 @@ function This_MOD.create_recipes()
     ---> Crear los objetos
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GPrefix.add_recipe_to_tech(This_MOD.prefix .. "transmission", Sender)
-    GPrefix.add_recipe_to_tech(This_MOD.prefix .. "transmission", Receiver)
+    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Sender)
+    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -246,6 +255,135 @@ function This_MOD.create_entities()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    Sender = {
+        type = "roboport",
+        name = This_MOD.sender_name,
+        icon_mipmaps = 1,
+        flags = {
+            "placeable-player",
+            "player-creation"
+        },
+        minable = {
+            mining_time = 0.2,
+            results = {
+                {
+                    type = "item",
+                    name = This_MOD.sender_name,
+                    amount = 1
+                }
+            }
+        },
+        max_health = 400,
+        corpse = "big-remnants",
+        collision_box = {
+            { -2.3, -2.3 },
+            { 2.3,  2.3 }
+        },
+        selection_box = {
+            { -2.5, -2.5 },
+            { 2.5,  2.5 }
+        },
+        drawing_box = {
+            { -2.5, -2.9 },
+            { 2.5,  2.5 }
+        },
+        dying_explosion = "medium-explosion",
+        energy_source = {
+            type = "electric",
+            usage_priority = "secondary-input",
+            input_flow_limit = "20MW",
+            buffer_capacity = "5.5MJ"
+        },
+        recharge_minimum = "5MJ",
+        energy_usage = "10MW",
+        charging_energy = "5MW",
+        logistics_radius = 0,
+        construction_radius = 0,
+        charge_approach_distance = 0,
+        robot_slots_count = 0,
+        material_slots_count = 0,
+        base_animation = {
+            layers = {
+                {
+                    filename = This_MOD.graphics .. "entity-sender.png",
+                    shift = util.by_pixel(6, -13),
+                    animation_speed = 0.18,
+                    frame_count = 64,
+                    priority = "high",
+                    height = 3232 / 8,
+                    width = 2880 / 8,
+                    line_length = 8,
+                    scale = 0.5
+
+                },
+                {
+                    draw_as_shadow = true,
+                    filename = This_MOD.graphics .. "entity-sender-shadow.png",
+                    shift = util.by_pixel(33, 10),
+                    frame_count = 64,
+                    priority = "high",
+                    height = 2224 / 8,
+                    width = 3712 / 8,
+                    line_length = 8,
+                    scale = 0.5
+                }
+            }
+        },
+        vehicle_impact_sound = {
+            filename = "__base__/sound/car-metal-impact.ogg",
+            volume = 0.65
+        },
+        working_sound = {
+            sound = {
+                filename = "__base__/sound/roboport-working.ogg",
+                volume = 0.6
+            },
+            max_sounds_per_type = 3,
+            audible_distance_modifier = 0.5,
+            probability = 1 / (15 * 60)
+        },
+        request_to_open_door_timeout = 15,
+        spawn_and_station_height = -0.1,
+        draw_logistic_radius_visualization = false,
+        draw_construction_radius_visualization = false,
+        open_door_trigger_effect = {
+            {
+                type = "play-sound",
+                sound = {
+                    filename = "__base__/sound/roboport-door.ogg",
+                    volume = 1.2
+                }
+            }
+        },
+        close_door_trigger_effect = {
+            {
+                type = "play-sound",
+                sound = {
+                    filename = "__base__/sound/roboport-door.ogg",
+                    volume = 0.75
+                }
+            }
+        },
+        circuit_connector = {
+            points = {
+                shadow = {
+                    green = { -1.5, 2.2 },
+                    red = { -1.5, 2.2 }
+                },
+                wire = {
+                    green = { -2, 1.7 },
+                    red = { -2, 1.7 }
+                }
+            }
+        },
+        circuit_wire_max_distance = 10,
+        icons = { { icon = This_MOD.graphics .. "item-sender.png" } },
+        localised_name = { "", { "entity-name." .. This_MOD.sender_name } },
+        localised_description = { "", { "entity-description." .. This_MOD.sender_name } }
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -318,6 +456,134 @@ function This_MOD.create_entities()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    Receiver = {
+        type = "roboport",
+        name = This_MOD.receiver_name,
+        icon_mipmaps = 1,
+        flags = {
+            "placeable-player",
+            "player-creation"
+        },
+        minable = {
+            mining_time = 0.5,
+            results = {
+                {
+                    type = "item",
+                    name = This_MOD.receiver_name,
+                    amount = 1
+                }
+            }
+        },
+        max_health = 800,
+        corpse = "big-remnants",
+        collision_box = {
+            { -4.3, -4.3 },
+            { 4.3,  4.3 }
+        },
+        selection_box = {
+            { -4.5, -4.5 },
+            { 4.5,  4.5 }
+        },
+        drawing_box = {
+            { -4.5, -4.9 },
+            { 4.5,  4.5 }
+        },
+        dying_explosion = "medium-explosion",
+        energy_source = {
+            type = "electric",
+            usage_priority = "secondary-input",
+            input_flow_limit = "4MW",
+            buffer_capacity = "1.1MJ"
+        },
+        recharge_minimum = "1MJ",
+        energy_usage = "2MW",
+        charging_energy = "1MW",
+        logistics_radius = 0,
+        construction_radius = 0,
+        charge_approach_distance = 0,
+        robot_slots_count = 0,
+        material_slots_count = 0,
+        base_animation = {
+            layers = {
+                {
+                    filename = This_MOD.graphics .. "entity-receiver.png",
+                    shift = util.by_pixel(1, -26),
+                    animation_speed = 0.15,
+                    frame_count = 64,
+                    priority = "high",
+                    height = 5440 / 8,
+                    width = 4688 / 8,
+                    line_length = 8,
+                    scale = 0.5
+                },
+                {
+                    draw_as_shadow = true,
+                    filename = This_MOD.graphics .. "entity-receiver-shadow.png",
+                    shift = util.by_pixel(25, 19),
+                    frame_count = 64,
+                    priority = "high",
+                    height = 4800 / 8,
+                    width = 5440 / 8,
+                    line_length = 8,
+                    scale = 0.5
+                }
+            }
+        },
+        vehicle_impact_sound = {
+            filename = "__base__/sound/car-metal-impact.ogg",
+            volume = 0.65
+        },
+        working_sound = {
+            sound = {
+                filename = "__base__/sound/roboport-working.ogg",
+                volume = 0.6
+            },
+            max_sounds_per_type = 3,
+            audible_distance_modifier = 0.5,
+            probability = 1 / (15 * 60)
+        },
+        request_to_open_door_timeout = 15,
+        spawn_and_station_height = -0.1,
+        draw_logistic_radius_visualization = false,
+        draw_construction_radius_visualization = false,
+        open_door_trigger_effect = {
+            {
+                type = "play-sound",
+                sound = {
+                    filename = "__base__/sound/roboport-door.ogg",
+                    volume = 1.2
+                }
+            }
+        },
+        close_door_trigger_effect = {
+            {
+                type = "play-sound",
+                sound = {
+                    filename = "__base__/sound/roboport-door.ogg",
+                    volume = 0.75
+                }
+            }
+        },
+        circuit_connector = {
+            points = {
+                shadow = {
+                    green = { -2.5, 4.2 },
+                    red = { -2.7, 4 }
+                },
+                wire = {
+                    green = { -3.5, 3.2 },
+                    red = { -3.7, 3 }
+                }
+            }
+        },
+        circuit_wire_max_distance = 10,
+        icons = { { icon = This_MOD.graphics .. "item-receiver.png" } },
+        localised_name = { "", { "entity-name." .. This_MOD.receiver_name } },
+        localised_description = { "", { "entity-description." .. This_MOD.receiver_name } }
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -358,10 +624,10 @@ function This_MOD.create_tech()
     --- Tecnología base
     local Technology = {
         type = "technology",
-        name = This_MOD.prefix .. "transmission",
+        name = This_MOD.tech_name,
         effects = {
-            { type = "unlock-recipe", recipe = This_MOD.prefix .. "sender", },
-            { type = "unlock-recipe", recipe = This_MOD.prefix .. "receiver", },
+            { type = "unlock-recipe", recipe = This_MOD.sender_name, },
+            { type = "unlock-recipe", recipe = This_MOD.receiver_name, },
         },
         icons = { {
             icon = This_MOD.graphics .. "technology.png",
@@ -406,7 +672,7 @@ function This_MOD.create_tech()
     --- Buscar los tecnologías de desbloqueo
     local Technologies = {}
     for _, effect in pairs(Technology.effects) do
-        local Recipe = data.raw.recipe[effect.recipe]
+        local Recipe = data.raw.recipe[effect.recipe] or {}
         for _, ingredient in pairs(Recipe.ingredients or {}) do
             local Tech = { level = 0 }
             for _, recipe in pairs(GPrefix.recipes[ingredient.name] or {}) do
