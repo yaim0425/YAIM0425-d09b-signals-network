@@ -50,7 +50,7 @@ function This_MOD.setting_mod()
     This_MOD.ref = {}
     This_MOD.ref.combinator = GPrefix.entities["decider-combinator"]
     This_MOD.ref.item = GPrefix.items["decider-combinator"]
-    This_MOD.ref.radar = GPrefix.entities["radar"]
+    This_MOD.ref.entity = GPrefix.entities["radar"]
 
     --- Crear un subgroup
     This_MOD.subgroup = This_MOD.prefix .. GPrefix.delete_prefix(This_MOD.ref.item.subgroup)
@@ -180,7 +180,7 @@ function This_MOD.create_entities()
     ---> Emisor
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Sender = util.copy(This_MOD.ref.radar)
+    local Sender = util.copy(This_MOD.ref.entity)
     Sender.name = This_MOD.prefix .. "sender"
     Sender.icons = { { icon = This_MOD.graphics .. "item-sender.png" } }
 
@@ -252,7 +252,7 @@ function This_MOD.create_entities()
     ---> Receptor
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Receiver = util.copy(This_MOD.ref.radar)
+    local Receiver = util.copy(This_MOD.ref.entity)
     Receiver.name = This_MOD.prefix .. "receiver"
     Receiver.icons = { { icon = This_MOD.graphics .. "item-receiver.png" } }
 
