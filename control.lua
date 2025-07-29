@@ -75,14 +75,14 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_force_created
     }, function(event)
-        GPrefix.var_dump("hide_surface")
+        game.players[event.player_index].print("hide_surface")
         -- This_MOD.hide_surface(This_MOD.Create_data(event))
     end)
 
     script.on_event({
         defines.events.on_forces_merged
     }, function(event)
-        GPrefix.var_dump("forces_merged")
+        game.players[event.player_index].print("forces_merged")
         -- This_MOD.forces_merged(This_MOD.Create_data(event))
     end)
 
@@ -135,7 +135,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_elem_changed
     }, function(event)
-        GPrefix.var_dump("add_icon")
+        game.players[event.player_index].print("add_icon")
         -- This_MOD.add_icon(This_MOD.Create_data(event))
     end)
 
@@ -150,7 +150,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_click
     }, function(event)
-        GPrefix.var_dump("button_action")
+        game.players[event.player_index].print("button_action")
         -- This_MOD.button_action(This_MOD.Create_data(event))
     end)
 
@@ -158,7 +158,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_confirmed
     }, function(event)
-        GPrefix.var_dump("validate_channel_name")
+        game.players[event.player_index].print("validate_channel_name")
         -- This_MOD.validate_channel_name(This_MOD.Create_data(event))
     end)
 
