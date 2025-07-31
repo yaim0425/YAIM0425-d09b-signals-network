@@ -633,9 +633,13 @@ end
 
 --- Cambiar el canal
 function This_MOD.set_channel(node, channel)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- No hay cambio
     if node.channel and node.channel == channel then return end
     if not node.entity.valid then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Cambiar los cables de canal
     if node.connect then
@@ -650,6 +654,8 @@ function This_MOD.set_channel(node, channel)
 
     --- Guardar el canal de la enridad
     node.channel = channel
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Forzar cierre de la GUI
@@ -1070,6 +1076,8 @@ end
 
 --- Acciones de los botones
 function This_MOD.button_action(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Variables a usar
     local Flag = false
     local EventID = 0
@@ -1126,6 +1134,8 @@ function This_MOD.button_action(Data)
     --     Data.Player.play_sound({ path = "entity-open/constant-combinator" })
     --     return
     -- end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 -- --- Seleccionar un nuevo objeto
@@ -1230,13 +1240,19 @@ end
 
 --- Mostrar el cuerpo para seleccionar un canal
 function This_MOD.show_old_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Cambiar de frame
     Data.GUI.frame_new_channel.visible = false
     Data.GUI.frame_old_channel.visible = true
 
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     --- Enfocar la selección
     Data.GUI.dropdown_channels.selected_index = tonumber(Data.node.channel.index)
     This_MOD.selection_channel(Data)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 --- Mostrar el cuerpo para crear un nuevo canal
