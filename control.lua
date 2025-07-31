@@ -1069,65 +1069,65 @@ function This_MOD.selection_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- --- Acciones de los botones
--- function This_MOD.button_action(Data)
---     --- Variables a usar
---     local Flag = false
---     local EventID = 0
+--- Acciones de los botones
+function This_MOD.button_action(Data)
+    --- Variables a usar
+    local Flag = false
+    local EventID = 0
 
---     --- Validar el elemento
---     EventID = defines.events.on_gui_click
---     Flag = Data.Event.name == EventID
---     if not Flag then return end
+    --- Validar el elemento
+    EventID = defines.events.on_gui_click
+    Flag = Data.Event.name == EventID
+    if not Flag then return end
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Cerrar la ventana
---     Flag = Data.Event.element == Data.GUI.button_exit
---     if Flag then
---         This_MOD.toggle_gui(Data)
---         return
---     end
+    --- Cerrar la ventana
+    Flag = Data.Event.element == Data.GUI.button_exit
+    if Flag then
+        This_MOD.toggle_gui(Data)
+        return
+    end
 
---     --- Cancelar el cambio de nombre o el nuevo canal
---     Flag = Data.Event.element == Data.GUI.button_cancel
---     if Flag then
---         Data.Event.element = Data.GUI.dropdown_channels
---         This_MOD.show_old_channel(Data)
---         return
---     end
+    -- --- Cancelar el cambio de nombre o el nuevo canal
+    -- Flag = Data.Event.element == Data.GUI.button_cancel
+    -- if Flag then
+    --     Data.Event.element = Data.GUI.dropdown_channels
+    --     This_MOD.show_old_channel(Data)
+    --     return
+    -- end
 
---     --- Cambiar el nombre de un canal o agregar un nuevo canal
---     Flag = false or Data.GUI.action == This_MOD.action.edit
---     Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
---     Flag = Flag and Data.Event.element == Data.GUI.button_green
---     if Flag then
---         This_MOD.validate_channel_name(Data)
---         return
---     end
+    -- --- Cambiar el nombre de un canal o agregar un nuevo canal
+    -- Flag = false or Data.GUI.action == This_MOD.action.edit
+    -- Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
+    -- Flag = Flag and Data.Event.element == Data.GUI.button_green
+    -- if Flag then
+    --     This_MOD.validate_channel_name(Data)
+    --     return
+    -- end
 
---     --- Editar el nombre del canal seleccionado
---     Flag = Data.Event.element == Data.GUI.button_edit
---     if Flag then
---         Data.GUI.action = This_MOD.action.edit
---         This_MOD.show_new_channel(Data)
---         return
---     end
+    -- --- Editar el nombre del canal seleccionado
+    -- Flag = Data.Event.element == Data.GUI.button_edit
+    -- if Flag then
+    --     Data.GUI.action = This_MOD.action.edit
+    --     This_MOD.show_new_channel(Data)
+    --     return
+    -- end
 
---     --- Cambiar el canal
---     Flag = Data.Event.element == Data.GUI.button_confirm
---     if Flag then
---         This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
---         Data.Event.element = Data.GUI.button_exit
---         This_MOD.toggle_gui(Data)
---         Data.Player.play_sound({ path = "entity-open/constant-combinator" })
---         return
---     end
--- end
+    -- --- Cambiar el canal
+    -- Flag = Data.Event.element == Data.GUI.button_confirm
+    -- if Flag then
+    --     This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
+    --     Data.Event.element = Data.GUI.button_exit
+    --     This_MOD.toggle_gui(Data)
+    --     Data.Player.play_sound({ path = "entity-open/constant-combinator" })
+    --     return
+    -- end
+end
 
 -- --- Seleccionar un nuevo objeto
 -- function This_MOD.add_icon(Data)
