@@ -238,7 +238,7 @@ function This_MOD.create_entity(Data)
 
     --- Canal para la nueva antena
     local Tags = Data.Event.tags
-    Tags = Tags and Tags.name or This_MOD.channel_default
+    Tags = Tags and Tags.channel or This_MOD.channel_default
     local Channel = This_MOD.get_channel(Data, Tags)
 
     --- Borrar el nombre adicional de la entidad
@@ -369,7 +369,7 @@ function This_MOD.edit_ghost(Data)
     if not Info then return end
 
     --- Modificar el fantasma
-    Ghost.tags = { name = Info.channel.name }
+    Ghost.tags = { channel = Info.channel.name }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -1219,7 +1219,7 @@ function This_MOD.create_blueprint(Data)
         if GPrefix.has_id(entity.name, This_MOD.id) then
             local Entity = Mapping[entity.entity_number]
             local Node = GPrefix.get_table(Data.nodes, "entity", Entity)
-            local Tags = { name = Node.channel.name }
+            local Tags = { channel = Node.channel.name }
             Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
         end
     end
