@@ -998,23 +998,6 @@ function This_MOD.toggle_gui(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- local function Info()
-    --     --- Valores de la entidad
-    --     Data.GUI.Node = Data.Node[Data.Entity.unit_number]
-
-    --     --- Selección inicial
-    --     Data.GUI.Pos_start = 0
-    --     for index, _ in pairs(Data.channels) do
-    --         Data.GUI.Pos_start = Data.GUI.Pos_start + 1
-    --         if index == Data.GUI.Node.channel.index then
-    --             break
-    --         end
-    --     end
-
-    --     --- Selección actual
-    --     Data.GUI.Pos = Data.GUI.Pos_start
-    -- end
-
     --- Cargar los canales
     local function load_channels()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1043,9 +1026,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.action = This_MOD.action.build
         gui_build()
         load_channels()
-        -- Info()
-        -- Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
-        -- This_MOD.selection_channel(Data)
         Data.GUI.entity = Data.Entity
         Data.GUI.action = This_MOD.action.none
         Data.Player.play_sound({ path = "entity-open/decider-combinator" })
