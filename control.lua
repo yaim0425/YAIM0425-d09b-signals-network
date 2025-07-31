@@ -150,8 +150,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_click
     }, function(event)
-        game.players[event.player_index].print("button_action")
-        -- This_MOD.button_action(This_MOD.Create_data(event))
+        This_MOD.button_action(This_MOD.create_data(event))
     end)
 
     --- Validar el nuevo nombre
@@ -1232,8 +1231,8 @@ end
 --- Mostrar el cuerpo para seleccionar un canal
 function This_MOD.show_old_channel(Data)
     --- Cambiar de frame
-    Data.GUI.frame_new_channels.visible = false
-    Data.GUI.frame_old_channels.visible = true
+    Data.GUI.frame_new_channel.visible = false
+    Data.GUI.frame_old_channel.visible = true
 
     --- Enfocar la selección
     Data.GUI.dropdown_channels.selected_index = tonumber(Data.node.channel.index)
