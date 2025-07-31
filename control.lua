@@ -1093,13 +1093,13 @@ function This_MOD.button_action(Data)
         return
     end
 
-    -- --- Cancelar el cambio de nombre o el nuevo canal
-    -- Flag = Data.Event.element == Data.GUI.button_cancel
-    -- if Flag then
-    --     Data.Event.element = Data.GUI.dropdown_channels
-    --     This_MOD.show_old_channel(Data)
-    --     return
-    -- end
+    --- Cancelar el cambio de nombre o el nuevo canal
+    Flag = Data.Event.element == Data.GUI.button_cancel
+    if Flag then
+        -- Data.Event.element = Data.GUI.dropdown_channels
+        This_MOD.show_old_channel(Data)
+        return
+    end
 
     -- --- Cambiar el nombre de un canal o agregar un nuevo canal
     -- Flag = false or Data.GUI.action == This_MOD.action.edit
@@ -1229,16 +1229,16 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
--- --- Mostrar el cuerpo para seleccionar un canal
--- function This_MOD.show_old_channel(Data)
---     --- Cambiar de frame
---     Data.GUI.frame_new_channels.visible = false
---     Data.GUI.frame_old_channels.visible = true
+--- Mostrar el cuerpo para seleccionar un canal
+function This_MOD.show_old_channel(Data)
+    --- Cambiar de frame
+    Data.GUI.frame_new_channels.visible = false
+    Data.GUI.frame_old_channels.visible = true
 
---     --- Enfocar la selección
---     Data.GUI.dropdown_channels.selected_index = Data.GUI.Pos
---     This_MOD.selection_channel(Data)
--- end
+    --- Enfocar la selección
+    Data.GUI.dropdown_channels.selected_index = tonumber(Data.node.channel.index)
+    This_MOD.selection_channel(Data)
+end
 
 --- Mostrar el cuerpo para crear un nuevo canal
 function This_MOD.show_new_channel(Data)
