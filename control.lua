@@ -244,6 +244,10 @@ function This_MOD.create_entity(Data)
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
 
+    -- --- Desconectar de la red
+    -- local Control = Data.Entity.get_or_create_control_behavior()
+    -- Control.read_logistics = false
+
     --- Guardar el canal de la enridad
     local Node = {}
     Node.entity = Data.Entity
@@ -756,6 +760,15 @@ function This_MOD.toggle_gui(Data)
 
         if Data.GUI.frame_main then return false end
         if not This_MOD.validate_entity(Data) then return false end
+
+        if Data.Entity.name == "entity-ghost" then
+            local Entity = Data.Entity.ghost_prototype
+            if GPrefix.has_id(Entity.name, This_MOD.id) then
+                Data.Player.play_sound({ path = "utility/cannot_build" })
+                Data.Player.opened = nil
+            end
+        end
+
         if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return false end
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
