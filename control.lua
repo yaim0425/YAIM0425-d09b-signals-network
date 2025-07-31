@@ -753,6 +753,7 @@ function This_MOD.toggle_gui(Data)
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
+
     local function validate_open()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
         ---> Validación
@@ -810,6 +811,7 @@ function This_MOD.toggle_gui(Data)
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
+
     local function gui_build()
         --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Cambiar los guiones del nombre
