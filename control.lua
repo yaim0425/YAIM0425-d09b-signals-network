@@ -135,8 +135,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_elem_changed
     }, function(event)
-        game.players[event.player_index].print("add_icon")
-        -- This_MOD.add_icon(This_MOD.Create_data(event))
+        This_MOD.add_icon(This_MOD.create_data(event))
     end)
 
     --- Al seleccionar otro canal
@@ -1138,54 +1137,63 @@ function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- --- Seleccionar un nuevo objeto
--- function This_MOD.add_icon(Data)
---     if not Data.GUI.button_icon then return end
+--- Seleccionar un nuevo objeto
+function This_MOD.add_icon(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Cargar la selección
---     local Select = Data.GUI.button_icon.elem_value
+    --- Validación
+    if not Data.Event.element then return end
+    if not Data.GUI.button_icon then return end
+    if Data.Event.element ~= Data.GUI.button_icon then return end
 
---     --- Restaurar el icono
---     Data.GUI.button_icon.elem_value = {
---         type = "virtual",
---         name = This_MOD.prefix .. "icon"
---     }
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Se intentó limpiar el icono
---     if not Select then return end
+    --- Cargar la selección
+    local Select = Data.GUI.button_icon.elem_value
 
---     --- Convertir seleccion en texto
---     local function signal_to_rich_text(select)
---         local type = ""
+    --- Restaurar el icono
+    Data.GUI.button_icon.elem_value = {
+        type = "virtual",
+        name = GPrefix.name .. "-icon"
+    }
 
---         if not select.type then
---             if prototypes.entity[select.name] then
---                 type = "entity"
---             elseif prototypes.recipe[select.name] then
---                 type = "recipe"
---             elseif prototypes.fluid[select.name] then
---                 type = "fluid"
---             elseif prototypes.item[select.name] then
---                 type = "item"
---             end
---         end
+    --- Se intentó limpiar el icono
+    if not Select then return end
 
---         if select.type then
---             type = select.type
---             if select.type == "virtual" then
---                 type = type .. "-signal"
---             end
---         end
+    --- Convertir seleccion en texto
+    local function signal_to_rich_text(select)
+        local type = ""
 
---         return "[img=" .. type .. "." .. select.name .. "]"
---     end
+        if not select.type then
+            if prototypes.entity[select.name] then
+                type = "entity"
+            elseif prototypes.recipe[select.name] then
+                type = "recipe"
+            elseif prototypes.fluid[select.name] then
+                type = "fluid"
+            elseif prototypes.item[select.name] then
+                type = "item"
+            end
+        end
 
---     --- Agregar la imagen seleccionada
---     local text = Data.GUI.textfield_new_channel.text
---     text = text .. signal_to_rich_text(Select)
---     Data.GUI.textfield_new_channel.text = text
---     Data.GUI.textfield_new_channel.focus()
--- end
+        if select.type then
+            type = select.type
+            if select.type == "virtual" then
+                type = type .. "-signal"
+            end
+        end
+
+        return "[img=" .. type .. "." .. select.name .. "]"
+    end
+
+    --- Agregar la imagen seleccionada
+    local text = Data.GUI.textfield_new_channel.text
+    text = text .. signal_to_rich_text(Select)
+    Data.GUI.textfield_new_channel.text = text
+    Data.GUI.textfield_new_channel.focus()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 --- Guardar el canal en la copia
 function This_MOD.create_blueprint(Data)
