@@ -208,7 +208,7 @@ function This_MOD.create_entities()
             type = "electric",
             usage_priority = "secondary-input",
             input_flow_limit = "1GW",
-            buffer_capacity = "5.5MJ"
+            buffer_capacity = "5MJ"
         },
 
         base_animation = {
@@ -330,7 +330,7 @@ function This_MOD.create_entities()
             type = "electric",
             usage_priority = "secondary-input",
             input_flow_limit = "1GW",
-            buffer_capacity = "1.1MJ"
+            buffer_capacity = "1MJ"
         },
 
         base_animation = {
