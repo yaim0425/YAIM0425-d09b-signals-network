@@ -1087,8 +1087,7 @@ function This_MOD.add_icon(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validación
-    if not Data.Event.element then return end
-    if not Data.GUI.button_icon then return end
+    if not Data.GUI.frame_main then return end
     if Data.Event.element ~= Data.GUI.button_icon then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
