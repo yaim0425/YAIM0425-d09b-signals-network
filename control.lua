@@ -75,8 +75,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_force_created
     }, function(event)
-        game.players[event.player_index].print("hide_surface")
-        -- This_MOD.hide_surface(This_MOD.Create_data(event))
+        This_MOD.hide_surface(This_MOD.create_data(event))
     end)
 
     script.on_event({
@@ -312,13 +311,17 @@ function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- --- Ocultar la superficie de las fuerzas recién creadas
--- function This_MOD.hide_surface(Data)
---     local Surface = This_MOD.get_surface()
---     if Surface then
---         Data.Event.force.set_surface_hidden(Surface, true)
---     end
--- end
+--- Ocultar la superficie de las fuerzas recién creadas
+function This_MOD.hide_surface(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Surface = This_MOD.get_surface()
+    if Surface then
+        Data.Event.force.set_surface_hidden(Surface, true)
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 -- --- Al fusionar dos fuerzas
 -- function This_MOD.forces_merged(Data)
