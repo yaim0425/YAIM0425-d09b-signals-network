@@ -694,6 +694,18 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
+--- Sonido normal
+function This_MOD.sound_good(Data)
+    Data.Player.play_sound({ path = "gui_tool_button" })
+end
+
+--- Sonido de error
+function This_MOD.sound_bad(Data)
+    Data.Player.play_sound({ path = "utility/cannot_build" })
+end
+
+---------------------------------------------------------------------------------------------------
+
 
 
 
@@ -741,7 +753,7 @@ function This_MOD.toggle_gui(Data)
         if Data.Entity.name == "entity-ghost" then
             local Entity = Data.Entity.ghost_prototype
             if GPrefix.has_id(Entity.name, This_MOD.id) then
-                Data.Player.play_sound({ path = "utility/cannot_build" })
+                This_MOD.sound_bad(Data)
                 Data.Player.opened = nil
             end
         end
@@ -1246,16 +1258,16 @@ function This_MOD.validate_channel_name(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Texto a evaluar
-    local Text = Data.GUI.textfield_new_channel
+    local Textbox = Data.GUI.textfield_new_channel
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validación
-    local Flag = Text.text == ""
-    Flag = Flag or GPrefix.get_table(Data.channels, "name", Text.text)
+    local Flag = Textbox.text == ""
+    Flag = Flag or GPrefix.get_table(Data.channels, "name", Textbox.text)
     if Flag then
-        Data.Player.play_sound({ path = "utility/cannot_build" })
-        Text.focus()
+        This_MOD.sound_bad(Data)
+        Textbox.focus()
         return
     end
 
@@ -1263,11 +1275,11 @@ function This_MOD.validate_channel_name(Data)
 
     --- Crear un nuevo canal
     if Data.GUI.action == This_MOD.action.new_channel then
-        local New_channel = This_MOD.get_channel(Data, Text.text)
+        local New_channel = This_MOD.get_channel(Data, Textbox.text)
         This_MOD.set_channel(Data.node, New_channel)
 
         local Dropdown = Data.GUI.dropdown_channels
-        Dropdown.add_item(Text.text, #Dropdown.items)
+        Dropdown.add_item(Textbox.text, #Dropdown.items)
 
         Data.Event.element = Dropdown
     end
@@ -1278,11 +1290,11 @@ function This_MOD.validate_channel_name(Data)
         local Index = Dropdown.selected_index
 
         Dropdown.remove_item(Index)
-        Dropdown.add_item(Text.text, Index)
+        Dropdown.add_item(Textbox.text, Index)
 
-        Data.node.channel.name = Text.text
+        Data.node.channel.name = Textbox.text
 
-        Data.Player.play_sound({ path = "gui_tool_button" })
+        This_MOD.sound_good(Data)
     end
 
     --- Volver al menu inicial
