@@ -1129,11 +1129,6 @@ function This_MOD.button_action(Data)
     Flag = Data.Event.element == Data.GUI.button_confirm
     if Flag then
         This_MOD.validate_channel_name(Data)
-
-        -- This_MOD.set_channel(Data.GUI.Node, This_MOD.get_channel_pos(Data))
-        -- Data.Event.element = Data.GUI.button_exit
-        -- This_MOD.toggle_gui(Data)
-        -- Data.Player.play_sound({ path = "entity-open/constant-combinator" })
         return
     end
 
