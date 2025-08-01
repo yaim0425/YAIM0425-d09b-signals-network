@@ -752,6 +752,7 @@ function This_MOD.load_icon()
     GPrefix.extend({
         type = "virtual-signal",
         name = Name,
+        localised_name = "",
         icon = This_MOD.graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
