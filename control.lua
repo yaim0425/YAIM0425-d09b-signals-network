@@ -1050,12 +1050,7 @@ function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validar el elemento
-    local EventID = defines.events.on_gui_click
-    if Data.Event.name ~= EventID then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
+    if not Data.GUI.frame_main then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
