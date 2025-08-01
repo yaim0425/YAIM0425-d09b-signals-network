@@ -1079,9 +1079,7 @@ function This_MOD.button_action(Data)
     end
 
     --- Cambiar el nombre de un canal o agregar un nuevo canal
-    Flag = false or Data.GUI.action == This_MOD.action.edit
-    Flag = Flag or Data.GUI.action == This_MOD.action.new_channel
-    Flag = Flag and Data.Event.element == Data.GUI.button_green
+    Flag = Data.Event.element == Data.GUI.button_confirm
     if Flag then
         This_MOD.validate_channel_name(Data)
         return
@@ -1092,13 +1090,6 @@ function This_MOD.button_action(Data)
     if Flag then
         Data.GUI.action = This_MOD.action.edit
         This_MOD.show_new_channel(Data)
-        return
-    end
-
-    --- Cambiar el canal
-    Flag = Data.Event.element == Data.GUI.button_confirm
-    if Flag then
-        This_MOD.validate_channel_name(Data)
         return
     end
 
