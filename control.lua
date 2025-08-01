@@ -1101,8 +1101,14 @@ function This_MOD.add_icon(Data)
         name = GPrefix.name .. "-icon"
     }
 
+    --- Renombrar
+    local Textbox = Data.GUI.textfield_new_channel
+
     --- Se intentó limpiar el icono
-    if not Select then return end
+    if not Select then
+        Textbox.focus()
+        return
+    end
 
     --- Convertir seleccion en texto
     local function signal_to_rich_text(select)
@@ -1131,10 +1137,10 @@ function This_MOD.add_icon(Data)
     end
 
     --- Agregar la imagen seleccionada
-    local text = Data.GUI.textfield_new_channel.text
+    local text = Textbox.text
     text = text .. signal_to_rich_text(Select)
-    Data.GUI.textfield_new_channel.text = text
-    Data.GUI.textfield_new_channel.focus()
+    Textbox.text = text
+    Textbox.focus()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
