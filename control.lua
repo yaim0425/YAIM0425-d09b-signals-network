@@ -1049,14 +1049,9 @@ end
 function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Variables a usar
-    local Flag = false
-    local EventID = 0
-
     --- Validar el elemento
-    EventID = defines.events.on_gui_click
-    Flag = Data.Event.name == EventID
-    if not Flag then return end
+    local EventID = defines.events.on_gui_click
+    if Data.Event.name ~= EventID then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1065,29 +1060,25 @@ function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Cerrar la ventana
-    Flag = Data.Event.element == Data.GUI.button_exit
-    if Flag then
+    if Data.Event.element == Data.GUI.button_exit then
         This_MOD.toggle_gui(Data)
         return
     end
 
     --- Cancelar el cambio de nombre o el nuevo canal
-    Flag = Data.Event.element == Data.GUI.button_cancel
-    if Flag then
+    if Data.Event.element == Data.GUI.button_cancel then
         This_MOD.show_old_channel(Data)
         return
     end
 
     --- Cambiar el nombre de un canal o agregar un nuevo canal
-    Flag = Data.Event.element == Data.GUI.button_confirm
-    if Flag then
+    if Data.Event.element == Data.GUI.button_confirm then
         This_MOD.validate_channel_name(Data)
         return
     end
 
     --- Editar el nombre del canal seleccionado
-    Flag = Data.Event.element == Data.GUI.button_edit
-    if Flag then
+    if Data.Event.element == Data.GUI.button_edit then
         Data.GUI.action = This_MOD.action.edit
         This_MOD.show_new_channel(Data)
         return
