@@ -1333,8 +1333,6 @@ function This_MOD.validate_channel_name(Data)
         Data.Player.play_sound({ path = "gui_tool_button" })
     end
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Volver al menu inicial
     This_MOD.show_old_channel(Data)
 
