@@ -694,36 +694,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 
--- --- Obtener el indice del canal de la entidad
--- function This_MOD.get_index_of_channel(Data)
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
---     local Channel_name = GPrefix.get_table(Data.nodes, "entity", Data.Entity).channel.name
---     local i = 0
-
---     for _, channel in pairs(Data.channels) do
---         i = i + 1
---         if channel.name == Channel_name then
---             return i
---         end
---     end
-
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
--- end
-
--- --- Obtener el canal seleccionado
--- function This_MOD.get_channel_pos(Data)
---     local Pos = 0
---     for _, channel in pairs(Data.Channel) do
---         Pos = Pos + 1
---         if Pos == Data.GUI.Pos then
---             return channel
---         end
---     end
--- end
-
----------------------------------------------------------------------------------------------------
-
 
 
 
