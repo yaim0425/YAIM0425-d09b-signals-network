@@ -156,8 +156,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_gui_confirmed
     }, function(event)
-        game.players[event.player_index].print("validate_channel_name")
-        -- This_MOD.validate_channel_name(This_MOD.Create_data(event))
+        This_MOD.validate_channel_name(This_MOD.create_data(event))
     end)
 
     --- Al copiar las entidades
