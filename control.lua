@@ -368,7 +368,6 @@ function This_MOD.forces_merged(Data)
     --- Renombrar
     local Source = Data.gForces[Data.Event.source_index]
     if not Source then return end
-    local Index = GPrefix.pad_left_zeros(10, 1)
     local Destination = This_MOD.create_data({
         force = Data.Event.destination
     })
@@ -384,8 +383,8 @@ function This_MOD.forces_merged(Data)
         local Channel
 
         --- Canal por defecto
-        if node.channel.index == Index then
-            Channel = Destination.channels[Index]
+        if node.channel.index == 1 then
+            Channel = Destination.channels[1]
         else
             --- Buscar el canal actual
             Channel = GPrefix.get_table(
@@ -408,8 +407,7 @@ function This_MOD.forces_merged(Data)
 
     --- Mover los canales
     for key, channel in pairs(Move) do
-        Index = GPrefix.get_length(Destination.channels) + 1
-        Index = GPrefix.pad_left_zeros(10, Index)
+        local Index = #Destination.channels + 1
         Destination.channels[Index] = channel
         Source.channels[key] = nil
         channel.index = Index
@@ -677,10 +675,9 @@ function This_MOD.get_channel(Data, channel)
     local Surface = This_MOD.get_surface()
 
     --- Se busca el canal por defecto
-    local Index = GPrefix.pad_left_zeros(10, 1)
-    local Flag = GPrefix.get_length(Data.channels)
+    local Flag = #Data.channels > 0
     Flag = Flag and GPrefix.is_table(channel)
-    if Flag then return Data.channels[Index] end
+    if Flag then return Data.channels[1] end
 
     --- Cargar el canal indicado
     local Channel = GPrefix.get_table(Data.channels, "name", channel)
@@ -701,8 +698,7 @@ function This_MOD.get_channel(Data, channel)
 
     --- Guardar el nuevo canal
     Channel = {}
-    Channel.index = GPrefix.get_length(Data.channels) or 0
-    Channel.index = GPrefix.pad_left_zeros(10, Channel.index + 1)
+    Channel.index = #Data.channels + 1
     Channel.entity = Entity
     Channel.name = channel
     Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
@@ -1081,7 +1077,7 @@ function This_MOD.toggle_gui(Data)
         Dropdown.add_item(This_MOD.new_channel)
 
         --- Seleccionar el canal actual
-        Dropdown.selected_index = tonumber(Data.node.channel.index)
+        Dropdown.selected_index = Data.node.channel.index
         Data.GUI.button_edit.enabled = Dropdown.selected_index > 1
 
         --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1196,7 +1192,7 @@ function This_MOD.selection_channel(Data)
     Data.GUI.button_edit.enabled = Selected_index > 1
 
     --- Cambiar el canal del nodo
-    local Channel = Data.channels[GPrefix.pad_left_zeros(10, Selected_index)]
+    local Channel = Data.channels[Selected_index]
     This_MOD.set_channel(Data.node, Channel)
     Data.Player.play_sound({ path = "utility/wire_connect_pole" })
 
@@ -1352,7 +1348,7 @@ function This_MOD.show_old_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Enfocar la selección
-    Data.GUI.dropdown_channels.selected_index = tonumber(Data.node.channel.index)
+    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
     This_MOD.selection_channel(Data)
     Data.GUI.action = nil
 
