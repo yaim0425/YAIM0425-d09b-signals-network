@@ -81,8 +81,7 @@ function This_MOD.load_events()
     script.on_event({
         defines.events.on_forces_merged
     }, function(event)
-        game.players[event.player_index].print("forces_merged")
-        -- This_MOD.forces_merged(This_MOD.Create_data(event))
+        This_MOD.forces_merged(This_MOD.create_data(event))
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -151,7 +150,7 @@ function This_MOD.load_events()
         This_MOD.button_action(This_MOD.create_data(event))
     end)
 
-    --- Validar el nuevo nombre
+    --- Validar el nuevo nombre al dar ENTER
     script.on_event({
         defines.events.on_gui_confirmed
     }, function(event)
@@ -240,9 +239,9 @@ function This_MOD.create_entity(Data)
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
 
-    -- --- Desconectar de la red
-    -- local Control = Data.Entity.get_or_create_control_behavior()
-    -- Control.read_logistics = false
+    --- Desconectar de la red
+    local Control = Data.Entity.get_or_create_control_behavior()
+    Control.read_logistics = false
 
     --- Guardar el canal de la enridad
     local Node = {}
@@ -323,28 +322,72 @@ function This_MOD.hide_surface(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- --- Al fusionar dos fuerzas
--- function This_MOD.forces_merged(Data)
---     --- Renombrar
---     local Source = Data.gForces[Data.Event.source_index]
---     if not Source then return end
---     local Destination = This_MOD.create_data({
---         force = Data.Event.destination
---     })
+--- Al fusionar dos fuerzas
+function This_MOD.forces_merged(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Mover los canales
---     for index, Channel in pairs(Source.Channel) do
---         Destination.channel[index] = Channel
---     end
+    --- Renombrar
+    local Source = Data.gForces[Data.Event.source_index]
+    if not Source then return end
+    local Index = GPrefix.pad_left_zeros(10, 1)
+    local Destination = This_MOD.create_data({
+        force = Data.Event.destination
+    })
 
---     --- Mover los nodos
---     for index, Node in pairs(Source.Node) do
---         Destination.node[index] = Node
---     end
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Eliminar la referencia a la fuerza
---     Data.gForces[Data.Event.source_index] = nil
--- end
+    --- Canales a mover
+    local Move = {}
+
+    --- Recorrer cada nodo
+    for _, node in pairs(Source.nodes) do
+        --- Variable a usar
+        local Channel
+
+        --- Canal por defecto
+        if node.channel.index == Index then
+            Channel = Destination.channels[Index]
+        else
+            --- Buscar el canal actual
+            Channel = GPrefix.get_table(
+                Destination.channels,
+                "name", node.channel.name
+            )
+
+            --- Canal a mover
+            Move[node.channel.index] = not Channel and node.channel or nil
+        end
+
+        --- Mover el nodo
+        table.insert(Destination.nodes, node)
+
+        --- Cambiar la conexión
+        if not Move[node.channel.index] then
+            This_MOD.set_channel(node, Channel)
+        end
+    end
+
+    --- Mover los canales
+    for key, channel in pairs(Move) do
+        Index = GPrefix.get_length(Destination.channels) + 1
+        Index = GPrefix.pad_left_zeros(10, Index)
+        Destination.channels[Index] = channel
+        Source.channels[key] = nil
+        channel.index = Index
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Eliminar los canales
+    for _, channel in pairs(Source.channels) do
+        channel.entity.destroy()
+    end
+
+    --- Eliminar la referencia a la fuerza
+    Data.gForces[Data.Event.source_index] = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 ---------------------------------------------------------------------------------------------------
 

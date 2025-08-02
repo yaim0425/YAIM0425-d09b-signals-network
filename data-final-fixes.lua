@@ -427,20 +427,11 @@ function This_MOD.create_entities()
     ---> Combinador
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Empty_sprite = {
-        filename = "__core__/graphics/empty.png",
-        width = 1,
-        height = 1,
-        frame_count = 1,
-        direction_count = 1,
-        shift = { 0, 0 }
-    }
-
     local Direction = {
-        north = Empty_sprite,
-        east = Empty_sprite,
-        south = Empty_sprite,
-        west = Empty_sprite,
+        north = util.empty_sprite(),
+        east = util.empty_sprite(),
+        south = util.empty_sprite(),
+        west = util.empty_sprite()
     }
 
     local Connection_points = {
