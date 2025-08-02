@@ -1105,6 +1105,69 @@ function This_MOD.toggle_gui(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+--- Seleccionar un nuevo objeto
+function This_MOD.add_icon(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
+    if not Data.GUI.frame_main then return end
+    if Data.Event.element ~= Data.GUI.button_icon then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cargar la selección
+    local Select = Data.GUI.button_icon.elem_value
+
+    --- Restaurar el icono
+    Data.GUI.button_icon.elem_value = {
+        type = "virtual",
+        name = GPrefix.name .. "-icon"
+    }
+
+    --- Renombrar
+    local Textbox = Data.GUI.textfield_new_channel
+
+    --- Se intentó limpiar el icono
+    if not Select then
+        Textbox.focus()
+        return
+    end
+
+    --- Convertir seleccion en texto
+    local function signal_to_rich_text(select)
+        local type = ""
+
+        if not select.type then
+            if prototypes.entity[select.name] then
+                type = "entity"
+            elseif prototypes.recipe[select.name] then
+                type = "recipe"
+            elseif prototypes.fluid[select.name] then
+                type = "fluid"
+            elseif prototypes.item[select.name] then
+                type = "item"
+            end
+        end
+
+        if select.type then
+            type = select.type
+            if select.type == "virtual" then
+                type = type .. "-signal"
+            end
+        end
+
+        return "[img=" .. type .. "." .. select.name .. "]"
+    end
+
+    --- Agregar la imagen seleccionada
+    local text = Textbox.text
+    text = text .. signal_to_rich_text(Select)
+    Textbox.text = text
+    Textbox.focus()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 --- Al seleccionar un canal
 function This_MOD.selection_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1177,65 +1240,52 @@ function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
---- Seleccionar un nuevo objeto
-function This_MOD.add_icon(Data)
+--- Validar el nombre del canal
+function This_MOD.validate_channel_name(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Texto a evaluar
+    local Textbox = Data.GUI.textfield_new_channel
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validación
-    if not Data.GUI.frame_main then return end
-    if Data.Event.element ~= Data.GUI.button_icon then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Cargar la selección
-    local Select = Data.GUI.button_icon.elem_value
-
-    --- Restaurar el icono
-    Data.GUI.button_icon.elem_value = {
-        type = "virtual",
-        name = GPrefix.name .. "-icon"
-    }
-
-    --- Renombrar
-    local Textbox = Data.GUI.textfield_new_channel
-
-    --- Se intentó limpiar el icono
-    if not Select then
+    local Flag = Textbox.text == ""
+    Flag = Flag or GPrefix.get_table(Data.channels, "name", Textbox.text)
+    if Flag then
+        This_MOD.sound_bad(Data)
         Textbox.focus()
         return
     end
 
-    --- Convertir seleccion en texto
-    local function signal_to_rich_text(select)
-        local type = ""
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        if not select.type then
-            if prototypes.entity[select.name] then
-                type = "entity"
-            elseif prototypes.recipe[select.name] then
-                type = "recipe"
-            elseif prototypes.fluid[select.name] then
-                type = "fluid"
-            elseif prototypes.item[select.name] then
-                type = "item"
-            end
-        end
+    --- Crear un nuevo canal
+    if Data.GUI.action == This_MOD.action.new_channel then
+        local New_channel = This_MOD.get_channel(Data, Textbox.text)
+        This_MOD.set_channel(Data.node, New_channel)
 
-        if select.type then
-            type = select.type
-            if select.type == "virtual" then
-                type = type .. "-signal"
-            end
-        end
+        local Dropdown = Data.GUI.dropdown_channels
+        Dropdown.add_item(Textbox.text, #Dropdown.items)
 
-        return "[img=" .. type .. "." .. select.name .. "]"
+        Data.Event.element = Dropdown
     end
 
-    --- Agregar la imagen seleccionada
-    local text = Textbox.text
-    text = text .. signal_to_rich_text(Select)
-    Textbox.text = text
-    Textbox.focus()
+    --- Cambiar el nombre de un canal
+    if Data.GUI.action == This_MOD.action.edit then
+        local Dropdown = Data.GUI.dropdown_channels
+        local Index = Dropdown.selected_index
+
+        Dropdown.remove_item(Index)
+        Dropdown.add_item(Textbox.text, Index)
+
+        Data.node.channel.name = Textbox.text
+
+        This_MOD.sound_good(Data)
+    end
+
+    --- Volver al menu inicial
+    This_MOD.show_old_channel(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -1332,56 +1382,6 @@ function This_MOD.show_new_channel(Data)
 
     --- Enfocar nombre
     Data.GUI.textfield_new_channel.focus()
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
---- Validar el nombre del canal
-function This_MOD.validate_channel_name(Data)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Texto a evaluar
-    local Textbox = Data.GUI.textfield_new_channel
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Validación
-    local Flag = Textbox.text == ""
-    Flag = Flag or GPrefix.get_table(Data.channels, "name", Textbox.text)
-    if Flag then
-        This_MOD.sound_bad(Data)
-        Textbox.focus()
-        return
-    end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Crear un nuevo canal
-    if Data.GUI.action == This_MOD.action.new_channel then
-        local New_channel = This_MOD.get_channel(Data, Textbox.text)
-        This_MOD.set_channel(Data.node, New_channel)
-
-        local Dropdown = Data.GUI.dropdown_channels
-        Dropdown.add_item(Textbox.text, #Dropdown.items)
-
-        Data.Event.element = Dropdown
-    end
-
-    --- Cambiar el nombre de un canal
-    if Data.GUI.action == This_MOD.action.edit then
-        local Dropdown = Data.GUI.dropdown_channels
-        local Index = Dropdown.selected_index
-
-        Dropdown.remove_item(Index)
-        Dropdown.add_item(Textbox.text, Index)
-
-        Data.node.channel.name = Textbox.text
-
-        This_MOD.sound_good(Data)
-    end
-
-    --- Volver al menu inicial
-    This_MOD.show_old_channel(Data)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
