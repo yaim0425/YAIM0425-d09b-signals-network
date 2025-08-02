@@ -71,6 +71,13 @@ function This_MOD.load_events()
         This_MOD.create_entity(This_MOD.create_data(event))
     end)
 
+    --- Copar la configuración de una antena en otra
+    script.on_event({
+        defines.events.on_entity_settings_pasted
+    }, function(event)
+        This_MOD.copy_paste_settings(This_MOD.create_data(event))
+    end)
+
     --- Ocultar la superficie de las fuerzas recién creadas
     script.on_event({
         defines.events.on_force_created
@@ -315,6 +322,33 @@ function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+--- Copar la configuración de una antena en otra
+function This_MOD.copy_paste_settings(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Renombrar
+    local Source = Data.Event.source
+    local Destination = Data.Event.destination
+
+    --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
+    if Source.name == "entity-ghost" then return end
+    if Destination.name == "entity-ghost" then return end
+
+    if not GPrefix.has_id(Source.name, This_MOD.id) then return end
+    if not GPrefix.has_id(Destination.name, This_MOD.id) then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Hacer el cambio
+    Source = GPrefix.get_table(Data.nodes, "unit_number", Source.unit_number)
+    Destination = GPrefix.get_table(Data.nodes, "unit_number", Destination.unit_number)
+    This_MOD.set_channel(Destination, Source.channel)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 --- Ocultar la superficie de las fuerzas recién creadas
 function This_MOD.hide_surface(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -462,6 +496,7 @@ function This_MOD.check_power()
 
         --- Renombrar
         local Node = GPrefix.get_table(Data.nodes, "entity", Data.Entity)
+        if not Node then return end
 
         if Node.connect then
             --- Desconectar
@@ -509,7 +544,7 @@ function This_MOD.check_power()
         local Deleted = {}
 
         --- Validar cada antena
-        for key, node in pairs(gForce.nodes) do
+        for key, node in pairs(gForce.nodes or {}) do
             if node.entity and node.entity.valid then
                 check_power(node)
             else
@@ -558,7 +593,7 @@ function This_MOD.after_entity_died()
         local Deleted = {}
 
         --- Revisar cada información
-        for key, ghost in pairs(gForce.ghosts) do
+        for key, ghost in pairs(gForce.ghosts or {}) do
             if ghost.tick > 0 then
                 ghost.tick = ghost.tick - 1
             else
