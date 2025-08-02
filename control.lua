@@ -78,6 +78,7 @@ function This_MOD.load_events()
         This_MOD.hide_surface(This_MOD.create_data(event))
     end)
 
+    --- Combinar dos forces
     script.on_event({
         defines.events.on_forces_merged
     }, function(event)
@@ -110,8 +111,12 @@ function This_MOD.load_events()
 
         --- Forzar el cierre, en caso de ser necesario
         This_MOD.validate_gui()
+    end)
 
-        --- Información de las antenas destruidas
+    --- Información de las antenas destruidas
+    script.on_event({
+        defines.events.on_tick
+    }, function()
         This_MOD.after_entity_died()
     end)
 
@@ -436,7 +441,7 @@ function This_MOD.beafore_entity_died(Data)
     local Info = {}
     Info.unit_number = Data.node.unit_number
     Info.channel = Data.node.channel
-    Info.tick = 9
+    Info.tick = 3
 
     --- Guardar la información
     table.insert(Data.ghosts, Info)
@@ -554,10 +559,10 @@ function This_MOD.after_entity_died()
 
         --- Revisar cada información
         for key, ghost in pairs(gForce.ghosts) do
-            if ghost.tick == 0 then
-                table.insert(Deleted, 1, key)
-            else
+            if ghost.tick > 0 then
                 ghost.tick = ghost.tick - 1
+            else
+                table.insert(Deleted, 1, key)
             end
         end
 
