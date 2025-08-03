@@ -234,7 +234,7 @@ end
 function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Entidad no valida
+    --- Validación
     if not Data.Entity then return end
     if not GPrefix.has_id(Data.Entity.name, This_MOD.id) then return end
 
