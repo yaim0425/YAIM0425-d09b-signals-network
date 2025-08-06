@@ -40,3 +40,4 @@ Proporciona una **red de señales lógica remota**, ideal para automatización g
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(3).png)  
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(4).png)
 ![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(5).png)  
+![](https://raw.githubusercontent.com/yaim0425/zzzYAIM0425-0900-signals-network/main/Doc/base/Screenshot%20(6).png)  
