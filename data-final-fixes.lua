@@ -500,7 +500,7 @@ function This_MOD.create_entities()
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    ---> Crear los objetos
+    ---> Crear las entidades
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     GPrefix.extend(Sender, Receiver, Combinator)
