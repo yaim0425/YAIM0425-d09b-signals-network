@@ -170,11 +170,10 @@ function This_MOD.create_recipes()
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    ---> Crear los objetos
+    ---> Crear las recetas
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Sender)
-    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Receiver)
+    GPrefix.extend(Sender, Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
