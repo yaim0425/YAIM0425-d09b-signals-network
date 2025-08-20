@@ -519,8 +519,8 @@ function This_MOD.create_tech()
         type = "technology",
         name = This_MOD.tech_name,
         effects = {
-            { type = "unlock-recipe", recipe = This_MOD.sender_name, },
-            { type = "unlock-recipe", recipe = This_MOD.receiver_name, },
+            { type = "unlock-recipe", recipe = This_MOD.sender_name },
+            { type = "unlock-recipe", recipe = This_MOD.receiver_name }
         },
         icons = { {
             icon = This_MOD.graphics .. "technology.png",
@@ -530,7 +530,7 @@ function This_MOD.create_tech()
         prerequisites = {
             "processing-unit",
             "electric-engine",
-            "circuit-network",
+            "circuit-network"
         },
         unit = {
             count = 100,
