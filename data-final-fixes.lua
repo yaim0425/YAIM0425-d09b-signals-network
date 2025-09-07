@@ -170,11 +170,10 @@ function This_MOD.create_recipes()
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    ---> Crear los objetos
+    ---> Crear las recetas
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Sender)
-    GPrefix.add_recipe_to_tech(This_MOD.tech_name, Receiver)
+    GPrefix.extend(Sender, Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -501,7 +500,7 @@ function This_MOD.create_entities()
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    ---> Crear los objetos
+    ---> Crear las entidades
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     GPrefix.extend(Sender, Receiver, Combinator)
@@ -520,8 +519,8 @@ function This_MOD.create_tech()
         type = "technology",
         name = This_MOD.tech_name,
         effects = {
-            { type = "unlock-recipe", recipe = This_MOD.sender_name, },
-            { type = "unlock-recipe", recipe = This_MOD.receiver_name, },
+            { type = "unlock-recipe", recipe = This_MOD.sender_name },
+            { type = "unlock-recipe", recipe = This_MOD.receiver_name }
         },
         icons = { {
             icon = This_MOD.graphics .. "technology.png",
@@ -531,7 +530,7 @@ function This_MOD.create_tech()
         prerequisites = {
             "processing-unit",
             "electric-engine",
-            "circuit-network",
+            "circuit-network"
         },
         unit = {
             count = 100,
@@ -540,53 +539,13 @@ function This_MOD.create_tech()
                 { "automation-science-pack", 1 },
                 { "logistic-science-pack",   1 },
                 { "chemical-science-pack",   1 },
+                mods["space-age"] and { "space-science-pack", 1 } or nil
             }
         }
     }
 
-    --- Corrección
-    if mods["space-age"] then
-        table.insert(
-            Technology.unit.ingredients
-            { "space-science-pack", 1 }
-        )
-    end
-
     --- Crear la tecnología
     GPrefix.extend(Technology)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    ---> Correcciones
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Buscar los tecnologías de desbloqueo
-    local Technologies = {}
-    for _, effect in pairs(Technology.effects) do
-        local Recipe = data.raw.recipe[effect.recipe] or {}
-        for _, ingredient in pairs(Recipe.ingredients or {}) do
-            local Tech = { level = 0 }
-            for _, recipe in pairs(GPrefix.recipes[ingredient.name] or {}) do
-                for _, tech in pairs(GPrefix.tech.recipe[recipe.name] or {}) do
-                    if Tech.level < tech.level then
-                        Tech = tech
-                    end
-                end
-            end
-            if Tech.technology then
-                Technologies[Tech.technology.name] = Tech
-            end
-        end
-    end
-
-    --- Cambiar los prerequisitos
-    Technology.prerequisites = {}
-    for tech, _ in pairs(Technologies) do
-        table.insert(Technology.prerequisites, tech)
-    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
