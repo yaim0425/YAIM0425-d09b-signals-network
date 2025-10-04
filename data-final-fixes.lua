@@ -154,8 +154,8 @@ function This_MOD.get_elements()
     --- Guardar la información
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    This_MOD.to_be_processed[Space.entity.name] = This_MOD.to_be_processed[Space.entity.name] or {}
-    This_MOD.to_be_processed[Space.entity.name][Space.item.name] = Space
+    This_MOD.to_be_processed.entities = This_MOD.to_be_processed.entities or {}
+    This_MOD.to_be_processed.entities[Space.entity.name] = Space
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
