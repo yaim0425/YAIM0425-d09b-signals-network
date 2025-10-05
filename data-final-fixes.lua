@@ -49,6 +49,11 @@ function This_MOD.start()
         end
     end
 
+    --- Valores a usar en control.lua
+    This_MOD.load_styles()
+    This_MOD.load_icon()
+    This_MOD.load_sound()
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
@@ -699,6 +704,199 @@ function This_MOD.create_tech(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     GMOD.extend(Technology)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------
+--- [ Valores a usar en control.lua ] ---
+---------------------------------------------------------------------------
+
+--- Estilos a usar
+function This_MOD.load_styles()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Valores a usar
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar los guiones del nombre
+    local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
+
+    --- Renombrar
+    local Styles = data.raw["gui-style"].default
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Multiuso
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    Styles[Prefix .. "flow_vertival_8"] = {
+        type = "vertical_flow_style",
+        vertical_spacing = 8
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Cabeza
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    Styles[Prefix .. "flow_head"] = {
+        type = "horizontal_flow_style",
+        horizontal_spacing = 8,
+        bottom_padding = 7
+    }
+
+    Styles[Prefix .. "label_title"] = {
+        type = "label_style",
+        parent = "frame_title",
+        button_padding = 3,
+        top_margin = -3
+    }
+
+    Styles[Prefix .. "empty_widget"] = {
+        type = "empty_widget_style",
+        parent = "draggable_space",
+        horizontally_stretchable = "on",
+        vertically_stretchable = "on",
+        height = 24
+    }
+
+    Styles[Prefix .. "button_close"] = {
+        type = "button_style",
+        parent = "close_button",
+        padding = 2,
+        margin = 0,
+        size = 24
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Cuerpo
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    Styles[Prefix .. "frame_entity"] = {
+        type = "frame_style",
+        parent = "entity_frame",
+        padding = 0
+    }
+
+    Styles[Prefix .. "frame_body"] = {
+        type = "frame_style",
+        parent = "entity_frame",
+        padding = 4
+    }
+
+    Styles[Prefix .. "drop_down_channels"] = {
+        type = "dropdown_style",
+        parent = "dropdown",
+        list_box_style = {
+            type = "list_box_style",
+            item_style = {
+                type = "button_style",
+                parent = "list_box_item",
+                left_click_sound = This_MOD.sound .. "empty_audio.ogg",
+            },
+        },
+        width = 296 + 64
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Nuevo canal
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    Styles[Prefix .. "button_red"] = {
+        type = "button_style",
+        parent = "tool_button_red",
+        padding = 0,
+        margin = 0,
+        size = 28
+    }
+
+    Styles[Prefix .. "button_green"] = {
+        type = "button_style",
+        parent = "tool_button_green",
+        left_click_sound = This_MOD.sound .. "empty_audio.ogg",
+        padding = 0,
+        margin = 0,
+        size = 28
+    }
+
+    Styles[Prefix .. "button_blue"] = {
+        type = "button_style",
+        parent = "tool_button_blue",
+        padding = 0,
+        margin = 0,
+        size = 28
+    }
+
+    Styles[Prefix .. "button"] = {
+        type = "button_style",
+        parent = "button",
+        top_margin = 1,
+        padding = 0,
+        size = 28
+    }
+
+    Styles[Prefix .. "stretchable_textfield"] = {
+        type = "textbox_style",
+        width = 296
+    }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+--- Icono para las imagenes
+function This_MOD.load_icon()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Validación
+    local Name = GMOD.name .. "-icon"
+    if data.raw["virtual-signal"][Name] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear la señal
+    GMOD.extend({
+        type = "virtual-signal",
+        name = Name,
+        localised_name = "",
+        icon = This_MOD.graphics .. "icon.png",
+        icon_size = 40,
+        subgroup = "virtual-signal",
+        order = "z-z-o"
+    })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+--- Cargar el sonido
+function This_MOD.load_sound()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    GMOD.extend({
+        type = "sound",
+        name = "gui_tool_button",
+        filename = "__core__/sound/gui-tool-button.ogg",
+        volume = 1.0
+    })
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
