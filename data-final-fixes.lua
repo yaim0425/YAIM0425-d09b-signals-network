@@ -344,7 +344,7 @@ function This_MOD.create_entity(space)
         draw_logistic_radius_visualization = false,
         draw_construction_radius_visualization = false,
 
-        radar_range = space.entity.max_distance_of_sector_revealed or 1,
+        radar_range = space.entity.max_distance_of_nearby_sector_revealed or 1,
         request_to_open_door_timeout = 15,
         spawn_and_station_height = -0.1,
         circuit_wire_max_distance = 10,
@@ -469,7 +469,7 @@ function This_MOD.create_entity(space)
         draw_logistic_radius_visualization = false,
         draw_construction_radius_visualization = false,
 
-        radar_range = space.entity.max_distance_of_sector_revealed or 1,
+        radar_range = space.entity.max_distance_of_nearby_sector_revealed or 1,
         request_to_open_door_timeout = 15,
         spawn_and_station_height = -0.1,
         circuit_wire_max_distance = 10,
