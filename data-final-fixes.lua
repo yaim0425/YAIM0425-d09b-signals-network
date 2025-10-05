@@ -734,6 +734,8 @@ function This_MOD.load_styles()
 
 
 
+
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Multiuso
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -744,6 +746,8 @@ function This_MOD.load_styles()
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
 
 
@@ -784,6 +788,8 @@ function This_MOD.load_styles()
 
 
 
+
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Cuerpo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -808,13 +814,15 @@ function This_MOD.load_styles()
             item_style = {
                 type = "button_style",
                 parent = "list_box_item",
-                left_click_sound = This_MOD.sound .. "empty_audio.ogg",
+                left_click_sound = This_MOD.path_sound .. "empty_audio.ogg",
             },
         },
         width = 296 + 64
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
 
 
 
@@ -833,7 +841,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_green"] = {
         type = "button_style",
         parent = "tool_button_green",
-        left_click_sound = This_MOD.sound .. "empty_audio.ogg",
+        left_click_sound = This_MOD.path_sound .. "empty_audio.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -866,19 +874,27 @@ end
 --- Icono para las imagenes
 function This_MOD.load_icon()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     local Name = GMOD.name .. "-icon"
     if data.raw["virtual-signal"][Name] then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Crear la señal
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
     GMOD.extend({
         type = "virtual-signal",
         name = Name,
         localised_name = "",
-        icon = This_MOD.graphics .. "icon.png",
+        icon = This_MOD.path_graphics .. "icon.png",
         icon_size = 40,
         subgroup = "virtual-signal",
         order = "z-z-o"
