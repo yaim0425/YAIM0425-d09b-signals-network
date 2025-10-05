@@ -42,8 +42,8 @@ function This_MOD.start()
             This_MOD.create_subgroup(space)
             This_MOD.create_item(space)
             This_MOD.create_entity(space)
-            -- This_MOD.create_recipe(space)
-            -- This_MOD.create_tech(space)
+            This_MOD.create_recipe(space)
+            This_MOD.create_tech(space)
 
             --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         end
@@ -103,6 +103,9 @@ function This_MOD.setting_mod()
     --- Nombre de las entidades
     This_MOD.name_sender = GMOD.name .. "-" .. This_MOD.id_sender .. "-sender"
     This_MOD.name_receiver = GMOD.name .. "-" .. This_MOD.id_receiver .. "-receiver"
+
+    --- Nombre de la tecnología
+    This_MOD.name_tech = This_MOD.prefix .. "transmission-tech"
 
     --- Ruta a los multimedias
     This_MOD.path_graphics = "__" .. This_MOD.prefix .. This_MOD.name .. "__/graphics/"
@@ -587,95 +590,50 @@ end
 
 function This_MOD.create_recipe(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
+    --- Emisor
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if not space.recipe then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Duplicar el elemento
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local Recipe = GMOD.copy(space.recipe)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Cambiar algunas propiedades
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Nombre
-    Recipe.name = space.name
-
-    --- Apodo y descripción
-    Recipe.localised_name = GMOD.copy(space.entity.localised_name)
-    Recipe.localised_description = GMOD.copy(This_MOD.lane_splitter.localised_description)
-
-    --- Elimnar propiedades inecesarias
-    Recipe.main_product = nil
-
-    --- Productividad
-    Recipe.allow_productivity = true
-    Recipe.maximum_productivity = 1000000
-
-    --- Cambiar icono
-    Recipe.icons = GMOD.copy(space.item.icons)
-    table.insert(Recipe.icons, This_MOD.indicator)
-
-    --- Habilitar la receta
-    Recipe.enabled = space.tech == nil
-
-    --- Actualizar Order
-    local Order = tonumber(Recipe.order) + 1
-    Recipe.order = GMOD.pad_left_zeros(#Recipe.order, Order)
-
-    --- Ingredientes
-    for _, ingredient in pairs(Recipe.ingredients) do
-        ingredient.name = (function(name)
-            --- Validación
-            if not name then return end
-
-            --- Procesar el nombre
-            local That_MOD =
-                GMOD.get_id_and_name(name) or
-                { ids = "-", name = name }
-
-            --- Nombre despues de aplicar el MOD
-            local New_name =
-                GMOD.name .. That_MOD.ids ..
-                This_MOD.id .. "-" ..
-                That_MOD.name
-
-            --- La entidad ya existe
-            if GMOD.entities[New_name] ~= nil then
-                return New_name
-            end
-
-            --- La entidad existirá
-            for _, Spaces in pairs(This_MOD.to_be_processed) do
-                for _, Space in pairs(Spaces) do
-                    if Space.entity.name == name then
-                        return New_name
-                    end
-                end
-            end
-        end)(ingredient.name) or ingredient.name
-    end
-
-    --- Resultados
-    Recipe.results = { {
+    local Sender = {}
+    Sender.type = "recipe"
+    Sender.name = This_MOD.name_sender
+    Sender.energy_required = 10
+    Sender.enabled = false
+    Sender.ingredients = {
+        { type = "item", name = "processing-unit",      amount = 20 },
+        { type = "item", name = "battery",              amount = 20 },
+        { type = "item", name = "steel-plate",          amount = 10 },
+        { type = "item", name = "electric-engine-unit", amount = 10 },
+    }
+    Sender.results = { {
         type = "item",
-        name = space.name,
+        name = This_MOD.name_sender,
+        amount = 1
+    } }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Receptor
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Receiver = {}
+    Receiver.type = "recipe"
+    Receiver.name = This_MOD.name_receiver
+    Receiver.energy_required = 10
+    Receiver.enabled = false
+    Receiver.ingredients = {
+        { type = "item", name = "processing-unit",      amount = 20 },
+        { type = "item", name = "copper-plate",         amount = 20 },
+        { type = "item", name = "steel-plate",          amount = 20 },
+        { type = "item", name = "electric-engine-unit", amount = 10 },
+    }
+    Receiver.results = { {
+        type = "item",
+        name = This_MOD.name_receiver,
         amount = 1
     } }
 
@@ -689,69 +647,46 @@ function This_MOD.create_recipe(space)
     --- Crear el prototipo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GMOD.extend(Recipe)
+    GMOD.extend(Sender, Receiver)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
 function This_MOD.create_tech(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
+    --- Tecnología base
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if not space.tech then return end
-    if data.raw.technology[space.name .. "-tech"] then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Duplicar el elemento
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local Tech = GMOD.copy(space.tech)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Cambiar algunas propiedades
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Nombre
-    Tech.name = space.name .. "-tech"
-
-    --- Apodo y descripción
-    Tech.localised_name = GMOD.copy(space.entity.localised_name)
-    Tech.localised_description = GMOD.copy(This_MOD.lane_splitter.localised_description)
-
-    --- Cambiar icono
-    Tech.icons = GMOD.copy(space.item.icons)
-    table.insert(Tech.icons, This_MOD.indicator_tech)
-
-    --- Tech previas
-    Tech.prerequisites = { space.tech.name }
-
-    --- Efecto de la tech
-    Tech.effects = { {
-        type = "unlock-recipe",
-        recipe = space.name
-    } }
-
-    --- Tech se activa con una fabricación
-    if Tech.research_trigger then
-        Tech.research_trigger = {
-            type = "craft-item",
-            item = space.item.name,
-            count = 1
+    local Technology = {
+        type = "technology",
+        name = This_MOD.name_tech,
+        localised_name = { "", { "technology-name." .. This_MOD.prefix .. "transmission" } },
+        localised_description = { "", { "technology-description." .. This_MOD.prefix .. "transmission" } },
+        effects = {
+            { type = "unlock-recipe", recipe = This_MOD.name_sender },
+            { type = "unlock-recipe", recipe = This_MOD.name_receiver }
+        },
+        icons = { {
+            icon = This_MOD.path_graphics .. "technology.png",
+            icon_size = 256
+        } },
+        order = "e-g",
+        prerequisites = {
+            "processing-unit",
+            "electric-engine",
+            "circuit-network"
+        },
+        unit = {
+            count = 100,
+            time = 30,
+            ingredients = {
+                { "automation-science-pack", 1 },
+                { "logistic-science-pack",   1 },
+                { "chemical-science-pack",   1 },
+                mods["space-age"] and { "space-science-pack", 1 } or nil
+            }
         }
-    end
+    }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -763,18 +698,18 @@ function This_MOD.create_tech(space)
     --- Crear el prototipo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GMOD.extend(Tech)
+    GMOD.extend(Technology)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
----------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 
 
 
 
----------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 ---[ Iniciar el MOD ]---
 ---------------------------------------------------------------------------
 
