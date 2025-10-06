@@ -104,16 +104,16 @@ end
 function This_MOD.load_events()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Al crear la entidad
-    -- script.on_event({
-    --     defines.events.on_built_entity,
-    --     defines.events.on_robot_built_entity,
-    --     defines.events.script_raised_built,
-    --     defines.events.script_raised_revive,
-    --     defines.events.on_space_platform_built_entity,
-    -- }, function(event)
-    --     This_MOD.create_entity(This_MOD.create_data(event))
-    -- end)
+    --- Al crear la entidad
+    script.on_event({
+        defines.events.on_built_entity,
+        defines.events.on_robot_built_entity,
+        defines.events.script_raised_built,
+        defines.events.script_raised_revive,
+        defines.events.on_space_platform_built_entity,
+    }, function(event)
+        This_MOD.create_entity(This_MOD.create_data(event))
+    end)
 
     -- --- Abrir o cerrar la interfaz
     -- script.on_event({
@@ -156,7 +156,122 @@ end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.create_entity(Data) end
+function This_MOD.create_entity(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Data.Entity then return end
+    if
+        not (
+            GMOD.has_id(Data.Entity.name, This_MOD.id_sender) or
+            GMOD.has_id(Data.Entity.name, This_MOD.id_receiver)
+        )
+    then
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Variables propias
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Canal por defecto
+    This_MOD.get_channel(Data)
+
+    --- Canal para la nueva antena
+    local Tags = Data.Event.tags
+    Tags = Tags and Tags.channel or This_MOD.channel_default
+    local Channel = This_MOD.get_channel(Data, Tags)
+
+    --- Borrar el nombre adicional de la entidad
+    Data.Entity.backer_name = ""
+
+    --- Desconectar de la red
+    local Control = Data.Entity.get_or_create_control_behavior()
+    Control.read_logistics = false
+
+    --- Guardar el canal de la enridad
+    local Node = {}
+    Node.entity = Data.Entity
+    Node.channel = Channel
+    Node.connect = false
+    Node.unit_number = Data.Entity.unit_number
+    table.insert(Data.nodes, Node)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Configurar la entidad
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Emisor
+    if GMOD.has_id(Data.Entity.name, This_MOD.id_sender) then
+        --- Superficie de los canales
+        local Surface = This_MOD.get_surface()
+
+        --- Crear los filtros
+        Node.filter_red = Surface.create_entity({
+            name = This_MOD.combinator_name,
+            force = Data.Force.name,
+            position = { 0, 0 }
+        })
+
+        Node.filter_green = Surface.create_entity({
+            name = This_MOD.combinator_name,
+            force = Data.Force.name,
+            position = { 0, 0 }
+        })
+
+        --- Configurar los filtros
+        Node.filter_red.get_or_create_control_behavior().parameters = {
+            output_signal = { type = "virtual", name = "signal-everything" },
+            first_signal = { type = "virtual", name = "signal-anything" },
+            comparator = "≠"
+        }
+
+        Node.filter_green.get_or_create_control_behavior().parameters = {
+            output_signal = { type = "virtual", name = "signal-everything" },
+            first_signal = { type = "virtual", name = "signal-anything" },
+            comparator = "≠"
+        }
+
+        --- Puntos de conexión de los filtros
+        local Filter_red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_input_red, true)
+        local Filter_green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_input_green, true)
+
+        --- Puntos de conexión del emisor
+        local Sender_red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+        local Sender_green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+
+        --- Conectar el emisor a los filtros
+        Sender_red.connect_to(Filter_red, false, defines.wire_origin.script)
+        Sender_green.connect_to(Filter_green, false, defines.wire_origin.script)
+
+        --- Guardar el puntos de conexión
+        Node.red = Node.filter_red.get_wire_connector(defines.wire_connector_id.combinator_output_red, true)
+        Node.green = Node.filter_green.get_wire_connector(defines.wire_connector_id.combinator_output_green, true)
+        Node.type = This_MOD.id_sender
+    end
+
+    --- Receptor
+    if GMOD.has_id(Data.Entity.name, This_MOD.id_receiver) then
+        Node.red = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+        Node.green = Data.Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+        Node.type = This_MOD.id_receiver
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.toggle_gui(Data) end
 
