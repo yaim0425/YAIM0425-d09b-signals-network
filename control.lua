@@ -115,13 +115,13 @@ function This_MOD.load_events()
         This_MOD.create_entity(This_MOD.create_data(event))
     end)
 
-    -- --- Abrir o cerrar la interfaz
-    -- script.on_event({
-    --     defines.events.on_gui_opened,
-    --     defines.events.on_gui_closed
-    -- }, function(event)
-    --     This_MOD.toggle_gui(This_MOD.create_data(event))
-    -- end)
+    --- Abrir o cerrar la interfaz
+    script.on_event({
+        defines.events.on_gui_opened,
+        defines.events.on_gui_closed
+    }, function(event)
+        This_MOD.toggle_gui(This_MOD.create_data(event))
+    end)
 
     -- --- Al seleccionar otro canal
     -- script.on_event({
@@ -273,7 +273,338 @@ function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
-function This_MOD.toggle_gui(Data) end
+function This_MOD.toggle_gui(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local function validate_close()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Validación
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if not Data.GUI.frame_main then return false end
+        if Data.GUI.action == This_MOD.action.build then return false end
+        if Data.GUI.action == This_MOD.action.close_force then return true end
+        if not Data.Event.element then return false end
+        if Data.Event.element == Data.GUI.frame_main then return true end
+        if Data.Event.element ~= Data.GUI.button_exit then return false end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Aprovado
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        return true
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
+    local function validate_open()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Validación
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if Data.GUI.frame_main then return false end
+        if not This_MOD.validate_entity(Data) then return false end
+
+        if Data.Entity.name == "entity-ghost" then
+            local Entity = Data.Entity.ghost_prototype
+            if GMOD.has_id(Entity.name, This_MOD.id) then
+                This_MOD.sound_bad(Data)
+                Data.Player.opened = nil
+            end
+        end
+
+        if
+            not (
+                GMOD.has_id(Data.Entity.name, This_MOD.id_sender) or
+                GMOD.has_id(Data.Entity.name, This_MOD.id_receiver)
+            )
+        then
+            return false
+        end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- En caso de ser necesaria
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if not Data.node then
+            This_MOD.create_entity({
+                entity = Data.Entity
+            })
+        end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Aprovado
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        return true
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local function gui_destroy()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        Data.GUI.frame_main.destroy()
+        Data.gPlayer.GUI = {}
+        Data.GUI = Data.gPlayer.GUI
+        Data.Player.opened = nil
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
+    local function gui_build()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Cambiar los guiones del nombre
+        local Prefix = string.gsub(This_MOD.prefix, "%-", "_")
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Crear el cuadro principal
+        Data.GUI.frame_main = {}
+        Data.GUI.frame_main.type = "frame"
+        Data.GUI.frame_main.name = "frame_main"
+        Data.GUI.frame_main.direction = "vertical"
+        Data.GUI.frame_main = Data.Player.gui.screen.add(Data.GUI.frame_main)
+        Data.GUI.frame_main.style = "frame"
+        Data.GUI.frame_main.auto_center = true
+
+        --- Indicar que la ventana esta abierta
+        --- Cerrar la ventana al abrir otra ventana, presionar E o Esc
+        Data.Player.opened = Data.GUI.frame_main
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Contenedor de la cabeza
+        Data.GUI.flow_head = {}
+        Data.GUI.flow_head.type = "flow"
+        Data.GUI.flow_head.name = "flow_head"
+        Data.GUI.flow_head.direction = "horizontal"
+        Data.GUI.flow_head = Data.GUI.frame_main.add(Data.GUI.flow_head)
+        Data.GUI.flow_head.style = Prefix .. "flow_head"
+
+        --- Etiqueta con el titulo
+        Data.GUI.label_title = {}
+        Data.GUI.label_title.type = "label"
+        Data.GUI.label_title.name = "title"
+        Data.GUI.label_title.caption = { "entity-name." .. Data.Entity.name }
+        Data.GUI.label_title = Data.GUI.flow_head.add(Data.GUI.label_title)
+        Data.GUI.label_title.style = Prefix .. "label_title"
+
+        --- Indicador para mover la ventana
+        Data.GUI.empty_widget_head = {}
+        Data.GUI.empty_widget_head.type = "empty-widget"
+        Data.GUI.empty_widget_head.name = "empty_widget_head"
+        Data.GUI.empty_widget_head = Data.GUI.flow_head.add(Data.GUI.empty_widget_head)
+        Data.GUI.empty_widget_head.drag_target = Data.GUI.frame_main
+        Data.GUI.empty_widget_head.style = Prefix .. "empty_widget"
+
+        --- Botón de cierre
+        Data.GUI.button_exit = {}
+        Data.GUI.button_exit.type = "sprite-button"
+        Data.GUI.button_exit.name = "button_exit"
+        Data.GUI.button_exit.sprite = "utility/close"
+        Data.GUI.button_exit.hovered_sprite = "utility/close_black"
+        Data.GUI.button_exit.clicked_sprite = "utility/close_black"
+        Data.GUI.button_exit.tooltip = { "", { This_MOD.prefix .. "close" } }
+        Data.GUI.button_exit = Data.GUI.flow_head.add(Data.GUI.button_exit)
+        Data.GUI.button_exit.style = Prefix .. "button_close"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Contenedor del cuerpo para el inventario
+        Data.GUI.flow_items = {}
+        Data.GUI.flow_items.type = "flow"
+        Data.GUI.flow_items.name = "flow_items"
+        Data.GUI.flow_items.direction = "vertical"
+        Data.GUI.flow_items = Data.GUI.frame_main.add(Data.GUI.flow_items)
+        Data.GUI.flow_items.style = Prefix .. "flow_vertival_8"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Efecto de profundidad
+        Data.GUI.frame_entity = {}
+        Data.GUI.frame_entity.type = "frame"
+        Data.GUI.frame_entity.name = "frame_entity"
+        Data.GUI.frame_entity.direction = "vertical"
+        Data.GUI.frame_entity = Data.GUI.flow_items.add(Data.GUI.frame_entity)
+        Data.GUI.frame_entity.style = Prefix .. "frame_entity"
+
+        --- Imagen de la entidad
+        Data.GUI.entity_preview_entity = {}
+        Data.GUI.entity_preview_entity.name = "entity_preview_entity"
+        Data.GUI.entity_preview_entity.type = "entity-preview"
+        Data.GUI.entity_preview_entity = Data.GUI.frame_entity.add(Data.GUI.entity_preview_entity)
+        Data.GUI.entity_preview_entity.style = "wide_entity_button"
+        Data.GUI.entity_preview_entity.entity = Data.Entity
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Efecto de profundidad
+        Data.GUI.frame_old_channel = {}
+        Data.GUI.frame_old_channel.type = "frame"
+        Data.GUI.frame_old_channel.name = "frame_old_channels"
+        Data.GUI.frame_old_channel.direction = "horizontal"
+        Data.GUI.frame_old_channel = Data.GUI.flow_items.add(Data.GUI.frame_old_channel)
+        Data.GUI.frame_old_channel.style = Prefix .. "frame_body"
+
+        --- Barra de movimiento
+        Data.GUI.dropdown_channels = {}
+        Data.GUI.dropdown_channels.type = "drop-down"
+        Data.GUI.dropdown_channels.name = "drop_down_channels"
+        Data.GUI.dropdown_channels = Data.GUI.frame_old_channel.add(Data.GUI.dropdown_channels)
+        Data.GUI.dropdown_channels.style = Prefix .. "drop_down_channels"
+
+        --- Botón para aplicar los cambios
+        Data.GUI.button_edit = {}
+        Data.GUI.button_edit.type = "sprite-button"
+        Data.GUI.button_edit.name = "button_edit"
+        Data.GUI.button_edit.sprite = "utility/rename_icon"
+        Data.GUI.button_edit.tooltip = { This_MOD.prefix .. "edit-channel" }
+        Data.GUI.button_edit = Data.GUI.frame_old_channel.add(Data.GUI.button_edit)
+        Data.GUI.button_edit.style = Prefix .. "button_blue"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Efecto de profundidad
+        Data.GUI.frame_new_channel = {}
+        Data.GUI.frame_new_channel.type = "frame"
+        Data.GUI.frame_new_channel.name = "frame_new_channels"
+        Data.GUI.frame_new_channel.direction = "horizontal"
+        Data.GUI.frame_new_channel = Data.GUI.flow_items.add(Data.GUI.frame_new_channel)
+        Data.GUI.frame_new_channel.style = Prefix .. "frame_body"
+        Data.GUI.frame_new_channel.visible = false
+
+        --- Nuevo nombre
+        Data.GUI.textfield_new_channel = {}
+        Data.GUI.textfield_new_channel.type = "textfield"
+        Data.GUI.textfield_new_channel.name = "write-channel"
+        Data.GUI.textfield_new_channel.text = "xXx"
+        Data.GUI.textfield_new_channel = Data.GUI.frame_new_channel.add(Data.GUI.textfield_new_channel)
+        Data.GUI.textfield_new_channel.style = Prefix .. "stretchable_textfield"
+
+        --- Crear la imagen de selección
+        Data.GUI.button_icon = {}
+        Data.GUI.button_icon.type = "choose-elem-button"
+        Data.GUI.button_icon.name = "button_icon"
+        Data.GUI.button_icon.elem_type = "signal"
+        Data.GUI.button_icon.signal = { type = "virtual", name = GMOD.name .. "-icon" }
+        Data.GUI.button_icon = Data.GUI.frame_new_channel.add(Data.GUI.button_icon)
+        Data.GUI.button_icon.style = Prefix .. "button"
+
+        --- Botón para cancelar los cambios
+        Data.GUI.button_cancel = {}
+        Data.GUI.button_cancel.type = "sprite-button"
+        Data.GUI.button_cancel.name = "button_cancel"
+        Data.GUI.button_cancel.sprite = "utility/close_fat"
+        Data.GUI.button_cancel.tooltip = { "gui-mod-settings.cancel" }
+        Data.GUI.button_cancel = Data.GUI.frame_new_channel.add(Data.GUI.button_cancel)
+        Data.GUI.button_cancel.style = Prefix .. "button_red"
+
+        --- Botón para aplicar los cambios
+        Data.GUI.button_confirm = {}
+        Data.GUI.button_confirm.type = "sprite-button"
+        Data.GUI.button_confirm.name = "button_green"
+        Data.GUI.button_confirm.sprite = "utility/check_mark_white"
+        Data.GUI.button_confirm.tooltip = { "gui.confirm" }
+        Data.GUI.button_confirm = Data.GUI.frame_new_channel.add(Data.GUI.button_confirm)
+        Data.GUI.button_confirm.style = Prefix .. "button_green"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cargar los canales
+    local function load_channels()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        --- Cargar los canales
+        local Dropdown = Data.GUI.dropdown_channels
+        for _, channel in pairs(Data.channels) do
+            Dropdown.add_item(channel.name)
+        end
+        Dropdown.add_item(This_MOD.new_channel)
+
+        --- Seleccionar el canal actual
+        Dropdown.selected_index = Data.node.channel.index
+        Data.GUI.button_edit.enabled = Dropdown.selected_index > 1
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Acción a ejecutar
+    if validate_close() then
+        gui_destroy()
+        This_MOD.sound_close(Data)
+    elseif validate_open() then
+        Data.GUI.action = This_MOD.action.build
+        gui_build()
+        load_channels()
+        Data.GUI.entity = Data.Entity
+        Data.GUI.action = This_MOD.action.none
+        This_MOD.sound_open(Data)
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.selection_channel(Data) end
 
@@ -458,6 +789,14 @@ end
 
 function This_MOD.sound_bad(Data)
     Data.Player.play_sound({ path = "utility/cannot_build" })
+end
+
+function This_MOD.sound_open(Data)
+    Data.Player.play_sound({ path = "entity-open/decider-combinator" })
+end
+
+function This_MOD.sound_close(Data)
+    Data.Player.play_sound({ path = "entity-close/decider-combinator" })
 end
 
 function This_MOD.sound_channel_selected(Data)
