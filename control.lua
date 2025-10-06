@@ -778,6 +778,40 @@ function This_MOD.get_channel(Data, channel)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+function This_MOD.validate_entity(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Cerrado forzado de la ventana de ser necesario
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Flag = false
+    Flag = (Data.GUI.entity and Data.GUI.entity.valid)
+    Flag = Flag or (Data.Entity and Data.Entity.valid)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Flag then
+        if Data.GUI.frame_main then
+            Data.GUI.action = This_MOD.action.close_force
+            This_MOD.toggle_gui(Data)
+        end
+        return false
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Aprovado
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    return true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 ---------------------------------------------------------------------------
 
 function This_MOD.sound_good(Data)
