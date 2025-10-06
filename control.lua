@@ -674,6 +674,7 @@ function This_MOD.create_data(event)
     if Data.Entity or Data.GUI then
         local Entity = Data.Entity or Data.GUI.entity
         Data.node = GMOD.get_tables(Data.nodes, "entity", Entity)
+        Data.node = Data.node and Data.node[1] or nil
     end
 
     --- Devolver el consolidado de los datos
