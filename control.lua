@@ -200,7 +200,7 @@ function This_MOD.get_surface()
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Crear la superficie si no existe
+    --- Crear la superficie
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Crear la superficie
@@ -220,6 +220,63 @@ function This_MOD.get_surface()
 
     --- Devolver la superficie
     return Surface
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.get_channel(Data, channel)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Superficie de los canales
+    local Surface = This_MOD.get_surface()
+
+    --- Convertir el id en iconos
+    if not channel then
+        channel = ""
+        local ID = tostring(#Data.channels + 1)
+        for n = 1, #ID do
+            channel = channel .. "[img=virtual-signal.signal-" .. ID:sub(n, n) .. "]"
+        end
+    end
+
+    --- Cargar el canal indicado
+    local Channel = GMOD.get_tables(Data.channels, "name", channel)
+    if Channel then return Channel end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Crear un nuevo canal
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Crear el poste
+    local Entity = Surface.create_entity({
+        name = "small-electric-pole",
+        position = { 0, 0 },
+        force = Data.Force.name
+    })
+
+    --- Desconectar el poste
+    local Copper = Entity.get_wire_connector(defines.wire_connector_id.pole_copper, false)
+    Copper.disconnect_all(defines.wire_origin.script)
+
+    --- Guardar el nuevo canal
+    Channel = {}
+    Channel.index = #Data.channels + 1
+    Channel.entity = Entity
+    Channel.name = channel
+    Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
+    Channel.green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
+    Data.channels[Channel.index] = Channel
+
+    --- Devolver el canal indicado
+    return Channel
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
