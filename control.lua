@@ -100,6 +100,8 @@ end
 
 function This_MOD.load_events()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Acciones comunes
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Al crear la entidad
     script.on_event({
@@ -111,68 +113,6 @@ function This_MOD.load_events()
     }, function(event)
         This_MOD.create_entity(This_MOD.create_data(event))
     end)
-
-    -- --- Copar la configuración de una antena en otra
-    -- script.on_event({
-    --     defines.events.on_entity_settings_pasted
-    -- }, function(event)
-    --     This_MOD.copy_paste_settings(This_MOD.create_data(event))
-    -- end)
-
-    -- --- Ocultar la superficie de las fuerzas recién creadas
-    -- script.on_event({
-    --     defines.events.on_force_created
-    -- }, function(event)
-    --     This_MOD.hide_surface(This_MOD.create_data(event))
-    -- end)
-
-    -- --- Combinar dos forces
-    -- script.on_event({
-    --     defines.events.on_forces_merged
-    -- }, function(event)
-    --     This_MOD.forces_merged(This_MOD.create_data(event))
-    -- end)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    -- --- Modificar el fantasma de reconstrucción
-    -- script.on_event({
-    --     defines.events.on_post_entity_died
-    -- }, function(event)
-    --     event.entity = event.ghost
-    --     This_MOD.edit_ghost(This_MOD.create_data(event))
-    -- end)
-
-    -- --- Muerte de la entidad
-    -- script.on_event({
-    --     defines.events.on_entity_died
-    -- }, function(event)
-    --     This_MOD.beafore_entity_died(This_MOD.create_data(event))
-    -- end)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    -- --- Verificación periodica
-    -- script.on_nth_tick(20, function()
-    --     --- La entidad tenga energía
-    --     This_MOD.check_power()
-
-    --     --- Forzar el cierre, en caso de ser necesario
-    --     This_MOD.validate_gui()
-    -- end)
-
-    -- --- Información de las antenas destruidas
-    -- script.on_event({
-    --     defines.events.on_tick
-    -- }, function()
-    --     This_MOD.after_entity_died()
-    -- end)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     -- --- Abrir o cerrar la interfaz
     -- script.on_event({
@@ -215,6 +155,88 @@ function This_MOD.load_events()
     --     defines.events.on_player_setup_blueprint
     -- }, function(event)
     --     This_MOD.create_blueprint(This_MOD.create_data(event))
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Muerte y reconstrucción de una entidad
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Modificar el fantasma de reconstrucción
+    -- script.on_event({
+    --     defines.events.on_post_entity_died
+    -- }, function(event)
+    --     event.entity = event.ghost
+    --     This_MOD.edit_ghost(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Muerte de la entidad
+    -- script.on_event({
+    --     defines.events.on_entity_died
+    -- }, function(event)
+    --     This_MOD.beafore_entity_died(This_MOD.create_data(event))
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Acciones por tiempo
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Verificación periodica
+    -- script.on_nth_tick(20, function()
+    --     --- La entidad tenga energía
+    --     This_MOD.check_power()
+
+    --     --- Forzar el cierre, en caso de ser necesario
+    --     This_MOD.validate_gui()
+    -- end)
+
+    -- --- Información de las antenas destruidas
+    -- script.on_event({
+    --     defines.events.on_tick
+    -- }, function()
+    --     This_MOD.after_entity_died()
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Acciones propias del MOD
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Copar la configuración de una antena en otra
+    -- script.on_event({
+    --     defines.events.on_entity_settings_pasted
+    -- }, function(event)
+    --     This_MOD.copy_paste_settings(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Ocultar la superficie de las fuerzas recién creadas
+    -- script.on_event({
+    --     defines.events.on_force_created
+    -- }, function(event)
+    --     This_MOD.hide_surface(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Combinar dos forces
+    -- script.on_event({
+    --     defines.events.on_forces_merged
+    -- }, function(event)
+    --     This_MOD.forces_merged(This_MOD.create_data(event))
     -- end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
