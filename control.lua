@@ -299,6 +299,60 @@ function This_MOD.show_new_channel(Data) end
 ---[ Funciones auxiliares ]---
 ---------------------------------------------------------------------------
 
+function This_MOD.create_data(event)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Consolidar la información
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Data = GMOD.create_data(event or {}, This_MOD)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Data.gForce then return Data end
+    if not event then return Data end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Variables propias
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Postes / canales
+    Data.gForce.channels = Data.gForce.channels or {}
+    Data.channels = Data.gForce.channels
+
+    --- Antenas
+    Data.gForce.nodes = Data.gForce.nodes or {}
+    Data.nodes = Data.gForce.nodes
+
+    --- Auxiliar
+    Data.gForce.ghosts = Data.gForce.ghosts or {}
+    Data.ghosts = Data.gForce.ghosts
+
+    --- Cargar el nodo a tratar
+    if Data.Entity or Data.GUI then
+        local Entity = Data.Entity or Data.GUI.entity
+        Data.node = GMOD.get_tables(Data.nodes, "entity", Entity)
+    end
+
+    --- Devolver el consolidado de los datos
+    return Data
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 function This_MOD.get_surface()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Validación
