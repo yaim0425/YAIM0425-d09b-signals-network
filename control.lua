@@ -57,6 +57,29 @@ function This_MOD.reference_values()
     --- Nombre del combinador
     This_MOD.combinator_name = This_MOD.prefix .. GMOD.entities["decider-combinator"].name
 
+    --- Configuración de la superficie
+    This_MOD.map_gen_settings = {
+        width = 1,
+        height = 1,
+        property_expression_names = {},
+        autoplace_settings = {
+            decorative = {
+                treat_missing_as_default = false,
+                settings = {}
+            },
+            entity = {
+                treat_missing_as_default = false,
+                settings = {}
+            },
+            tile = {
+                treat_missing_as_default = false,
+                settings = {
+                    ["out-of-map"] = {}
+                }
+            }
+        }
+    }
+
     --- Posibles estados de la ventana
     This_MOD.action = {}
     This_MOD.action.none = nil
@@ -507,7 +530,7 @@ function This_MOD.add_icon(Data)
 
     --- Agregar la imagen seleccionada
     local Text = Textbox.text
-    Text = Text .. (function ()
+    Text = Text .. (function()
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Variables a usar
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -705,38 +728,14 @@ end
 ---[ Funciones auxiliares ]---
 ---------------------------------------------------------------------------
 
-function This_MOD.create_data(event)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Consolidar la información
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local Data = GMOD.create_data(event or {}, This_MOD)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Corregir la variable
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    if not Data.Entity then Data.Entity = Data.GUI.entity end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
+function This_MOD.get_surface()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Validación
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if not Data.gForce then return Data end
-    if not event then return Data end
-    if not Data.Entity then return Data end
+    if game.surfaces[This_MOD.prefix .. This_MOD.name] then
+        return game.surfaces[This_MOD.prefix .. This_MOD.name]
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -745,20 +744,26 @@ function This_MOD.create_data(event)
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Variables propias
+    --- Crear la superficie si no existe
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Canales - indexados en orden de creación
-    Data.gForce[Data.Entity.name] = Data.gForce[Data.Entity.name] or {}
-    Data.gForce[Data.Entity.name].channels = Data.gForce[Data.Entity.name].channels or {}
-    Data.channels = Data.gForce[Data.Entity.name].channels
+    --- Crear la superficie
+    local Surface = game.create_surface(
+        This_MOD.prefix .. This_MOD.name,
+        This_MOD.map_gen_settings
+    )
 
-    --- Ultimo id buscado para un canal
-    Data.channels.last_link_id = Data.channels.last_link_id or 0
-    Data.last_link_id = Data.channels.last_link_id
+    --- Crear el espacio a usar
+    Surface.request_to_generate_chunks({ 0, 0 }, 1)
+    Surface.force_generate_chunk_requests()
 
-    --- Devolver el consolidado de los datos
-    return Data
+    --- Ocultar la superficie de todas las fuerzas
+    for _, force in pairs(game.forces) do
+        force.set_surface_hidden(Surface, true)
+    end
+
+    --- Devolver la superficie
+    return Surface
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
