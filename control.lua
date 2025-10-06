@@ -232,12 +232,12 @@ function This_MOD.get_channel(Data, channel)
     --- Superficie de los canales
     local Surface = This_MOD.get_surface()
 
-    --- Convertir el id en iconos
+    --- Convertir el index en iconos
     if not channel then
         channel = ""
-        local ID = tostring(#Data.channels + 1)
-        for n = 1, #ID do
-            channel = channel .. "[img=virtual-signal.signal-" .. ID:sub(n, n) .. "]"
+        local Index = tostring(#Data.channels + 1)
+        for n = 1, #Index do
+            channel = channel .. "[img=virtual-signal.signal-" .. Index:sub(n, n) .. "]"
         end
     end
 
