@@ -112,13 +112,82 @@ function This_MOD.load_events()
         This_MOD.create_entity(This_MOD.create_data(event))
     end)
 
-    --- Abrir o cerrar la interfaz
-    script.on_event({
-        defines.events.on_gui_opened,
-        defines.events.on_gui_closed
-    }, function(event)
-        This_MOD.toggle_gui(This_MOD.create_data(event))
-    end)
+    -- --- Copar la configuración de una antena en otra
+    -- script.on_event({
+    --     defines.events.on_entity_settings_pasted
+    -- }, function(event)
+    --     This_MOD.copy_paste_settings(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Ocultar la superficie de las fuerzas recién creadas
+    -- script.on_event({
+    --     defines.events.on_force_created
+    -- }, function(event)
+    --     This_MOD.hide_surface(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Combinar dos forces
+    -- script.on_event({
+    --     defines.events.on_forces_merged
+    -- }, function(event)
+    --     This_MOD.forces_merged(This_MOD.create_data(event))
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Modificar el fantasma de reconstrucción
+    -- script.on_event({
+    --     defines.events.on_post_entity_died
+    -- }, function(event)
+    --     event.entity = event.ghost
+    --     This_MOD.edit_ghost(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Muerte de la entidad
+    -- script.on_event({
+    --     defines.events.on_entity_died
+    -- }, function(event)
+    --     This_MOD.beafore_entity_died(This_MOD.create_data(event))
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Verificación periodica
+    -- script.on_nth_tick(20, function()
+    --     --- La entidad tenga energía
+    --     This_MOD.check_power()
+
+    --     --- Forzar el cierre, en caso de ser necesario
+    --     This_MOD.validate_gui()
+    -- end)
+
+    -- --- Información de las antenas destruidas
+    -- script.on_event({
+    --     defines.events.on_tick
+    -- }, function()
+    --     This_MOD.after_entity_died()
+    -- end)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    -- --- Abrir o cerrar la interfaz
+    -- script.on_event({
+    --     defines.events.on_gui_opened,
+    --     defines.events.on_gui_closed
+    -- }, function(event)
+    --     This_MOD.toggle_gui(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Al seleccionar o deseleccionar un icon
+    -- script.on_event({
+    --     defines.events.on_gui_elem_changed
+    -- }, function(event)
+    --     This_MOD.add_icon(This_MOD.create_data(event))
+    -- end)
 
     -- --- Al seleccionar otro canal
     -- script.on_event({
@@ -134,18 +203,18 @@ function This_MOD.load_events()
     --     This_MOD.button_action(This_MOD.create_data(event))
     -- end)
 
-    -- --- Al seleccionar o deseleccionar un icon
-    -- script.on_event({
-    --     defines.events.on_gui_elem_changed
-    -- }, function(event)
-    --     This_MOD.add_icon(This_MOD.create_data(event))
-    -- end)
-
-    -- --- Al presionar ENTER
+    -- --- Validar el nuevo nombre al dar ENTER
     -- script.on_event({
     --     defines.events.on_gui_confirmed
     -- }, function(event)
-    --     This_MOD.validate_channel_name(This_MOD.Create_data(event))
+    --     This_MOD.validate_channel_name(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Al copiar las entidades
+    -- script.on_event({
+    --     defines.events.on_player_setup_blueprint
+    -- }, function(event)
+    --     This_MOD.create_blueprint(This_MOD.create_data(event))
     -- end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
