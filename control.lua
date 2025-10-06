@@ -31,10 +31,14 @@ GMOD[This_MOD.id] = This_MOD
 function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Valores de la referencia
-    This_MOD.reference_values()
+    --- Validación
+    if This_MOD.setting then return end
 
-    --- Cambiar la propiedad necesaria
+    --- Valor de referencia
+    This_MOD.setting = GMOD.setting[This_MOD.id] or {}
+
+    --- Ejecución de las funciones
+    This_MOD.reference_values()
     This_MOD.load_events()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -43,14 +47,23 @@ end
 function This_MOD.reference_values()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- IDs de las entidades
+    This_MOD.id_sender = "A01A"
+    This_MOD.id_receiver = "A02A"
+
     --- Valores propios
     This_MOD.new_channel = { This_MOD.prefix .. "new-channel" }
+
+    --- Nombre del combinador
+    This_MOD.combinator_name = This_MOD.prefix .. GMOD.entities["decider-combinator"].name
 
     --- Posibles estados de la ventana
     This_MOD.action = {}
     This_MOD.action.none = nil
-    This_MOD.action.edit = 1
-    This_MOD.action.new_channel = 2
+    This_MOD.action.build = 1
+    This_MOD.action.edit = 2
+    This_MOD.action.new_channel = 3
+    This_MOD.action.close_force = 4
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
