@@ -179,12 +179,13 @@ function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Canal por defecto
-    This_MOD.get_channel(Data)
+    if #Data.channels == 0 then This_MOD.get_channel(Data) end
 
-    --- Canal para la nueva antena
-    local Tags = Data.Event.tags
-    Tags = Tags and Tags.channel or This_MOD.channel_default
-    local Channel = This_MOD.get_channel(Data, Tags)
+    --- Canal de la entidad
+    local Channel = Data.channels[1]
+    if Data.Event.tags then
+        Channel = This_MOD.get_channel(Data, Data.Event.tags.channel)
+    end
 
     --- Borrar el nombre adicional de la entidad
     Data.Entity.backer_name = ""
