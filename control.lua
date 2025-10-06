@@ -32,10 +32,7 @@ function This_MOD.start()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Validación
-    if This_MOD.setting then return end
-
-    --- Valor de referencia
-    This_MOD.setting = GMOD.setting[This_MOD.id] or {}
+    if This_MOD.action then return end
 
     --- Ejecución de las funciones
     This_MOD.reference_values()
