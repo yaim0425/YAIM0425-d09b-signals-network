@@ -787,7 +787,31 @@ function This_MOD.validate_channel_name(Data) end
 
 function This_MOD.show_old_channel(Data) end
 
-function This_MOD.show_new_channel(Data) end
+function This_MOD.show_new_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_old_channel.visible = false
+    Data.GUI.frame_new_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Configuración para un nuevo canal
+    if Data.GUI.action == This_MOD.action.new_channel then
+        Data.GUI.textfield_new_channel.text = ""
+    end
+
+    --- Configuración para un nuevo nombre
+    if Data.GUI.action == This_MOD.action.edit then
+        local Textfield = Data.GUI.textfield_new_channel
+        Textfield.text = Data.node.channel.name
+    end
+
+    --- Enfocar nombre
+    Data.GUI.textfield_new_channel.focus()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 ---------------------------------------------------------------------------
 
