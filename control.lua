@@ -746,11 +746,11 @@ function This_MOD.button_action(Data)
         return
     end
 
-    -- --- Cancelar el cambio de nombre o el nuevo canal
-    -- if Data.Event.element == Data.GUI.button_cancel then
-    --     This_MOD.show_old_channel(Data)
-    --     return
-    -- end
+    --- Cancelar el cambio de nombre o el nuevo canal
+    if Data.Event.element == Data.GUI.button_cancel then
+        This_MOD.show_old_channel(Data)
+        return
+    end
 
     -- --- Cambiar el nombre de un canal o agregar un nuevo canal
     -- if Data.Event.element == Data.GUI.button_confirm then
