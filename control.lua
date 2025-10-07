@@ -224,12 +224,12 @@ function This_MOD.load_events()
         This_MOD.copy_paste_settings(This_MOD.create_data(event))
     end)
 
-    -- --- Ocultar la superficie de las fuerzas recién creadas
-    -- script.on_event({
-    --     defines.events.on_force_created
-    -- }, function(event)
-    --     This_MOD.hide_surface(This_MOD.create_data(event))
-    -- end)
+    --- Ocultar la superficie de las fuerzas recién creadas
+    script.on_event({
+        defines.events.on_force_created
+    }, function(event)
+        This_MOD.hide_surface(This_MOD.create_data(event))
+    end)
 
     -- --- Combinar dos forces
     -- script.on_event({
@@ -1321,16 +1321,16 @@ function This_MOD.copy_paste_settings(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- function This_MOD.hide_surface(Data)
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+function This_MOD.hide_surface(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     local Surface = This_MOD.get_surface()
---     if Surface then
---         Data.Event.force.set_surface_hidden(Surface, true)
---     end
+    local Surface = This_MOD.get_surface()
+    if Surface then
+        Data.Event.force.set_surface_hidden(Surface, true)
+    end
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
--- end
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 -- function This_MOD.forces_merged(Data)
 --     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
