@@ -129,12 +129,12 @@ function This_MOD.load_events()
     --     This_MOD.selection_channel(This_MOD.create_data(event))
     -- end)
 
-    -- --- Al hacer clic en algún elemento de la ventana
-    -- script.on_event({
-    --     defines.events.on_gui_click
-    -- }, function(event)
-    --     This_MOD.button_action(This_MOD.create_data(event))
-    -- end)
+    --- Al hacer clic en algún elemento de la ventana
+    script.on_event({
+        defines.events.on_gui_click
+    }, function(event)
+        This_MOD.button_action(This_MOD.create_data(event))
+    end)
 
     -- --- Al seleccionar o deseleccionar un icon
     -- script.on_event({
@@ -697,7 +697,50 @@ end
 
 function This_MOD.selection_channel(Data) end
 
-function This_MOD.button_action(Data) end
+function This_MOD.button_action(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Data.GUI.frame_main then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Acciones
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cerrar la ventana
+    if Data.Event.element == Data.GUI.button_exit then
+        This_MOD.toggle_gui(Data)
+        return
+    end
+
+    -- --- Cancelar el cambio de nombre o el nuevo canal
+    -- if Data.Event.element == Data.GUI.button_cancel then
+    --     This_MOD.show_old_channel(Data)
+    --     return
+    -- end
+
+    -- --- Cambiar el nombre de un canal o agregar un nuevo canal
+    -- if Data.Event.element == Data.GUI.button_confirm then
+    --     This_MOD.validate_channel_name(Data)
+    --     return
+    -- end
+
+    -- --- Editar el nombre del canal seleccionado
+    -- if Data.Event.element == Data.GUI.button_edit then
+    --     Data.GUI.action = This_MOD.action.edit
+    --     This_MOD.show_new_channel(Data)
+    --     return
+    -- end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.add_icon(Data) end
 
