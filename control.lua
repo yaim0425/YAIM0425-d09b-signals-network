@@ -241,7 +241,7 @@ function This_MOD.load_events()
     --- Al clonar una antena
     script.on_event({
         defines.events.on_entity_cloned
-    },function(event)
+    }, function(event)
         local Event = GMOD.copy(event)
         Event.entity = event.destination
         This_MOD.create_entity(This_MOD.create_data(Event))
@@ -411,7 +411,10 @@ function This_MOD.toggle_gui(Data)
 
         if Data.Entity.name == "entity-ghost" then
             local Entity = Data.Entity.ghost_prototype
-            if GMOD.has_id(Entity.name, This_MOD.id) then
+            if
+                GMOD.has_id(Entity.name, This_MOD.id_sender) or
+                GMOD.has_id(Entity.name, This_MOD.id_receiver)
+            then
                 This_MOD.sound_bad(Data)
                 Data.Player.opened = nil
             end
