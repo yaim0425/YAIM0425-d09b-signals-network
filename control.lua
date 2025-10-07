@@ -672,7 +672,6 @@ function This_MOD.toggle_gui(Data)
         for _, channel in pairs(Data.channels) do
             Dropdown.add_item(channel.name)
         end
-        Dropdown.add_item(This_MOD.new_channel)
 
         --- Seleccionar el canal actual
         Dropdown.selected_index = Data.node.channel.index
@@ -716,22 +715,10 @@ function This_MOD.selection_channel(Data)
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Procesar la selección
+    --- Cambiar el canal del nodo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Selección actual
-    local Selected_index = Dropdown.selected_index
-
-    --- Se quiere crear un nuevo canal
-    if Selected_index == #Dropdown.items then
-        Data.GUI.action = This_MOD.action.new_channel
-        This_MOD.show_new_channel(Data)
-        This_MOD.sound_channel_selected(Data)
-        return
-    end
-
-    --- Cambiar el canal del nodo
-    local Channel = Data.channels[Selected_index]
+    local Channel = Data.channels[Dropdown.selected_index]
     This_MOD.set_channel(Data.node, Channel)
     This_MOD.sound_channel_changed(Data)
 
@@ -758,6 +745,14 @@ function This_MOD.button_action(Data)
     --- Cerrar la ventana
     if Data.Event.element == Data.GUI.button_exit then
         This_MOD.toggle_gui(Data)
+        return
+    end
+
+    --- Se quiere crear un nuevo canal
+    if Data.Event.element == Data.GUI.button_plus then
+        Data.GUI.action = This_MOD.action.new_channel
+        This_MOD.show_new_channel(Data)
+        This_MOD.sound_channel_selected(Data)
         return
     end
 
