@@ -1270,7 +1270,7 @@ function This_MOD.get_channel(Data, channel)
 
     --- Cargar el canal indicado
     local Channel = GMOD.get_tables(Data.channels, "name", channel)
-    if Channel then return Channel end
+    if Channel then return Channel[1] end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
