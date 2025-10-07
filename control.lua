@@ -934,114 +934,6 @@ function This_MOD.validate_channel_name(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
----------------------------------------------------------------------------
-
-function This_MOD.check_power()
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Funciones de validación
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local function connection_toggle(Data)
-        --- Entidad a modificar
-        if not Data.Entity then return end
-        if not Data.Entity.valid then return end
-
-        --- Renombrar
-        local Node = GMOD.get_tables(Data.nodes, "entity", Data.Entity)
-        if not Node then return end
-        Node = Node[1]
-
-        if Node.connect then
-            --- Desconectar
-            Node.connect = false
-            Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
-            Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
-        else
-            --- Conectar
-            Node.connect = true
-            Node.red.connect_to(Node.channel.red, false, defines.wire_origin.script)
-            Node.green.connect_to(Node.channel.green, false, defines.wire_origin.script)
-        end
-    end
-
-    local function check_power(Node)
-        --- En Factorio 2.0 puede ocurrir que la entidad esté
-        --- completamente alimentada, pero debido a algunas
-        --- peculiaridades del motor el búfer sólo está lleno
-        --- al 96%, por ejemplo.
-
-        --- Umbral de activació: 90%
-        local Threshold = 0.9
-
-        --- Variables a usar
-        local Energy = Node.entity.energy
-        local Buffer = Node.entity.electric_buffer_size
-        local Power_satisfied = Energy >= Buffer * Threshold
-
-        --- Acciones
-        local Flag = false
-        Flag = Flag or Node.connect and not Power_satisfied --- Desconectar
-        Flag = Flag or not Node.connect and Power_satisfied --- Conectar
-        if Flag then
-            local Data = { entity = Node.entity }
-            Data = This_MOD.create_data(Data)
-            connection_toggle(Data)
-        end
-    end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validar cada antena
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    for _, gForce in pairs(This_MOD.create_data().gForces) do
-        --- Antenas a eliminar
-        local Deleted = {}
-
-        --- Validar cada antena
-        for key, node in pairs(gForce.nodes or {}) do
-            if node.entity and node.entity.valid then
-                check_power(node)
-            else
-                table.insert(Deleted, 1, key)
-            end
-        end
-
-        --- Eliminar a las entidad invalidas
-        for _, key in pairs(Deleted) do
-            local Node = gForce.nodes[key]
-            table.remove(gForce.nodes, key)
-
-            if Node.type == This_MOD.id_sender then
-                Node.filter_red.destroy()
-                Node.filter_green.destroy()
-            end
-        end
-    end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
-function This_MOD.validate_gui()
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    for player_index, gPlayer in pairs(This_MOD.create_data().gPlayers) do
-        This_MOD.validate_entity(
-            This_MOD.create_data({
-                entity = gPlayer.GUI.entity,
-                player_index = player_index
-            })
-        )
-    end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
 function This_MOD.create_blueprint(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Validación
@@ -1096,6 +988,51 @@ function This_MOD.create_blueprint(Data)
             Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
         end
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+---------------------------------------------------------------------------
+
+function This_MOD.show_old_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_new_channel.visible = false
+    Data.GUI.frame_old_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Enfocar la selección
+    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
+    This_MOD.selection_channel(Data)
+    Data.GUI.action = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.show_new_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_old_channel.visible = false
+    Data.GUI.frame_new_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Configuración para un nuevo canal
+    if Data.GUI.action == This_MOD.action.new_channel then
+        Data.GUI.textfield_new_channel.text = ""
+    end
+
+    --- Configuración para un nuevo nombre
+    if Data.GUI.action == This_MOD.action.edit then
+        local Textfield = Data.GUI.textfield_new_channel
+        Textfield.text = Data.node.channel.name
+    end
+
+    --- Enfocar nombre
+    Data.GUI.textfield_new_channel.focus()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -1221,45 +1158,108 @@ end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.show_old_channel(Data)
+function This_MOD.check_power()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Funciones de validación
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cambiar de frame
-    Data.GUI.frame_new_channel.visible = false
-    Data.GUI.frame_old_channel.visible = true
+    local function connection_toggle(Data)
+        --- Entidad a modificar
+        if not Data.Entity then return end
+        if not Data.Entity.valid then return end
+
+        --- Renombrar
+        local Node = GMOD.get_tables(Data.nodes, "entity", Data.Entity)
+        if not Node then return end
+        Node = Node[1]
+
+        if Node.connect then
+            --- Desconectar
+            Node.connect = false
+            Node.red.disconnect_from(Node.channel.red, defines.wire_origin.script)
+            Node.green.disconnect_from(Node.channel.green, defines.wire_origin.script)
+        else
+            --- Conectar
+            Node.connect = true
+            Node.red.connect_to(Node.channel.red, false, defines.wire_origin.script)
+            Node.green.connect_to(Node.channel.green, false, defines.wire_origin.script)
+        end
+    end
+
+    local function check_power(Node)
+        --- En Factorio 2.0 puede ocurrir que la entidad esté
+        --- completamente alimentada, pero debido a algunas
+        --- peculiaridades del motor el búfer sólo está lleno
+        --- al 96%, por ejemplo.
+
+        --- Umbral de activació: 90%
+        local Threshold = 0.9
+
+        --- Variables a usar
+        local Energy = Node.entity.energy
+        local Buffer = Node.entity.electric_buffer_size
+        local Power_satisfied = Energy >= Buffer * Threshold
+
+        --- Acciones
+        local Flag = false
+        Flag = Flag or Node.connect and not Power_satisfied --- Desconectar
+        Flag = Flag or not Node.connect and Power_satisfied --- Conectar
+        if Flag then
+            local Data = { entity = Node.entity }
+            Data = This_MOD.create_data(Data)
+            connection_toggle(Data)
+        end
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Enfocar la selección
-    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
-    This_MOD.selection_channel(Data)
-    Data.GUI.action = nil
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validar cada antena
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    for _, gForce in pairs(This_MOD.create_data().gForces) do
+        --- Antenas a eliminar
+        local Deleted = {}
+
+        --- Validar cada antena
+        for key, node in pairs(gForce.nodes or {}) do
+            if node.entity and node.entity.valid then
+                check_power(node)
+            else
+                table.insert(Deleted, 1, key)
+            end
+        end
+
+        --- Eliminar a las entidad invalidas
+        for _, key in pairs(Deleted) do
+            local Node = gForce.nodes[key]
+            table.remove(gForce.nodes, key)
+
+            if Node.type == This_MOD.id_sender then
+                Node.filter_red.destroy()
+                Node.filter_green.destroy()
+            end
+        end
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
-function This_MOD.show_new_channel(Data)
+function This_MOD.validate_gui()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Cambiar de frame
-    Data.GUI.frame_old_channel.visible = false
-    Data.GUI.frame_new_channel.visible = true
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Configuración para un nuevo canal
-    if Data.GUI.action == This_MOD.action.new_channel then
-        Data.GUI.textfield_new_channel.text = ""
+    for player_index, gPlayer in pairs(This_MOD.create_data().gPlayers) do
+        This_MOD.validate_entity(
+            This_MOD.create_data({
+                entity = gPlayer.GUI.entity,
+                player_index = player_index
+            })
+        )
     end
-
-    --- Configuración para un nuevo nombre
-    if Data.GUI.action == This_MOD.action.edit then
-        local Textfield = Data.GUI.textfield_new_channel
-        Textfield.text = Data.node.channel.name
-    end
-
-    --- Enfocar nombre
-    Data.GUI.textfield_new_channel.focus()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
