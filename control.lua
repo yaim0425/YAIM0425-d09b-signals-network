@@ -1142,6 +1142,32 @@ function This_MOD.get_channel(Data, channel)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
+function This_MOD.set_channel(node, channel)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- No hay cambio
+    if node.channel and node.channel == channel then return end
+    if not node.entity.valid then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar los cables de canal
+    if node.connect then
+        --- Desconectar
+        node.red.disconnect_from(node.channel.red, defines.wire_origin.script)
+        node.green.disconnect_from(node.channel.green, defines.wire_origin.script)
+
+        --- Conectar
+        node.red.connect_to(channel.red, false, defines.wire_origin.script)
+        node.green.connect_to(channel.green, false, defines.wire_origin.script)
+    end
+
+    --- Guardar el canal de la enridad
+    node.channel = channel
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
 function This_MOD.validate_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Cerrado forzado de la ventana de ser necesario
