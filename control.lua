@@ -217,12 +217,12 @@ function This_MOD.load_events()
     --- Acciones propias del MOD
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Copar la configuración de una antena en otra
-    -- script.on_event({
-    --     defines.events.on_entity_settings_pasted
-    -- }, function(event)
-    --     This_MOD.copy_paste_settings(This_MOD.create_data(event))
-    -- end)
+    --- Copar la configuración de una antena en otra
+    script.on_event({
+        defines.events.on_entity_settings_pasted
+    }, function(event)
+        This_MOD.copy_paste_settings(This_MOD.create_data(event))
+    end)
 
     -- --- Ocultar la superficie de las fuerzas recién creadas
     -- script.on_event({
@@ -1087,7 +1087,6 @@ function This_MOD.edit_ghost(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     local Ghost = Data.Event.ghost
-    local Prototype = Data.Event.prototype
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1263,6 +1262,139 @@ function This_MOD.validate_gui()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
+
+---------------------------------------------------------------------------
+
+function This_MOD.copy_paste_settings(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Renombrar
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Source = Data.Event.source
+    local Destination = Data.Event.destination
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if Source.name == "entity-ghost" then return end
+    if Destination.name == "entity-ghost" then return end
+
+    if
+        not (
+            GMOD.has_id(Source.name, This_MOD.id_sender) or
+            GMOD.has_id(Source.name, This_MOD.id_receiver)
+        )
+    then
+        return
+    end
+
+    if
+        not (
+            GMOD.has_id(Destination.name, This_MOD.id_sender) or
+            GMOD.has_id(Destination.name, This_MOD.id_receiver)
+        )
+    then
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Hacer el cambio
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    Source = GMOD.get_tables(Data.nodes, "unit_number", Source.unit_number)[1]
+    Destination = GMOD.get_tables(Data.nodes, "unit_number", Destination.unit_number)[1]
+    This_MOD.set_channel(Destination, Source.channel)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+-- function This_MOD.hide_surface(Data)
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+--     local Surface = This_MOD.get_surface()
+--     if Surface then
+--         Data.Event.force.set_surface_hidden(Surface, true)
+--     end
+
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- end
+
+-- function This_MOD.forces_merged(Data)
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+--     --- Renombrar
+--     local Source = Data.gForces[Data.Event.source_index]
+--     if not Source then return end
+--     local Destination = This_MOD.create_data({
+--         force = Data.Event.destination
+--     })
+
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+--     --- Canales a mover
+--     local Move = {}
+
+--     --- Recorrer cada nodo
+--     for _, node in pairs(Source.nodes) do
+--         --- Variable a usar
+--         local Channel
+
+--         --- Canal por defecto
+--         if node.channel.index == 1 then
+--             Channel = Destination.channels[1]
+--         else
+--             --- Buscar el canal actual
+--             Channel = GPrefix.get_table(
+--                 Destination.channels,
+--                 "name", node.channel.name
+--             )
+
+--             --- Canal a mover
+--             Move[node.channel.index] = not Channel and node.channel or nil
+--         end
+
+--         --- Mover el nodo
+--         table.insert(Destination.nodes, node)
+
+--         --- Cambiar la conexión
+--         if not Move[node.channel.index] then
+--             This_MOD.set_channel(node, Channel)
+--         end
+--     end
+
+--     --- Mover los canales
+--     for key, channel in pairs(Move) do
+--         local Index = #Destination.channels + 1
+--         Destination.channels[Index] = channel
+--         Source.channels[key] = nil
+--         channel.index = Index
+--     end
+
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+--     --- Eliminar los canales
+--     for _, channel in pairs(Source.channels) do
+--         channel.entity.destroy()
+--     end
+
+--     --- Eliminar la referencia a la fuerza
+--     Data.gForces[Data.Event.source_index] = nil
+
+--     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+-- end
 
 ---------------------------------------------------------------------------
 
