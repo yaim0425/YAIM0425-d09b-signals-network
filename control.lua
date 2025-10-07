@@ -526,7 +526,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_exit.sprite = "utility/close"
         Data.GUI.button_exit.hovered_sprite = "utility/close_black"
         Data.GUI.button_exit.clicked_sprite = "utility/close_black"
-        Data.GUI.button_exit.tooltip = { "", { This_MOD.prefix .. "close" } }
         Data.GUI.button_exit = Data.GUI.flow_head.add(Data.GUI.button_exit)
         Data.GUI.button_exit.style = Prefix .. "button_close"
 
@@ -598,7 +597,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_edit.type = "sprite-button"
         Data.GUI.button_edit.name = "button_edit"
         Data.GUI.button_edit.sprite = "utility/rename_icon"
-        Data.GUI.button_edit.tooltip = { This_MOD.prefix .. "edit-channel" }
         Data.GUI.button_edit = Data.GUI.frame_old_channel.add(Data.GUI.button_edit)
         Data.GUI.button_edit.style = Prefix .. "button_blue"
 
@@ -641,7 +639,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_cancel.type = "sprite-button"
         Data.GUI.button_cancel.name = "button_cancel"
         Data.GUI.button_cancel.sprite = "utility/close_fat"
-        Data.GUI.button_cancel.tooltip = { "gui-mod-settings.cancel" }
         Data.GUI.button_cancel = Data.GUI.frame_new_channel.add(Data.GUI.button_cancel)
         Data.GUI.button_cancel.style = Prefix .. "button_red"
 
@@ -650,7 +647,6 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_confirm.type = "sprite-button"
         Data.GUI.button_confirm.name = "button_green"
         Data.GUI.button_confirm.sprite = "utility/check_mark_white"
-        Data.GUI.button_confirm.tooltip = { "gui.confirm" }
         Data.GUI.button_confirm = Data.GUI.frame_new_channel.add(Data.GUI.button_confirm)
         Data.GUI.button_confirm.style = Prefix .. "button_green"
 
