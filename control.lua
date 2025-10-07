@@ -1137,7 +1137,7 @@ function This_MOD.create_blueprint(Data)
             GMOD.has_id(entity.name, This_MOD.id_receiver)
         then
             local Entity = Mapping[entity.entity_number]
-            local Node = GMOD.get_table(Data.nodes, "entity", Entity)[1]
+            local Node = GMOD.get_tables(Data.nodes, "entity", Entity)[1]
             local Tags = { channel = Node.channel.name }
             Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
         end
