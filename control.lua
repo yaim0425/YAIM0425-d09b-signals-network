@@ -167,27 +167,27 @@ function This_MOD.load_events()
     --- Muerte y reconstrucción de una entidad
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    -- --- Modificar el fantasma de reconstrucción
-    -- script.on_event({
-    --     defines.events.on_post_entity_died
-    -- }, function(event)
-    --     event.entity = event.ghost
-    --     This_MOD.edit_ghost(This_MOD.create_data(event))
-    -- end)
+    --- Muerte de la entidad
+    script.on_event({
+        defines.events.on_entity_died
+    }, function(event)
+        This_MOD.beafore_entity_died(This_MOD.create_data(event))
+    end)
 
-    -- --- Muerte de la entidad
-    -- script.on_event({
-    --     defines.events.on_entity_died
-    -- }, function(event)
-    --     This_MOD.beafore_entity_died(This_MOD.create_data(event))
-    -- end)
+    --- Modificar el fantasma de reconstrucción
+    script.on_event({
+        defines.events.on_post_entity_died
+    }, function(event)
+        event.entity = event.ghost
+        This_MOD.edit_ghost(This_MOD.create_data(event))
+    end)
 
-    -- --- Información de las antenas destruidas
-    -- script.on_event({
-    --     defines.events.on_tick
-    -- }, function()
-    --     This_MOD.after_entity_died()
-    -- end)
+    --- Información de las antenas destruidas
+    script.on_event({
+        defines.events.on_tick
+    }, function()
+        This_MOD.after_entity_died()
+    end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -199,7 +199,6 @@ function This_MOD.load_events()
     --- Acciones por tiempo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Verificación periodica
     script.on_nth_tick(20, function()
         --- La entidad tenga energía
         This_MOD.check_power()
@@ -937,51 +936,6 @@ end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.show_old_channel(Data)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Cambiar de frame
-    Data.GUI.frame_new_channel.visible = false
-    Data.GUI.frame_old_channel.visible = true
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Enfocar la selección
-    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
-    This_MOD.selection_channel(Data)
-    Data.GUI.action = nil
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
-function This_MOD.show_new_channel(Data)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Cambiar de frame
-    Data.GUI.frame_old_channel.visible = false
-    Data.GUI.frame_new_channel.visible = true
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    --- Configuración para un nuevo canal
-    if Data.GUI.action == This_MOD.action.new_channel then
-        Data.GUI.textfield_new_channel.text = ""
-    end
-
-    --- Configuración para un nuevo nombre
-    if Data.GUI.action == This_MOD.action.edit then
-        local Textfield = Data.GUI.textfield_new_channel
-        Textfield.text = Data.node.channel.name
-    end
-
-    --- Enfocar nombre
-    Data.GUI.textfield_new_channel.focus()
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
----------------------------------------------------------------------------
-
 function This_MOD.check_power()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Funciones de validación
@@ -1142,6 +1096,170 @@ function This_MOD.create_blueprint(Data)
             Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
         end
     end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+---------------------------------------------------------------------------
+
+function This_MOD.beafore_entity_died(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if
+        not (
+            GMOD.has_id(Data.Entity.name, This_MOD.id_sender) or
+            GMOD.has_id(Data.Entity.name, This_MOD.id_receiver)
+        )
+    then
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Guardar la información
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Eliminar la conexión
+    Data.node.red.disconnect_from(Data.node.channel.red, defines.wire_origin.script)
+    Data.node.green.disconnect_from(Data.node.channel.green, defines.wire_origin.script)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Información a guardar
+    local Info = {}
+    Info.unit_number = Data.node.unit_number
+    Info.channel = Data.node.channel
+    Info.tick = 3
+
+    --- Guardar la información
+    table.insert(Data.ghosts, Info)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.edit_ghost(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Renombrar
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Ghost = Data.Event.ghost
+    local Prototype = Data.Event.prototype
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Ghost then return end
+    if
+        not (
+            GMOD.has_id(Data.Entity.name, This_MOD.id_sender) or
+            GMOD.has_id(Data.Entity.name, This_MOD.id_receiver)
+        )
+    then
+        return
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Preparar la reconstrucción
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cargar la información relacionada
+    local Info = GMOD.get_tables(Data.ghosts, "unit_number", Data.Event.unit_number)
+    if not Info then return end
+    Info = Info[1]
+
+    --- Modificar el fantasma
+    Ghost.tags = { channel = Info.channel.name }
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.after_entity_died()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Recorrer cada fuerza activa
+    for _, gForce in pairs(This_MOD.create_data().gForces) do
+        --- Información a eliminar
+        local Deleted = {}
+
+        --- Revisar cada información
+        for key, ghost in pairs(gForce.ghosts or {}) do
+            if ghost.tick > 0 then
+                ghost.tick = ghost.tick - 1
+            else
+                table.insert(Deleted, 1, key)
+            end
+        end
+
+        --- Eliminar la información
+        for _, key in pairs(Deleted) do
+            table.remove(gForce.ghosts, key)
+        end
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+---------------------------------------------------------------------------
+
+function This_MOD.show_old_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_new_channel.visible = false
+    Data.GUI.frame_old_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Enfocar la selección
+    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
+    This_MOD.selection_channel(Data)
+    Data.GUI.action = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.show_new_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_old_channel.visible = false
+    Data.GUI.frame_new_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Configuración para un nuevo canal
+    if Data.GUI.action == This_MOD.action.new_channel then
+        Data.GUI.textfield_new_channel.text = ""
+    end
+
+    --- Configuración para un nuevo nombre
+    if Data.GUI.action == This_MOD.action.edit then
+        local Textfield = Data.GUI.textfield_new_channel
+        Textfield.text = Data.node.channel.name
+    end
+
+    --- Enfocar nombre
+    Data.GUI.textfield_new_channel.focus()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
