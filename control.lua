@@ -238,6 +238,16 @@ function This_MOD.load_events()
         This_MOD.forces_merged(This_MOD.create_data(event))
     end)
 
+    --- Al clonar una antena
+    script.on_event({
+        defines.events.on_entity_cloned
+    },function(event)
+        local Event = GMOD.copy(event)
+        Event.entity = event.destination
+        This_MOD.create_entity(This_MOD.create_data(Event))
+        This_MOD.copy_paste_settings(This_MOD.create_data(event))
+    end)
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
