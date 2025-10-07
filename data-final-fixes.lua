@@ -798,7 +798,7 @@ function This_MOD.load_styles()
                 left_click_sound = This_MOD.path_sound .. "empty_audio.ogg",
             },
         },
-        width = 296 + 64
+        width = 296 + 32
     }
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---

@@ -592,6 +592,14 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.dropdown_channels = Data.GUI.frame_old_channel.add(Data.GUI.dropdown_channels)
         Data.GUI.dropdown_channels.style = Prefix .. "drop_down_channels"
 
+        --- Botón para agregar un canal
+        Data.GUI.button_plus = {}
+        Data.GUI.button_plus.type = "sprite-button"
+        Data.GUI.button_plus.name = "button_plus"
+        Data.GUI.button_plus.sprite = "virtual-signal/shape-cross"
+        Data.GUI.button_plus = Data.GUI.frame_old_channel.add(Data.GUI.button_plus)
+        Data.GUI.button_plus.style = Prefix .. "button_blue"
+
         --- Botón para aplicar los cambios
         Data.GUI.button_edit = {}
         Data.GUI.button_edit.type = "sprite-button"
