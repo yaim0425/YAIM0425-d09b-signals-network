@@ -231,12 +231,12 @@ function This_MOD.load_events()
         This_MOD.hide_surface(This_MOD.create_data(event))
     end)
 
-    -- --- Combinar dos forces
-    -- script.on_event({
-    --     defines.events.on_forces_merged
-    -- }, function(event)
-    --     This_MOD.forces_merged(This_MOD.create_data(event))
-    -- end)
+    --- Combinar dos forces
+    script.on_event({
+        defines.events.on_forces_merged
+    }, function(event)
+        This_MOD.forces_merged(This_MOD.create_data(event))
+    end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -1332,69 +1332,86 @@ function This_MOD.hide_surface(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
--- function This_MOD.forces_merged(Data)
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+function This_MOD.forces_merged(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Renombrar
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Renombrar
---     local Source = Data.gForces[Data.Event.source_index]
---     if not Source then return end
---     local Destination = This_MOD.create_data({
---         force = Data.Event.destination
---     })
+    local Source = Data.gForces[Data.Event.source_index]
+    if not Source then return end
+    local Destination = This_MOD.create_data({
+        force = Data.Event.destination
+    })
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---     --- Canales a mover
---     local Move = {}
 
---     --- Recorrer cada nodo
---     for _, node in pairs(Source.nodes) do
---         --- Variable a usar
---         local Channel
 
---         --- Canal por defecto
---         if node.channel.index == 1 then
---             Channel = Destination.channels[1]
---         else
---             --- Buscar el canal actual
---             Channel = GPrefix.get_table(
---                 Destination.channels,
---                 "name", node.channel.name
---             )
 
---             --- Canal a mover
---             Move[node.channel.index] = not Channel and node.channel or nil
---         end
 
---         --- Mover el nodo
---         table.insert(Destination.nodes, node)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Mover los canales
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
---         --- Cambiar la conexión
---         if not Move[node.channel.index] then
---             This_MOD.set_channel(node, Channel)
---         end
---     end
+    --- Canales a mover
+    local Move = {}
 
---     --- Mover los canales
---     for key, channel in pairs(Move) do
---         local Index = #Destination.channels + 1
---         Destination.channels[Index] = channel
---         Source.channels[key] = nil
---         channel.index = Index
---     end
+    --- Recorrer cada nodo
+    for _, node in pairs(Source.nodes) do
+        --- Variable a usar
+        local Channel
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Canal por defecto
+        if node.channel.index == 1 then
+            Channel = Destination.channels[1]
+        else
+            --- Buscar el canal actual
+            Channel = GMOD.get_tables(
+                Destination.channels,
+                "name", node.channel.name
+            )[1]
 
---     --- Eliminar los canales
---     for _, channel in pairs(Source.channels) do
---         channel.entity.destroy()
---     end
+            --- Canal a mover
+            Move[node.channel.index] = not Channel and node.channel or nil
+        end
 
---     --- Eliminar la referencia a la fuerza
---     Data.gForces[Data.Event.source_index] = nil
+        --- Mover el nodo
+        table.insert(Destination.nodes, node)
 
---     --- --- --- --- --- --- --- --- --- --- --- --- --- ---
--- end
+        --- Cambiar la conexión
+        if not Move[node.channel.index] then
+            This_MOD.set_channel(node, Channel)
+        end
+    end
+
+    --- Mover los canales
+    for key, channel in pairs(Move) do
+        local Index = #Destination.channels + 1
+        Destination.channels[Index] = channel
+        Source.channels[key] = nil
+        channel.index = Index
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Eliminar la información
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Eliminar los canales
+    for _, channel in pairs(Source.channels) do
+        channel.entity.destroy()
+    end
+
+    --- Eliminar la referencia a la fuerza
+    Data.gForces[Data.Event.source_index] = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 ---------------------------------------------------------------------------
 
