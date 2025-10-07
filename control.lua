@@ -1097,6 +1097,7 @@ function This_MOD.edit_ghost(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     local Ghost = Data.Event.ghost
+    local Prototype = Data.Event.prototype
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1111,8 +1112,8 @@ function This_MOD.edit_ghost(Data)
     if not Ghost then return end
     if
         not (
-            GMOD.has_id(Data.Entity.name, This_MOD.id_sender) or
-            GMOD.has_id(Data.Entity.name, This_MOD.id_receiver)
+            GMOD.has_id(Prototype.name, This_MOD.id_sender) or
+            GMOD.has_id(Prototype.name, This_MOD.id_receiver)
         )
     then
         return
