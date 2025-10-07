@@ -699,25 +699,15 @@ end
 
 function This_MOD.selection_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+    --- Validación
     if not Data.GUI.frame_main then return end
     if not This_MOD.validate_entity(Data) then return end
     local Element = Data.Event.element
     local Dropdown = Data.GUI.dropdown_channels
     if Element and Element ~= Dropdown then return end
 
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Cambiar el canal del nodo
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     local Channel = Data.channels[Dropdown.selected_index]
     This_MOD.set_channel(Data.node, Channel)
     This_MOD.sound_channel_changed(Data)
