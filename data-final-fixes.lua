@@ -31,7 +31,6 @@ function This_MOD.start()
             --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
             --- Crear los elementos
-            This_MOD.create_subgroup(space)
             This_MOD.create_item(space)
             This_MOD.create_entity(space)
             This_MOD.create_recipe(space)
@@ -125,8 +124,6 @@ function This_MOD.get_elements()
     Space.tech = GMOD.get_technology(Space.recipe)
     Space.recipe = Space.recipe and Space.recipe[1] or nil
 
-    Space.subgroup = This_MOD.prefix .. GMOD.delete_prefix(Space.item.subgroup)
-
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
@@ -160,30 +157,6 @@ end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.create_subgroup(space)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    if not space.item then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Crear un nuevo subgrupo
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local Old = space.item.subgroup
-    local New = space.subgroup
-    GMOD.duplicate_subgroup(Old, New)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
 function This_MOD.create_item(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Emisor
@@ -191,8 +164,7 @@ function This_MOD.create_item(space)
 
     local Sender = GMOD.copy(space.item)
     Sender.icons = { { icon = This_MOD.path_graphics .. "item-sender.png" } }
-    Sender.subgroup = space.subgroup
-    Sender.order = "010"
+    Sender.order = "110"
 
     Sender.name = This_MOD.name_sender
     Sender.place_result = This_MOD.name_sender
@@ -212,8 +184,7 @@ function This_MOD.create_item(space)
 
     local Receiver = GMOD.copy(space.item)
     Receiver.icons = { { icon = This_MOD.path_graphics .. "item-receiver.png" } }
-    Receiver.subgroup = space.subgroup
-    Sender.order = "020"
+    Receiver.order = "120"
 
     Receiver.name = This_MOD.name_receiver
     Receiver.place_result = This_MOD.name_receiver
