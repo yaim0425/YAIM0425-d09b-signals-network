@@ -758,12 +758,12 @@ function This_MOD.button_action(Data)
         return
     end
 
-    -- --- Editar el nombre del canal seleccionado
-    -- if Data.Event.element == Data.GUI.button_edit then
-    --     Data.GUI.action = This_MOD.action.edit
-    --     This_MOD.show_new_channel(Data)
-    --     return
-    -- end
+    --- Editar el nombre del canal seleccionado
+    if Data.Event.element == Data.GUI.button_edit then
+        Data.GUI.action = This_MOD.action.edit
+        This_MOD.show_new_channel(Data)
+        return
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
