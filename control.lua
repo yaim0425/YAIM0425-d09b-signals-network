@@ -752,11 +752,11 @@ function This_MOD.button_action(Data)
         return
     end
 
-    -- --- Cambiar el nombre de un canal o agregar un nuevo canal
-    -- if Data.Event.element == Data.GUI.button_confirm then
-    --     This_MOD.validate_channel_name(Data)
-    --     return
-    -- end
+    --- Cambiar el nombre de un canal o agregar un nuevo canal
+    if Data.Event.element == Data.GUI.button_confirm then
+        This_MOD.validate_channel_name(Data)
+        return
+    end
 
     -- --- Editar el nombre del canal seleccionado
     -- if Data.Event.element == Data.GUI.button_edit then
