@@ -122,12 +122,12 @@ function This_MOD.load_events()
         This_MOD.toggle_gui(This_MOD.create_data(event))
     end)
 
-    -- --- Al seleccionar otro canal
-    -- script.on_event({
-    --     defines.events.on_gui_selection_state_changed
-    -- }, function(event)
-    --     This_MOD.selection_channel(This_MOD.create_data(event))
-    -- end)
+    --- Al seleccionar otro canal
+    script.on_event({
+        defines.events.on_gui_selection_state_changed
+    }, function(event)
+        This_MOD.selection_channel(This_MOD.create_data(event))
+    end)
 
     --- Al hacer clic en algún elemento de la ventana
     script.on_event({
@@ -672,7 +672,6 @@ function This_MOD.toggle_gui(Data)
 
         --- Seleccionar el canal actual
         Dropdown.selected_index = Data.node.channel.index
-        Data.GUI.button_edit.enabled = Dropdown.selected_index > 1
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
@@ -695,7 +694,45 @@ function This_MOD.toggle_gui(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
-function This_MOD.selection_channel(Data) end
+function This_MOD.selection_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Data.GUI.frame_main then return end
+    if not This_MOD.validate_entity(Data) then return end
+    local Element = Data.Event.element
+    local Dropdown = Data.GUI.dropdown_channels
+    if Element and Element ~= Dropdown then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Procesar la selección
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Selección actual
+    local Selected_index = Dropdown.selected_index
+
+    --- Se quiere crear un nuevo canal
+    if Selected_index == #Dropdown.items then
+        Data.GUI.action = This_MOD.action.new_channel
+        This_MOD.show_new_channel(Data)
+        This_MOD.sound_channel_selected(Data)
+        return
+    end
+
+    --- Cambiar el canal del nodo
+    local Channel = Data.channels[Selected_index]
+    This_MOD.set_channel(Data.node, Channel)
+    This_MOD.sound_channel_changed(Data)
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
