@@ -150,12 +150,12 @@ function This_MOD.load_events()
         This_MOD.validate_channel_name(This_MOD.create_data(event))
     end)
 
-    -- --- Al copiar las entidades
-    -- script.on_event({
-    --     defines.events.on_player_setup_blueprint
-    -- }, function(event)
-    --     This_MOD.create_blueprint(This_MOD.create_data(event))
-    -- end)
+    --- Al copiar las entidades
+    script.on_event({
+        defines.events.on_player_setup_blueprint
+    }, function(event)
+        This_MOD.create_blueprint(This_MOD.create_data(event))
+    end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -804,7 +804,7 @@ function This_MOD.add_icon(Data)
 
     --- Agregar la imagen seleccionada
     local Text = Textbox.text
-    Text = Text .. (function ()
+    Text = Text .. (function()
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Variables a usar
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1083,6 +1083,64 @@ function This_MOD.validate_gui()
                 player_index = player_index
             })
         )
+    end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+function This_MOD.create_blueprint(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Variable a usar
+    local Blueprint = nil
+
+    --- Identificar el tipo de selección
+    local Flag_blueprint =
+        Data.Player.blueprint_to_setup and
+        Data.Player.blueprint_to_setup.valid_for_read
+
+    local Flag_cursor =
+        Data.Player.cursor_stack.valid_for_read and
+        Data.Player.cursor_stack.is_blueprint
+
+    --- Renombrar la selección
+    if Flag_blueprint then
+        Blueprint = Data.Player.blueprint_to_setup
+    elseif Flag_cursor then
+        Blueprint = Data.Player.cursor_stack
+    end
+
+    --- Validar la selección
+    if not Blueprint then return end
+    if not Blueprint.is_blueprint_setup() then return end
+
+    --- Listado de las entidades
+    local Entities = Blueprint.get_blueprint_entities()
+    if not Entities then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Guardar el canal al que está conectado
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    local Mapping = Data.Event.mapping.get()
+    for _, entity in pairs(Entities or {}) do
+        if
+            GMOD.has_id(entity.name, This_MOD.id_sender) or
+            GMOD.has_id(entity.name, This_MOD.id_receiver)
+        then
+            local Entity = Mapping[entity.entity_number]
+            local Node = GMOD.get_table(Data.nodes, "entity", Entity)[1]
+            local Tags = { channel = Node.channel.name }
+            Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
+        end
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
