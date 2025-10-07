@@ -785,7 +785,22 @@ function This_MOD.validate_channel_name(Data) end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.show_old_channel(Data) end
+function This_MOD.show_old_channel(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cambiar de frame
+    Data.GUI.frame_new_channel.visible = false
+    Data.GUI.frame_old_channel.visible = true
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Enfocar la selección
+    Data.GUI.dropdown_channels.selected_index = Data.node.channel.index
+    This_MOD.selection_channel(Data)
+    Data.GUI.action = nil
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.show_new_channel(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
