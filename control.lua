@@ -136,12 +136,12 @@ function This_MOD.load_events()
         This_MOD.button_action(This_MOD.create_data(event))
     end)
 
-    -- --- Al seleccionar o deseleccionar un icon
-    -- script.on_event({
-    --     defines.events.on_gui_elem_changed
-    -- }, function(event)
-    --     This_MOD.add_icon(This_MOD.create_data(event))
-    -- end)
+    --- Al seleccionar o deseleccionar un icon
+    script.on_event({
+        defines.events.on_gui_elem_changed
+    }, function(event)
+        This_MOD.add_icon(This_MOD.create_data(event))
+    end)
 
     -- --- Validar el nuevo nombre al dar ENTER
     -- script.on_event({
@@ -768,7 +768,107 @@ function This_MOD.button_action(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
-function This_MOD.add_icon(Data) end
+function This_MOD.add_icon(Data)
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not Data.Event.element then return end
+    if Data.Event.element ~= Data.GUI.button_icon then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Procesar la selección
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    --- Cargar la selección
+    local Select = Data.GUI.button_icon.elem_value
+
+    --- Restaurar el icono
+    Data.GUI.button_icon.elem_value = {
+        type = "virtual",
+        name = GMOD.name .. "-icon"
+    }
+
+    --- Renombrar
+    local Textbox = Data.GUI.textfield_new_channel
+
+    --- Se intentó limpiar el icono
+    if not Select then
+        Textbox.focus()
+        return
+    end
+
+    --- Agregar la imagen seleccionada
+    local Text = Textbox.text
+    Text = Text .. (function ()
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Variables a usar
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        local type = ""
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Detectar el tipo de icono
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if not Select.type then
+            if prototypes.entity[Select.name] then
+                type = "entity"
+            elseif prototypes.recipe[Select.name] then
+                type = "recipe"
+            elseif prototypes.fluid[Select.name] then
+                type = "fluid"
+            elseif prototypes.item[Select.name] then
+                type = "item"
+            end
+        end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Ajustar el tipo de icono
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        if Select.type then
+            type = Select.type
+            if Select.type == "virtual" then
+                type = type .. "-signal"
+            end
+        end
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+        --- Devolver el icon en formato de texto
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+        return "[img=" .. type .. "." .. Select.name .. "]"
+
+        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    end)()
+    Textbox.text = Text
+    Textbox.focus()
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
 function This_MOD.validate_channel_name(Data) end
 
