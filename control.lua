@@ -114,20 +114,13 @@ function This_MOD.load_events()
         This_MOD.create_entity(This_MOD.create_data(event))
     end)
 
-    -- --- Abrir o cerrar la interfaz
-    -- script.on_event({
-    --     defines.events.on_gui_opened,
-    --     defines.events.on_gui_closed
-    -- }, function(event)
-    --     This_MOD.toggle_gui(This_MOD.create_data(event))
-    -- end)
-
-    -- --- Al seleccionar o deseleccionar un icon
-    -- script.on_event({
-    --     defines.events.on_gui_elem_changed
-    -- }, function(event)
-    --     This_MOD.add_icon(This_MOD.create_data(event))
-    -- end)
+    --- Abrir o cerrar la interfaz
+    script.on_event({
+        defines.events.on_gui_opened,
+        defines.events.on_gui_closed
+    }, function(event)
+        This_MOD.toggle_gui(This_MOD.create_data(event))
+    end)
 
     -- --- Al seleccionar otro canal
     -- script.on_event({
@@ -141,6 +134,13 @@ function This_MOD.load_events()
     --     defines.events.on_gui_click
     -- }, function(event)
     --     This_MOD.button_action(This_MOD.create_data(event))
+    -- end)
+
+    -- --- Al seleccionar o deseleccionar un icon
+    -- script.on_event({
+    --     defines.events.on_gui_elem_changed
+    -- }, function(event)
+    --     This_MOD.add_icon(This_MOD.create_data(event))
     -- end)
 
     -- --- Validar el nuevo nombre al dar ENTER
