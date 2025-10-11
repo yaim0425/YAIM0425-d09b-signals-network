@@ -625,7 +625,7 @@ function This_MOD.create_tech(space)
             { type = "unlock-recipe", recipe = This_MOD.name_receiver }
         },
         icons = { {
-            icon = This_MOD.path_graphics .. "technology.png",
+            icon = This_MOD.path_graphics .. "tech.png",
             icon_size = 256
         } },
         order = "e-g",
