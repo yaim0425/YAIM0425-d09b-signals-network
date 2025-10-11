@@ -615,7 +615,7 @@ function This_MOD.create_tech(space)
     --- Tecnología base
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Technology = {
+    local Tech = {
         type = "technology",
         name = This_MOD.name_tech,
         localised_name = { "", { "technology-name." .. This_MOD.prefix .. "transmission" } },
@@ -656,7 +656,7 @@ function This_MOD.create_tech(space)
     --- Crear el prototipo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GMOD.extend(Technology)
+    GMOD.extend(Tech)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
