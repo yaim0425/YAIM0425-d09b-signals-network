@@ -731,6 +731,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_close"] = {
         type = "button_style",
         parent = "close_button",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 2,
         margin = 0,
         size = 24
@@ -766,7 +767,7 @@ function This_MOD.load_styles()
             item_style = {
                 type = "button_style",
                 parent = "list_box_item",
-                left_click_sound = This_MOD.path_sound .. "empty_audio.ogg",
+                left_click_sound = "__core__/sound/wire-connect-pole.ogg",
             },
         },
         width = 296 + 32
@@ -785,6 +786,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_red"] = {
         type = "button_style",
         parent = "tool_button_red",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -802,6 +804,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_blue"] = {
         type = "button_style",
         parent = "tool_button_blue",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -810,6 +813,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button"] = {
         type = "button_style",
         parent = "button",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         top_margin = 1,
         padding = 0,
         size = 28
