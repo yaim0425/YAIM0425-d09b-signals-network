@@ -810,6 +810,12 @@ function This_MOD.load_styles()
         size = 28
     }
 
+    Styles[Prefix .. "button_plus"] = {
+        type = "button_style",
+        parent = Prefix .. "button_blue",
+        left_click_sound = "__core__/sound/wire-connect-pole.ogg",
+    }
+
     Styles[Prefix .. "button"] = {
         type = "button_style",
         parent = "button",
