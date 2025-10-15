@@ -45,6 +45,9 @@ function This_MOD.start()
     This_MOD.load_icon()
     This_MOD.load_sound()
 
+    --- Fijar las posiciones actual
+    GMOD.d00b.change_orders()
+
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
