@@ -559,6 +559,8 @@ function This_MOD.create_recipe(space)
     Sender.name = This_MOD.name_sender
     Sender.energy_required = 10
     Sender.enabled = false
+    Sender.subgroup = GMOD.items[This_MOD.name_sender].subgroup
+    Sender.order = GMOD.items[This_MOD.name_sender].order
     Sender.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "battery",              amount = 20 },
@@ -586,6 +588,8 @@ function This_MOD.create_recipe(space)
     Receiver.name = This_MOD.name_receiver
     Receiver.energy_required = 10
     Receiver.enabled = false
+    Receiver.subgroup = GMOD.items[This_MOD.name_receiver].subgroup
+    Receiver.order = GMOD.items[This_MOD.name_receiver].order
     Receiver.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "copper-plate",         amount = 20 },
