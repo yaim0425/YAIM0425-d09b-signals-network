@@ -167,7 +167,7 @@ function This_MOD.create_item(space)
 
     local Sender = GMOD.copy(space.item)
     Sender.icons = { { icon = This_MOD.path_graphics .. "item-sender.png" } }
-    Sender.order = "110"
+    Sender.order = "910"
 
     Sender.name = This_MOD.name_sender
     Sender.place_result = This_MOD.name_sender
@@ -187,7 +187,7 @@ function This_MOD.create_item(space)
 
     local Receiver = GMOD.copy(space.item)
     Receiver.icons = { { icon = This_MOD.path_graphics .. "item-receiver.png" } }
-    Receiver.order = "120"
+    Receiver.order = "920"
 
     Receiver.name = This_MOD.name_receiver
     Receiver.place_result = This_MOD.name_receiver
