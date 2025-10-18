@@ -31,7 +31,6 @@ function This_MOD.start()
             --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
             --- Crear los elementos
-            This_MOD.create_subgroup(space)
             This_MOD.create_item(space)
             This_MOD.create_entity(space)
             This_MOD.create_recipe(space)
@@ -45,6 +44,9 @@ function This_MOD.start()
     This_MOD.load_styles()
     This_MOD.load_icon()
     This_MOD.load_sound()
+
+    --- Fijar las posiciones actual
+    GMOD.d00b.change_orders()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -118,14 +120,12 @@ function This_MOD.get_elements()
 
     local Space = {}
     Space.combinator = GMOD.entities["decider-combinator"]
-    Space.item = GMOD.get_item_create(Space.combinator, "place_result")
+    Space.item = GMOD.get_item_create(Space.combinator, GMOD.parameter.get_item_create.place_result)
     Space.entity = GMOD.entities["radar"]
 
     Space.recipe = GMOD.recipes[Space.item.name]
     Space.tech = GMOD.get_technology(Space.recipe)
     Space.recipe = Space.recipe and Space.recipe[1] or nil
-
-    Space.subgroup = This_MOD.prefix .. GMOD.delete_prefix(Space.item.subgroup)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -160,30 +160,6 @@ end
 
 ---------------------------------------------------------------------------
 
-function This_MOD.create_subgroup(space)
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    if not space.item then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Crear un nuevo subgrupo
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    local Old = space.item.subgroup
-    local New = space.subgroup
-    GMOD.duplicate_subgroup(Old, New)
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
 function This_MOD.create_item(space)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Emisor
@@ -191,8 +167,7 @@ function This_MOD.create_item(space)
 
     local Sender = GMOD.copy(space.item)
     Sender.icons = { { icon = This_MOD.path_graphics .. "item-sender.png" } }
-    Sender.subgroup = space.subgroup
-    Sender.order = "010"
+    Sender.order = "110"
 
     Sender.name = This_MOD.name_sender
     Sender.place_result = This_MOD.name_sender
@@ -212,8 +187,7 @@ function This_MOD.create_item(space)
 
     local Receiver = GMOD.copy(space.item)
     Receiver.icons = { { icon = This_MOD.path_graphics .. "item-receiver.png" } }
-    Receiver.subgroup = space.subgroup
-    Sender.order = "020"
+    Receiver.order = "120"
 
     Receiver.name = This_MOD.name_receiver
     Receiver.place_result = This_MOD.name_receiver
@@ -585,6 +559,8 @@ function This_MOD.create_recipe(space)
     Sender.name = This_MOD.name_sender
     Sender.energy_required = 10
     Sender.enabled = false
+    Sender.subgroup = GMOD.items[This_MOD.name_sender].subgroup
+    Sender.order = GMOD.items[This_MOD.name_sender].order
     Sender.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "battery",              amount = 20 },
@@ -612,6 +588,8 @@ function This_MOD.create_recipe(space)
     Receiver.name = This_MOD.name_receiver
     Receiver.energy_required = 10
     Receiver.enabled = false
+    Receiver.subgroup = GMOD.items[This_MOD.name_receiver].subgroup
+    Receiver.order = GMOD.items[This_MOD.name_receiver].order
     Receiver.ingredients = {
         { type = "item", name = "processing-unit",      amount = 20 },
         { type = "item", name = "copper-plate",         amount = 20 },
@@ -644,7 +622,7 @@ function This_MOD.create_tech(space)
     --- Tecnología base
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Technology = {
+    local Tech = {
         type = "technology",
         name = This_MOD.name_tech,
         localised_name = { "", { "technology-name." .. This_MOD.prefix .. "transmission" } },
@@ -654,7 +632,7 @@ function This_MOD.create_tech(space)
             { type = "unlock-recipe", recipe = This_MOD.name_receiver }
         },
         icons = { {
-            icon = This_MOD.path_graphics .. "technology.png",
+            icon = This_MOD.path_graphics .. "tech.png",
             icon_size = 256
         } },
         order = "e-g",
@@ -685,7 +663,7 @@ function This_MOD.create_tech(space)
     --- Crear el prototipo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    GMOD.extend(Technology)
+    GMOD.extend(Tech)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -760,6 +738,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_close"] = {
         type = "button_style",
         parent = "close_button",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 2,
         margin = 0,
         size = 24
@@ -795,7 +774,7 @@ function This_MOD.load_styles()
             item_style = {
                 type = "button_style",
                 parent = "list_box_item",
-                left_click_sound = This_MOD.path_sound .. "empty_audio.ogg",
+                left_click_sound = "__core__/sound/wire-connect-pole.ogg",
             },
         },
         width = 296 + 32
@@ -814,6 +793,7 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_red"] = {
         type = "button_style",
         parent = "tool_button_red",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 0,
         margin = 0,
         size = 28
@@ -831,14 +811,22 @@ function This_MOD.load_styles()
     Styles[Prefix .. "button_blue"] = {
         type = "button_style",
         parent = "tool_button_blue",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         padding = 0,
         margin = 0,
         size = 28
     }
 
+    Styles[Prefix .. "button_plus"] = {
+        type = "button_style",
+        parent = Prefix .. "button_blue",
+        left_click_sound = "__core__/sound/wire-connect-pole.ogg",
+    }
+
     Styles[Prefix .. "button"] = {
         type = "button_style",
         parent = "button",
+        left_click_sound = "__core__/sound/gui-tool-button.ogg",
         top_margin = 1,
         padding = 0,
         size = 28
