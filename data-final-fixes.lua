@@ -115,6 +115,19 @@ end
 
 function This_MOD.get_elements()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if GMOD.entities[This_MOD.name_sender] then return end
+    if GMOD.entities[This_MOD.name_receiver] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Valores para el proceso
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -139,8 +152,6 @@ function This_MOD.get_elements()
 
     if not Space.combinator then return end
     if not Space.entity then return end
-    if GMOD.entities[This_MOD.name_sender] then return end
-    if GMOD.entities[This_MOD.name_receiver] then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
