@@ -607,7 +607,7 @@ function This_MOD.toggle_gui(Data)
         Data.GUI.button_add.name = "button_add"
         Data.GUI.button_add.sprite = "virtual-signal/shape-cross"
         Data.GUI.button_add = Data.GUI.frame_channel_list.add(Data.GUI.button_add)
-        Data.GUI.button_add.style = Prefix .. "button_plus"
+        Data.GUI.button_add.style = Prefix .. "button_add"
 
         --- Botón para aplicar los cambios
         Data.GUI.button_edit = {}
