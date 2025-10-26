@@ -133,7 +133,7 @@ function This_MOD.get_elements()
 
     local Space = {}
     Space.combinator = GMOD.entities["decider-combinator"]
-    Space.item = GMOD.get_item_create(Space.combinator, GMOD.parameter.get_item_create.place_result)
+    Space.item = GMOD.get_item_create(Space.combinator, "place_result")
     Space.entity = GMOD.entities["radar"]
 
     Space.recipe = GMOD.recipes[Space.item.name]
