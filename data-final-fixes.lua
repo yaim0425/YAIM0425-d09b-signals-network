@@ -115,12 +115,25 @@ end
 
 function This_MOD.get_elements()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if GMOD.entities[This_MOD.name_sender] then return end
+    if GMOD.entities[This_MOD.name_receiver] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Valores para el proceso
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     local Space = {}
     Space.combinator = GMOD.entities["decider-combinator"]
-    Space.item = GMOD.get_item_create(Space.combinator, GMOD.parameter.get_item_create.place_result)
+    Space.item = GMOD.get_item_create(Space.combinator, "place_result")
     Space.entity = GMOD.entities["radar"]
 
     Space.recipe = GMOD.recipes[Space.item.name]
@@ -139,8 +152,6 @@ function This_MOD.get_elements()
 
     if not Space.combinator then return end
     if not Space.entity then return end
-    if GMOD.entities[This_MOD.name_sender] then return end
-    if GMOD.entities[This_MOD.name_receiver] then return end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -817,7 +828,7 @@ function This_MOD.load_styles()
         size = 28
     }
 
-    Styles[Prefix .. "button_plus"] = {
+    Styles[Prefix .. "button_add"] = {
         type = "button_style",
         parent = Prefix .. "button_blue",
         left_click_sound = "__core__/sound/wire-connect-pole.ogg",
