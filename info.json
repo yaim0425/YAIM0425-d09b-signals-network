@@ -5,6 +5,7 @@
   "author": "YAIM0425",
   "factorio_version": "2.0",
   "description": "Allows sending of signals from anywhere to anywhere, even between planets. Unlimited distances. No surface restrictions. [[I accept suggestions]]",
+  "homepage": "https://github.com/yaim0425/YAIM0425-d09b-signals-network",
   "dependencies": [
     "YAIM0425-d00b-core"
   ]
