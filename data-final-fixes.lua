@@ -45,11 +45,11 @@ function This_MOD.start()
     This_MOD.load_icon()
     This_MOD.load_sound()
 
-    --- Fijar las posiciones actual
-    GMOD.d00b.change_orders()
-
     --- Ocultar elementos
     This_MOD.hidden___Earendel()
+
+    --- Fijar las posiciones actual
+    GMOD.d00b.change_orders()
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -689,58 +689,6 @@ end
 
 
 ---------------------------------------------------------------------------------------------------
---- [ Eliminar las antenas de Earendel ] ---
----------------------------------------------------------------------------------------------------
-
-function This_MOD.hidden___Earendel()
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Validación
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    if not mods["aai-signal-transmission"] then return end
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Ocultar las creaciones los elementos
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-    for _, name in pairs({
-        "aai-signal-sender",
-        "aai-signal-receiver",
-        "aai-filter"
-    }) do
-        local Item = GMOD.items[name]
-        local Entity = GMOD.entities[name]
-        local Recipes = GMOD.recipes[name]
-
-        Item.hidden = true
-        Entity.hidden = true
-        for _, recipe in pairs(Recipes) do
-            recipe.hidden = true
-        end
-
-        GMOD.items[name] = nil
-        GMOD.recipes[name] = nil
-        GMOD.entities[name] = nil
-    end
-
-    data.raw.technology["aai-signal-transmission"].hidden = true
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
----------------------------------------------------------------------------------------------------
-
-
-
-
-
----------------------------------------------------------------------------------------------------
 --- [ Valores a usar en control.lua ] ---
 ---------------------------------------------------------------------------------------------------
 
@@ -946,6 +894,58 @@ function This_MOD.load_sound()
         filename = "__core__/sound/gui-tool-button.ogg",
         volume = 1.0
     })
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+--- [ Ocultar las antenas de Earendel ] ---
+---------------------------------------------------------------------------------------------------
+
+function This_MOD.hidden___Earendel()
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Validación
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    if not mods["aai-signal-transmission"] then return end
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+
+
+
+
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+    --- Ocultar las creaciones los elementos
+    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+    for _, name in pairs({
+        "aai-signal-sender",
+        "aai-signal-receiver",
+        "aai-filter"
+    }) do
+        local Item = GMOD.items[name]
+        local Entity = GMOD.entities[name]
+        local Recipes = GMOD.recipes[name]
+
+        Item.hidden = true
+        Entity.hidden = true
+        for _, recipe in pairs(Recipes) do
+            recipe.hidden = true
+        end
+
+        GMOD.items[name] = nil
+        GMOD.recipes[name] = nil
+        GMOD.entities[name] = nil
+    end
+
+    data.raw.technology["aai-signal-transmission"].hidden = true
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
