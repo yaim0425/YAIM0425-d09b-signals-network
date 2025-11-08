@@ -174,14 +174,7 @@ function This_MOD.load_events()
         defines.events.on_post_entity_died
     }, function(event)
         event.entity = event.ghost
-        This_MOD.edit_ghost(This_MOD.create_data(event))
-    end)
-
-    --- Información de las antenas destruidas
-    script.on_event({
-        defines.events.on_tick
-    }, function()
-        This_MOD.after_entity_died()
+        This_MOD.after_entity_died(This_MOD.create_data(event))
     end)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -274,12 +267,12 @@ function This_MOD.create_entity(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Canal por defecto
-    if #Data.channels == 0 then
+    if #Data.Channels == 0 then
         This_MOD.get_channel(Data)
     end
 
     --- Canal de la entidad
-    local Channel = Data.channels[1]
+    local Channel = Data.Channels[1]
     if Data.Event.tags then
         Channel = This_MOD.get_channel(Data, Data.Event.tags.channel)
     end
@@ -297,7 +290,7 @@ function This_MOD.create_entity(Data)
     Node.channel = Channel
     Node.connect = false
     Node.unit_number = Data.Entity.unit_number
-    table.insert(Data.nodes, Node)
+    table.insert(Data.Nodes, Node)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -436,7 +429,7 @@ function This_MOD.toggle_gui(Data)
         --- En caso de ser necesaria
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        if not Data.node then
+        if not Data.Node then
             This_MOD.create_entity({
                 entity = Data.Entity
             })
@@ -690,7 +683,7 @@ function This_MOD.toggle_gui(Data)
         --- Cargar los canales
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        for _, channel in pairs(Data.channels) do
+        for _, channel in pairs(Data.Channels) do
             Dropdown.add_item(channel.name)
         end
 
@@ -704,7 +697,7 @@ function This_MOD.toggle_gui(Data)
         --- Seleccionar el canal actual
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-        Dropdown.selected_index = Data.node.channel.index
+        Dropdown.selected_index = Data.Node.channel.index
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     end
@@ -748,8 +741,8 @@ function This_MOD.selection_channel(Data)
     --- Cambiar el canal del nodo
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Channel = Data.channels[Dropdown.selected_index]
-    This_MOD.set_channel(Data.node, Channel)
+    local Channel = Data.Channels[Dropdown.selected_index]
+    This_MOD.set_channel(Data.Node, Channel)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -807,7 +800,7 @@ function This_MOD.button_action(Data)
 
         --- Editar el nombre
         local Textfield = Data.GUI.textfield_channel
-        Textfield.text = Data.node.channel.name
+        Textfield.text = Data.Node.channel.name
 
         --- Enfocar nombre
         Data.GUI.textfield_channel.focus()
@@ -958,7 +951,7 @@ function This_MOD.edit_channel_name(Data)
 
     --- Valores a usar
     local Name = Textbox.text == ""
-    local Channel = GMOD.get_tables(Data.channels, "name", Textbox.text)
+    local Channel = GMOD.get_tables(Data.Channels, "name", Textbox.text)
     Channel = Channel and Channel[1] or nil
 
     --- Valores incorrecto
@@ -987,12 +980,12 @@ function This_MOD.edit_channel_name(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Actualizar el nombre
-    Data.node.channel.name = Textbox.text
+    Data.Node.channel.name = Textbox.text
 
     --- Actualizar la GUI
     Dropdown.remove_item(Index)
     Dropdown.add_item(Textbox.text, Index)
-    Dropdown.selected_index = Data.node.channel.index
+    Dropdown.selected_index = Data.Node.channel.index
 
     --- Enfocar la selección
     This_MOD.selection_channel(Data)
@@ -1057,7 +1050,7 @@ function This_MOD.create_blueprint(Data)
             GMOD.has_id(entity.name, This_MOD.id_receiver)
         then
             local Entity = Mapping[entity.entity_number]
-            local Node = GMOD.get_tables(Data.nodes, "entity", Entity)[1]
+            local Node = GMOD.get_tables(Data.Nodes, "entity", Entity)[1]
             local Tags = { channel = Node.channel.name }
             Blueprint.set_blueprint_entity_tags(entity.entity_number, Tags)
         end
@@ -1093,23 +1086,23 @@ function This_MOD.before_entity_died(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Eliminar la conexión
-    Data.node.red.disconnect_from(Data.node.channel.red, defines.wire_origin.script)
-    Data.node.green.disconnect_from(Data.node.channel.green, defines.wire_origin.script)
+    Data.Node.red.disconnect_from(Data.Node.channel.red, defines.wire_origin.script)
+    Data.Node.green.disconnect_from(Data.Node.channel.green, defines.wire_origin.script)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
     --- Información a guardar
     local Info = {}
-    Info.unit_number = Data.node.unit_number
-    Info.channel = Data.node.channel
+    Info.unit_number = Data.Node.unit_number
+    Info.channel = Data.Node.channel
 
     --- Guardar la información
-    table.insert(Data.ghosts, Info)
+    table.insert(Data.Ghosts, Info)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
 
-function This_MOD.edit_ghost(Data)
+function This_MOD.after_entity_died(Data)
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Renombrar
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1127,7 +1120,7 @@ function This_MOD.edit_ghost(Data)
     --- Validación
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if #Data.ghosts == 0 then return end
+    if #Data.Ghosts == 0 then return end
     if
         not (
             GMOD.has_id(Prototype.name, This_MOD.id_sender) or
@@ -1147,10 +1140,10 @@ function This_MOD.edit_ghost(Data)
     --- Cargar la información relacionada
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    for index, info in pairs(Data.ghosts) do
+    for index, info in pairs(Data.Ghosts) do
         if info.unit_number == Data.Event.unit_number then
             Ghost.tags = { channel = info.channel.name }
-            table.remove(Data.ghosts, index)
+            table.remove(Data.Ghosts, index)
             break
         end
     end
@@ -1171,7 +1164,7 @@ function This_MOD.check_power()
         if not Data.Entity.valid then return end
 
         --- Renombrar
-        local Node = GMOD.get_tables(Data.nodes, "entity", Data.Entity)
+        local Node = GMOD.get_tables(Data.Nodes, "entity", Data.Entity)
         if not Node then return end
         Node = Node[1]
 
@@ -1317,8 +1310,8 @@ function This_MOD.copy_paste_settings(Data)
     --- Hacer el cambio
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    Source = GMOD.get_tables(Data.nodes, "unit_number", Source.unit_number)[1]
-    Destination = GMOD.get_tables(Data.nodes, "unit_number", Destination.unit_number)[1]
+    Source = GMOD.get_tables(Data.Nodes, "unit_number", Source.unit_number)[1]
+    Destination = GMOD.get_tables(Data.Nodes, "unit_number", Destination.unit_number)[1]
     This_MOD.set_channel(Destination, Source.channel)
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1458,21 +1451,21 @@ function This_MOD.create_data(event)
 
     --- Postes / canales
     Data.gForce.channels = Data.gForce.channels or {}
-    Data.channels = Data.gForce.channels
+    Data.Channels = Data.gForce.channels
 
     --- Antenas
     Data.gForce.nodes = Data.gForce.nodes or {}
-    Data.nodes = Data.gForce.nodes
+    Data.Nodes = Data.gForce.nodes
 
     --- Auxiliar
     Data.gForce.ghosts = Data.gForce.ghosts or {}
-    Data.ghosts = Data.gForce.ghosts
+    Data.Ghosts = Data.gForce.ghosts
 
     --- Cargar el nodo a tratar
     if Data.Entity or Data.GUI then
         local Entity = Data.Entity or Data.GUI.entity
-        Data.node = GMOD.get_tables(Data.nodes, "entity", Entity)
-        Data.node = Data.node and Data.node[1] or nil
+        Data.Node = GMOD.get_tables(Data.Nodes, "entity", Entity)
+        Data.Node = Data.Node and Data.Node[1] or nil
     end
 
     --- Devolver el consolidado de los datos
@@ -1532,14 +1525,14 @@ function This_MOD.get_channel(Data, channel)
     --- Convertir el index en iconos
     if not channel then
         channel = ""
-        local Index = tostring(#Data.channels + 1)
+        local Index = tostring(#Data.Channels + 1)
         for n = 1, #Index do
             channel = channel .. "[img=virtual-signal.signal-" .. Index:sub(n, n) .. "]"
         end
     end
 
     --- Cargar el canal indicado
-    local Channel = GMOD.get_tables(Data.channels, "name", channel)
+    local Channel = GMOD.get_tables(Data.Channels, "name", channel)
     if Channel then return Channel[1] end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1565,12 +1558,12 @@ function This_MOD.get_channel(Data, channel)
 
     --- Guardar el nuevo canal
     Channel = {}
-    Channel.index = #Data.channels + 1
+    Channel.index = #Data.Channels + 1
     Channel.entity = Entity
     Channel.name = channel
     Channel.red = Entity.get_wire_connector(defines.wire_connector_id.circuit_red, true)
     Channel.green = Entity.get_wire_connector(defines.wire_connector_id.circuit_green, true)
-    Data.channels[Channel.index] = Channel
+    Data.Channels[Channel.index] = Channel
 
     --- Devolver el canal indicado
     return Channel
