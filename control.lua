@@ -1115,7 +1115,7 @@ function This_MOD.edit_ghost(Data)
     --- Renombrar
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Ghost = Data.Event.ghost
+    local Ghost = Data.Event.ghost or {}
     local Prototype = Data.Event.prototype
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1128,7 +1128,7 @@ function This_MOD.edit_ghost(Data)
     --- Validación
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    if not Ghost then return end
+    if #Data.ghosts == 0 then return end
     if
         not (
             GMOD.has_id(Prototype.name, This_MOD.id_sender) or
