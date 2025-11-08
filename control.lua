@@ -1145,40 +1145,14 @@ function This_MOD.edit_ghost(Data)
 
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-    --- Preparar la reconstrucción
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
     --- Cargar la información relacionada
-    local Info = GMOD.get_tables(Data.ghosts, "unit_number", Data.Event.unit_number)
-    if not Info then return end
-    Info = Info[1]
-
-    --- Modificar el fantasma
-    Ghost.tags = { channel = Info.channel.name }
-
-    --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-end
-
-function This_MOD.after_entity_died()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    --- Recorrer cada fuerza activa
-    for _, gForce in pairs(This_MOD.create_data().gForces) do
-        --- Información a eliminar
-        local Deleted = {}
-
-        --- Revisar cada información
-        for key, ghost in pairs(gForce.ghosts or {}) do
-            if ghost.tick > 0 then
-                ghost.tick = ghost.tick - 1
-            else
-                table.insert(Deleted, 1, key)
-            end
-        end
-
-        --- Eliminar la información
-        for _, key in pairs(Deleted) do
-            table.remove(gForce.ghosts, key)
+    for index, info in pairs(Data.ghosts) do
+        if info.unit_number == Data.Event.unit_number then
+            Ghost.tags = { channel = info.channel.name }
+            table.remove(Data.ghosts, index)
+            break
         end
     end
 
