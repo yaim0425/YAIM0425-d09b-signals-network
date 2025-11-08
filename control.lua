@@ -1102,7 +1102,6 @@ function This_MOD.before_entity_died(Data)
     local Info = {}
     Info.unit_number = Data.node.unit_number
     Info.channel = Data.node.channel
-    Info.tick = 3
 
     --- Guardar la información
     table.insert(Data.ghosts, Info)
