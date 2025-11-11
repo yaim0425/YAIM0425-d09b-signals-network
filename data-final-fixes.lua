@@ -930,9 +930,9 @@ function This_MOD.hidden___Earendel()
         "aai-signal-receiver",
         "aai-filter"
     }) do
-        local Item = GMOD.items[name]
-        local Entity = GMOD.entities[name]
-        local Recipes = GMOD.recipes[name]
+        local Item = GMOD.items[name] or {}
+        local Entity = GMOD.entities[name] or {}
+        local Recipes = GMOD.recipes[name] or {}
 
         Item.hidden = true
         Entity.hidden = true
